@@ -1,18 +1,32 @@
-# SPFx Custom Fields Library
-
 > Note: The SharePoint Framework is currently in preview and is subject to change. SharePoint Framework client-side web parts are not currently supported for use in production enviornments.
 
-This example is a kit of **19+ components** to customize SPFx web parts custom fields, to make the
-**optimal experience to edit your Web parts**.
+# SPFx Custom Fields Library
 
-These samples show how to implement custom fields with the new SharePoint Framework (SPFx). These samples
-include an implementation of **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,
-**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**,
-**PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldDisplayMode**,
-**PropertyFieldCustomList**,
- **PropertyFieldSPListPicker**,  **PropertyFieldSPListQuery**,**PropertyFieldSPListMultiplePicker**, **PropertyFieldSPFolderPicker**,
- **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldMapPicker**
- controls, based on the Office UI Fabric framework and React.
+This library is a kit of **19+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
+
+This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldDisplayMode**,  **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
+
+# How to install & use
+
+To install this library is your project, open a command line and execute this command in your WebPart's folder:
+```bash
+npm i --save sp-client-custom-fields
+```
+Open your file `'config/config.json'`, and add the following lines in the **externals** and in the **localizedResources** sections:
+```
+"externals": {
+   "sp-client-custom-fields": "node_modules/sp-client-custom-fields/dist/sp-client-custom-fields.bundle.js"
+}
+"localizedResources": {
+    "sp-client-custom-fields/strings": "../node_modules/sp-client-custom-fields/lib/loc/{locale}.js"
+}
+```
+Execute gulp in the command line
+```bash
+gulp
+```
+
+**You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.
 
 # Overview
 
@@ -44,18 +58,6 @@ Custom Field | Description |  Overview
 [PropertyFieldPhoneNumber](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPhoneNumber) | Custom field to select a phone number with a masked control based on phone numbers international formats. | ![PropertyFieldPhoneNumber](./assets/OverviewPhoneNumber.png)
 [PropertyFieldMaskedInput](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldMaskedInput) | Custom field to add a text input with a specified masked based on regexp. | ![PropertyFieldMaskedInput](./assets/OverviewMaskedInput.png)
 [PropertyFieldMapPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldMapPicker) | Custom field to add a gps localisation with map preview. | ![PropertyFieldMapPicker](./assets/OverviewMapPicker.png)
-
-# Build and run this sample in the SharePoint workbench
-
-```bash
-git clone the repo
-npm i
-tsd install
-gulp serve
-```
-
-If you need more information about to develop SharePoint Framework client side web part, deploy and test it on your workbench
-station, you can consult the following tutorial: https://github.com/SharePoint/sp-dev-docs/wiki/Setup-SharePoint-Tenant
 
 # The MIT License (MIT)
 
