@@ -6,6 +6,8 @@ This library is a kit of **19+ components** to customize SPFx web parts custom f
 
 This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldDisplayMode**,  **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
 
+**Current stable version: 0.9.7**
+
 # How to install & use
 
 To install this library is your project, open a command line and execute this command in your WebPart's folder:
