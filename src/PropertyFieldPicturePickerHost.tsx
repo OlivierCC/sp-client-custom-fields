@@ -13,7 +13,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 
-import * as strings from 'propertyFieldsStrings';
+import * as strings from 'sp-client-custom-fields/strings';
 
 /**
  * @interface

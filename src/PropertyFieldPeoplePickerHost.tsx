@@ -15,7 +15,7 @@ import { IPropertyFieldPeople } from './PropertyFieldPeoplePicker';
 import { IWebPartContext } from '@microsoft/sp-client-preview';
 import { EnvironmentType, IHttpClientOptions } from '@microsoft/sp-client-base';
 
-import * as strings from 'propertyFieldsStrings';
+import * as strings from 'sp-client-custom-fields/strings';
 
 
 /**

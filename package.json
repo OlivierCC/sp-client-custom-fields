@@ -1,6 +1,6 @@
 {
   "name": "sp-client-custom-fields",
-  "version": "0.9.4",
+  "version": "0.9.6",
   "private": false,
   "engines": {
     "node": ">=0.10.0"

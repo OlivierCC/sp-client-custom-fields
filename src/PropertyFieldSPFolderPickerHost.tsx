@@ -16,7 +16,7 @@ import { Dialog, DialogType } from 'office-ui-fabric-react/lib/Dialog';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { List } from 'office-ui-fabric-react/lib/List';
 
-import * as strings from 'propertyFieldsStrings';
+import * as strings from 'sp-client-custom-fields/strings';
 
 /**
  * @interface

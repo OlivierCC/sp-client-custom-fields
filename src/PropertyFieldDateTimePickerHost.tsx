@@ -10,7 +10,7 @@ import { IPropertyFieldDateTimePickerPropsInternal } from './PropertyFieldDateTi
 import { DatePicker, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
-import * as strings from 'propertyFieldsStrings';
+import * as strings from 'sp-client-custom-fields/strings';
 
 /**
  * @interface

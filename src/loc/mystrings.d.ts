@@ -91,7 +91,7 @@ declare interface IStrings {
   DatePickerDayShortSaturday: string;
 }
 
-declare module 'propertyFieldsStrings' {
+declare module 'sp-client-custom-fields/strings' {
   const strings: IStrings;
   export = strings;
 }

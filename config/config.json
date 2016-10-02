@@ -16,7 +16,7 @@
     "react-dom/server": "node_modules/react-dom/dist/react-dom-server.min.js"
   },
   "localizedResources": {
-    "propertyFieldsStrings": "loc/{locale}.js",
+    "sp-client-custom-fields/strings": "loc/{locale}.js",
     "testStrings": "webparts/test/loc/{locale}.js"
   }
 }

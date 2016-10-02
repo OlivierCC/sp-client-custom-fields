@@ -16,7 +16,7 @@ import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { EnvironmentType } from '@microsoft/sp-client-base';
 import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
 
-import * as strings from 'propertyFieldsStrings';
+import * as strings from 'sp-client-custom-fields/strings';
 
 /**
  * @interface
