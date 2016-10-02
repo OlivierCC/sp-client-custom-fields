@@ -3,7 +3,7 @@
     {
       "entry": "./lib/webparts/test/TestWebPart.js",
       "manifest": "./src/webparts/test/TestWebPart.manifest.json",
-      "outputPath": "./dist/test.bundle.js"
+      "outputPath": "./dist/sp-client-custom-fields.bundle.js"
     }
   ],
   "externals": {
