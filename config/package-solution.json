@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "name": "sp-client-custom-fields-client-side-solution",
+    "id": "a8ecc5d7-b351-44a1-8ade-46ccf5681234",
+    "version": "1.0.0.0"
+  },
+  "paths": {
+    "zippedPackage": "solution/sp-client-custom-fields.spapp"
+  }
+}
