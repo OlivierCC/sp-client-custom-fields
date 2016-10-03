@@ -6,7 +6,7 @@ This library is a kit of **20+ components** to customize SPFx web parts custom f
 
 This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
 
-**Current stable version: 0.9.8**
+**Current stable version: 0.9.8** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 # How to install & use
 
@@ -28,7 +28,7 @@ Execute gulp in the command line
 gulp
 ```
 
-**You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.
+**You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.   [More information](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-install-%3F)
 
 # Overview
 
