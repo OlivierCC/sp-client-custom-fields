@@ -57,7 +57,8 @@ import { PropertyFieldCustomList, CustomListFieldType } from '../../PropertyFiel
 import { PropertyFieldSPListQuery, PropertyFieldSPListQueryOrderBy } from '../../PropertyFieldSPListQuery';
 //Include the PropertyFieldAlignPicker component
 import { PropertyFieldAlignPicker } from '../../PropertyFieldAlignPicker';
-
+//Include the PropertyFieldDropDownSelect component
+import { PropertyFieldDropDownSelect } from '../../PropertyFieldDropDownSelect';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -92,7 +93,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       displayMode: this.properties.displayMode,
       customList: this.properties.customList,
       query: this.properties.query,
-      align: this.properties.align
+      align: this.properties.align,
+      dropDownSelect: this.properties.dropDownSelect
     });
 
     ReactDom.render(element, this.domElement);
@@ -162,6 +164,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
             {
               groupName: 'Text Input Fields',
               groupFields: [
+
                 PropertyFieldCustomList('customList', {
                   label: strings.CustomListFieldLabel,
                   value: this.properties.customList,
@@ -190,6 +193,20 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   ],
                   onPropertyChange: this.onPropertyChange,
                   context: this.context
+                }),
+                PropertyFieldDropDownSelect('dropDownSelect', {
+                  label: strings.DropDownSelectFieldLabel,
+                  options: [
+                    {'key': 'Option1', 'text': 'Option 1'},
+                    {'key': 'Option2', 'text': 'Option 2'},
+                    {'key': 'Option3', 'text': 'Option 3'},
+                    {'key': 'Option4', 'text': 'Option 4'},
+                    {'key': 'Option5', 'text': 'Option 5'},
+                    {'key': 'Option6', 'text': 'Option 6'},
+                    {'key': 'Option7', 'text': 'Option 7'}
+                  ],
+                  initialValue: this.properties.dropDownSelect,
+                  onPropertyChange: this.onPropertyChange
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,

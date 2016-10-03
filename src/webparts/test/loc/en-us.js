@@ -21,6 +21,7 @@ define([], function() {
     "DisplayModeFieldLabel": "Display Mode Field",
     "CustomListFieldLabel": "Custom List Field",
     "QueryFieldLabel": "List Query Field",
-    "AlignFieldLabel": "Align Field"
+    "AlignFieldLabel": "Align Field",
+    "DropDownSelectFieldLabel": "Drop down with select Field"
   }
 });

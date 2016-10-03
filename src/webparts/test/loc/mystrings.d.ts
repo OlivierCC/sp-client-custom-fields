@@ -23,6 +23,7 @@ declare interface ITestStrings {
   CustomListFieldLabel: string;
   QueryFieldLabel: string;
   AlignFieldLabel: string;
+  DropDownSelectFieldLabel: string;
 }
 
 declare module 'testStrings' {

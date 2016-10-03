@@ -23,4 +23,5 @@ export interface ITestWebPartProps {
   customList: any[];
   query: string;
   align: string;
+  dropDownSelect: string[];
 }

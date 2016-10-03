@@ -79,6 +79,22 @@ export default class Test extends React.Component<ITestProps, {}> {
                 &nbsp; Text Input Fields
               </p>
               <p >
+                <i className="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>&nbsp;
+                <b>DropDown Select</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownSelect" target="_doc">(Doc)</a> : &nbsp;
+                <ul>
+                { this.props.dropDownSelect != null ?
+                  this.props.dropDownSelect.map((element: string, i:number) => {
+                    return (
+                      <li>{element}</li>
+                    );
+                  })
+                  : ''
+                }
+                </ul>
+
+              </p>
+              <p >
                 <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
                 <b>Custom List</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldCustomList" target="_doc">(Doc)</a> : &nbsp;
