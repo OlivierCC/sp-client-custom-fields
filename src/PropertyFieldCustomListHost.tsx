@@ -24,6 +24,8 @@ import PropertyFieldSPListPickerHost from './PropertyFieldSPListPickerHost';
 import PropertyFieldSPFolderPickerHost from './PropertyFieldSPFolderPickerHost';
 import PropertyFieldPeoplePickerHost from './PropertyFieldPeoplePickerHost';
 
+import * as strings from 'sp-client-custom-fields/strings';
+
 /**
  * @interface
  * PropertyFieldCustomListHost properties interface
@@ -301,8 +303,8 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                {this.props.fields != null ?
               <div>
               <div style={{marginBottom: '20px', backgroundColor: '#F4F4F4', width: '100%', paddingTop: '5px', paddingBottom: '5px'}}>
-                <Button buttonType={ButtonType.hero} disabled={true} icon='Add'> &nbsp;Add item</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickCancel} icon='Back'> &nbsp;Back</Button>
+                <Button buttonType={ButtonType.hero} disabled={true} icon='Add'> &nbsp;{strings.CustomListAddItem}</Button>
+                <Button buttonType={ButtonType.hero} onClick={this.onClickCancel} icon='Back'> &nbsp;{strings.CustomListBack}</Button>
               </div>
               { this.state.mandatoryOpen === true ?
                     <div className="ms-MessageBar">
@@ -312,7 +314,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                           <i className="ms-Icon ms-Icon--Error"></i>
                         </div>
                         <div className="ms-MessageBar-text">
-                          Error the field '{this.state.missingField}' is mandatory
+                          {strings.CustomListFieldMissing.replace("{0}", this.state.missingField)}
                         </div>
                       </div>
                     </div>
@@ -346,7 +348,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                             input['value'] = true;
                                         }
                                       }
-                                    } /> <span style={{fontSize: '14px'}}>True</span>
+                                    } /> <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
                                     <input type="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
@@ -355,7 +357,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                             input['value'] = false;
                                         }
                                       }
-                                    } /> <span style={{fontSize: '14px'}}>False</span>
+                                    } /> <span style={{fontSize: '14px'}}>{strings.CustomListFalse}</span>
                                   </div>
                                 : ''
                                 }
@@ -454,8 +456,8 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                 : ''
                }
                <div style={{marginTop: '30px', marginBottom: '30px'}}>
-                <Button buttonType={ButtonType.primary} onClick={this.onClickAdd}>OK</Button>
-                <Button buttonType={ButtonType.normal} onClick={this.onClickCancel}>Cancel</Button>
+                <Button buttonType={ButtonType.primary} onClick={this.onClickAdd}>{strings.CustomListOK}</Button>
+                <Button buttonType={ButtonType.normal} onClick={this.onClickCancel}>{strings.CustomListCancel}</Button>
               </div>
           </div>
           : ''}
@@ -465,8 +467,8 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                {this.props.fields != null ?
                   <div>
                   <div style={{marginBottom: '20px', backgroundColor: '#F4F4F4', width: '100%', paddingTop: '5px', paddingBottom: '5px'}}>
-                    <Button buttonType={ButtonType.hero} disabled={true} icon='Edit'> &nbsp;Edit</Button>
-                    <Button buttonType={ButtonType.hero} onClick={this.onClickCancel} icon='Back'> &nbsp;Back</Button>
+                    <Button buttonType={ButtonType.hero} disabled={true} icon='Edit'> &nbsp;{strings.CustomListEdit}</Button>
+                    <Button buttonType={ButtonType.hero} onClick={this.onClickCancel} icon='Back'> &nbsp;{strings.CustomListBack}</Button>
                   </div>
                   { this.state.mandatoryOpen === true ?
                     <div className="ms-MessageBar">
@@ -476,7 +478,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                           <i className="ms-Icon ms-Icon--Error"></i>
                         </div>
                         <div className="ms-MessageBar-text">
-                          Error the field '{this.state.missingField}' is mandatory
+                          {strings.CustomListFieldMissing.replace("{0}", this.state.missingField)}
                         </div>
                       </div>
                     </div>
@@ -512,7 +514,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                       }
                                     }
                                     defaultChecked={this.state.data[this.state.selectedIndex][value.title] == "true"}
-                                    /> <span style={{fontSize: '14px'}}>True</span>
+                                    /> <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
                                     <input type="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
@@ -523,7 +525,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                       }
                                     }
                                     defaultChecked={this.state.data[this.state.selectedIndex][value.title] == "false"}
-                                    /> <span style={{fontSize: '14px'}}>False</span>
+                                    /> <span style={{fontSize: '14px'}}>{strings.CustomListFalse}</span>
                                   </div>
                                 : ''
                                 }
@@ -622,8 +624,8 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                 : ''
                }
                <div style={{marginTop: '30px', marginBottom: '30px'}}>
-                <Button buttonType={ButtonType.primary} onClick={this.onClickUpdate}>OK</Button>
-                <Button buttonType={ButtonType.normal} onClick={this.onClickCancel}>Cancel</Button>
+                <Button buttonType={ButtonType.primary} onClick={this.onClickUpdate}>{strings.CustomListOK}</Button>
+                <Button buttonType={ButtonType.normal} onClick={this.onClickCancel}>{strings.CustomListCancel}</Button>
               </div>
 
 
@@ -634,21 +636,21 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
           { this.state.openListView === true ?
           <div>
               <div style={{marginBottom: '20px', backgroundColor: '#F4F4F4', width: '100%', paddingTop: '5px', paddingBottom: '5px'}}>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickAddItem} icon='Add'> &nbsp;Add item</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickEdit} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='Edit'> &nbsp;Edit</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickDeleteItem} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='Delete'> &nbsp;Del</Button>
+                <Button buttonType={ButtonType.hero} onClick={this.onClickAddItem} icon='Add'> &nbsp;{strings.CustomListAddItem}</Button>
+                <Button buttonType={ButtonType.hero} onClick={this.onClickEdit} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='Edit'> &nbsp;{strings.CustomListEdit}</Button>
+                <Button buttonType={ButtonType.hero} onClick={this.onClickDeleteItem} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='Delete'> &nbsp;{strings.CustomListDel}</Button>
                 <Button buttonType={ButtonType.hero} onClick={this.onClickMoveUp} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='ChevronUp'> </Button>
                 <Button buttonType={ButtonType.hero} onClick={this.onClickMoveDown} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='ChevronDown'> </Button>
               </div>
-                 <Dialog type={DialogType.close} isOpen={this.state.deleteOpen} title="Confirm Delete"
+                 <Dialog type={DialogType.close} isOpen={this.state.deleteOpen} title={strings.CustomListConfirmDel}
                   onDismiss={this.onDismissDelete}  isDarkOverlay={false} isBlocking={true}>
                     <div>
                       <div>
-                        <Label>Are you sure that you want to delete this item ?</Label>
+                        <Label>{strings.CustomListConfirmDelMssg}</Label>
                       </div>
                       <div style={{paddingTop:'20px'}}>
-                        <Button buttonType={ButtonType.primary} onClick={this.clickDelete}>Yes</Button>
-                        <Button buttonType={ButtonType.normal} onClick={this.onDismissDelete}>No</Button>
+                        <Button buttonType={ButtonType.primary} onClick={this.clickDelete}>{strings.CustomListYes}</Button>
+                        <Button buttonType={ButtonType.normal} onClick={this.onDismissDelete}>{strings.CustomListNo}</Button>
                       </div>
                     </div>
                  </Dialog>

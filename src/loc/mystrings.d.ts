@@ -1,5 +1,21 @@
 declare interface IStrings {
 
+  //CustomList labels
+  //Copy the following labels in your project if you want to use the SPListQuery
+  CustomListAddItem: string;
+  CustomListBack: string;
+  CustomListTrue: string;
+  CustomListFalse: string;
+  CustomListOK: string;
+  CustomListCancel: string;
+  CustomListEdit: string;
+  CustomListDel: string;
+  CustomListYes: string;
+  CustomListNo: string;
+  CustomListConfirmDel: string;
+  CustomListConfirmDelMssg: string;
+  CustomListFieldMissing: string;
+
   //SPListQuery labels
   //Copy the following labels in your project if you want to use the SPListQuery
   SPListQueryList: string;

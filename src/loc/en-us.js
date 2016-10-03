@@ -1,5 +1,21 @@
 define([], function() {
   return {
+    //Custom List labels
+    //Copy the following labels in your project if you want to use the SPListQuery
+    "CustomListAddItem": "Add item",
+    "CustomListBack": "Back",
+    "CustomListTrue": "True",
+    "CustomListFalse": "False",
+    "CustomListOK": "OK",
+    "CustomListCancel": "Cancel",
+    "CustomListEdit": "Edit",
+    "CustomListDel": "Del",
+    "CustomListYes": "Yes",
+    "CustomListNo": "No",
+    "CustomListConfirmDel": "Confirm Delete",
+    "CustomListConformDelMssg": "Are you sure that you want to delete this item ?",
+    "CustomListFieldMissing": "Error the field '{0}' is mandatory",
+
     //SPListQuery labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "SPListQueryList": "List",
