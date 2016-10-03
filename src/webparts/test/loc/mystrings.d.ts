@@ -22,6 +22,7 @@ declare interface ITestStrings {
   DisplayModeFieldLabel: string;
   CustomListFieldLabel: string;
   QueryFieldLabel: string;
+  AlignFieldLabel: string;
 }
 
 declare module 'testStrings' {

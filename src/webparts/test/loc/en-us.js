@@ -20,6 +20,7 @@ define([], function() {
     "DocumentFieldLabel": "Document Field",
     "DisplayModeFieldLabel": "Display Mode Field",
     "CustomListFieldLabel": "Custom List Field",
-    "QueryFieldLabel": "List Query Field"
+    "QueryFieldLabel": "List Query Field",
+    "AlignFieldLabel": "Align Field"
   }
 });

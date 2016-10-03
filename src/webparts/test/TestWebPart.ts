@@ -55,6 +55,9 @@ import { PropertyFieldDisplayMode } from '../../PropertyFieldDisplayMode';
 import { PropertyFieldCustomList, CustomListFieldType } from '../../PropertyFieldCustomList';
 //Include the PropertyFieldSPListQuery component
 import { PropertyFieldSPListQuery, PropertyFieldSPListQueryOrderBy } from '../../PropertyFieldSPListQuery';
+//Include the PropertyFieldAlignPicker component
+import { PropertyFieldAlignPicker } from '../../PropertyFieldAlignPicker';
+
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -88,7 +91,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       document: this.properties.document,
       displayMode: this.properties.displayMode,
       customList: this.properties.customList,
-      query: this.properties.query
+      query: this.properties.query,
+      align: this.properties.align
     });
 
     ReactDom.render(element, this.domElement);
@@ -146,6 +150,11 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                 PropertyFieldColorPicker('color', {
                   label: strings.ColorFieldLabel,
                   initialColor: this.properties.color,
+                  onPropertyChange: this.onPropertyChange
+                }),
+                PropertyFieldAlignPicker('align', {
+                  label: strings.AlignFieldLabel,
+                  initialValue: this.properties.align,
                   onPropertyChange: this.onPropertyChange
                 })
               ],

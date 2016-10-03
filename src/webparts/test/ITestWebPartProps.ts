@@ -22,4 +22,5 @@ export interface ITestWebPartProps {
   displayMode: string;
   customList: any[];
   query: string;
+  align: string;
 }

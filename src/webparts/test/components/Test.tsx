@@ -67,6 +67,12 @@ export default class Test extends React.Component<ITestProps, {}> {
                 <i className={'ms-Icon ' + this.props.icon} aria-hidden="true" style={{fontSize:'large'}}></i>
                 &nbsp;{this.props.icon}
               </p>
+              <p >
+                <i className="ms-Icon ms-Icon--AlignLeft" aria-hidden="true"></i>&nbsp;
+                <b>Align</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldAlignPicker" target="_doc">(Doc)</a> : &nbsp;
+                {this.props.align}
+              </p>
 
               <p className="ms-fontSize-xxl">
                <i className="ms-Icon ms-Icon--InsertTextBox" aria-hidden="true"></i>
