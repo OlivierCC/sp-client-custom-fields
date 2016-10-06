@@ -24,4 +24,5 @@ export interface ITestWebPartProps {
   query: string;
   align: string;
   dropDownSelect: string[];
+  richTextBox: string;
 }

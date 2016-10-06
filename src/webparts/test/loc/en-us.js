@@ -22,6 +22,7 @@ define([], function() {
     "CustomListFieldLabel": "Custom List Field",
     "QueryFieldLabel": "List Query Field",
     "AlignFieldLabel": "Align Field",
-    "DropDownSelectFieldLabel": "Drop down with select Field"
+    "DropDownSelectFieldLabel": "Drop down with select Field",
+    "RichTextBoxFieldLabel": "Rich Text Box Field"
   }
 });

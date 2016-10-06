@@ -24,6 +24,7 @@ declare interface ITestStrings {
   QueryFieldLabel: string;
   AlignFieldLabel: string;
   DropDownSelectFieldLabel: string;
+  RichTextBoxFieldLabel: string;
 }
 
 declare module 'testStrings' {

@@ -78,7 +78,7 @@ export default class Test extends React.Component<ITestProps, {}> {
                <i className="ms-Icon ms-Icon--InsertTextBox" aria-hidden="true"></i>
                 &nbsp; Text Input Fields
               </p>
-              <p >
+              <div>
                 <i className="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>&nbsp;
                 <b>DropDown Select</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownSelect" target="_doc">(Doc)</a> : &nbsp;
@@ -93,7 +93,7 @@ export default class Test extends React.Component<ITestProps, {}> {
                 }
                 </ul>
 
-              </p>
+              </div>
               <p >
                 <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
                 <b>Custom List</b>
@@ -105,6 +105,12 @@ export default class Test extends React.Component<ITestProps, {}> {
                 <b>Password</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword" target="_doc">(Doc)</a> : &nbsp;
                 {this.props.password}
+              </p>
+               <p >
+                <i className="ms-Icon ms-Icon--Font" aria-hidden="true"></i>&nbsp;
+                <b>Rich Text Box</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldRichTextBox" target="_doc">(Doc)</a> : &nbsp;
+                {this.props.richTextBox}
               </p>
               <p>
                 <i className="ms-Icon ms-Icon--CalendarWorkWeek" aria-hidden="true"></i>&nbsp;

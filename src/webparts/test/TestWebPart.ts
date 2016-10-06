@@ -59,6 +59,8 @@ import { PropertyFieldSPListQuery, PropertyFieldSPListQueryOrderBy } from '../..
 import { PropertyFieldAlignPicker } from '../../PropertyFieldAlignPicker';
 //Include the PropertyFieldDropDownSelect component
 import { PropertyFieldDropDownSelect } from '../../PropertyFieldDropDownSelect';
+//Include the PropertyFieldRichTextBox component
+import { PropertyFieldRichTextBox } from '../../PropertyFieldRichTextBox';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -94,6 +96,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       customList: this.properties.customList,
       query: this.properties.query,
       align: this.properties.align,
+      richTextBox: this.properties.richTextBox,
       dropDownSelect: this.properties.dropDownSelect
     });
 
@@ -211,6 +214,14 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,
                   initialValue: this.properties.password,
+                  onPropertyChange: this.onPropertyChange
+                }),
+                PropertyFieldRichTextBox('richTextBox', {
+                  label: strings.RichTextBoxFieldLabel,
+                  initialValue: this.properties.richTextBox,
+                  inline: false,
+                  minHeight: 100,
+                  mode: 'basic', //'basic' or 'standard' or 'full'
                   onPropertyChange: this.onPropertyChange
                 }),
                 PropertyFieldDatePicker('date', {
