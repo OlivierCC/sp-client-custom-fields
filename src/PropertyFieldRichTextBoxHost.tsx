@@ -15,6 +15,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
  *
  */
 export interface IPropertyFieldRichTextBoxHostProps extends IPropertyFieldRichTextBoxPropsInternal {
+  guid: string;
 }
 
 
@@ -52,7 +53,7 @@ export default class PropertyFieldRichTextBoxHost extends React.Component<IPrope
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <div style={{border: '1px solid #c8c8c8', minHeight: minHeight + 'px'}}><textarea name="editor1" id="editor1">{this.props.initialValue}</textarea></div>
+        <div style={{border: '1px solid #c8c8c8', minHeight: minHeight + 'px'}}><textarea name={this.props.guid + '-editor'} id={this.props.guid + '-editor'}>{this.props.initialValue}</textarea></div>
       </div>
     );
   }

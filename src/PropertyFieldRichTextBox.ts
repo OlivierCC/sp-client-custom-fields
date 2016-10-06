@@ -94,6 +94,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
   private mode: string;
   private  inline: boolean;
   private minHeight: number;
+  private guid: string;
   private onPropertyChange: (propertyPath: string, newValue: any) => void;
 
   /**
@@ -112,7 +113,19 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     this.minHeight = this.minHeight;
     this.onPropertyChange = _properties.onPropertyChange;
     this.render = this.render.bind(this);
+    this.guid = this.getGuid();
   }
+
+  private getGuid(): string {
+    return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' +
+      this.s4() + '-' + this.s4() + this.s4() + this.s4();
+  }
+
+  private s4(): string {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
 
   /**
    * @function
@@ -130,7 +143,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       minHeight: this.minHeight,
       onDispose: this.dispose,
       onRender: this.render,
-      onPropertyChange: this.onPropertyChange
+      onPropertyChange: this.onPropertyChange,
+      guid: this.guid
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -153,7 +167,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
         CKEDITOR.instances[i].on('change', (elm?, val?) =>
         {
           CKEDITOR.instances[i].updateElement();
-          var value = ((document.getElementById('editor1')) as any).value;
+          var value = ((document.getElementById(this.guid + '-editor')) as any).value;
           if (this.onPropertyChange && value != null) {
             this.onPropertyChange(this.targetProperty, value);
           }
