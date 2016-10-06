@@ -9,7 +9,7 @@ This kit includes Web Part property fields as **PropertyFieldDatePicker**, **Pro
 Now available in more than 15 languages as: English, French, Arabic, Chinese, Danish, Spanish, Finnish, Hindi, Italian,
 Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish.
 
-**Current stable version: 1.0.0** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.0.1** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 # How to install & use
 
