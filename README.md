@@ -42,7 +42,9 @@ gulp
 
 # Overview
 
-![Overview](./assets/Overview.gif)
+![Overview](./assets/Logo.png)
+
+You can consult [samples on this page](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-try-a-sample-%3F).
 
 # Custom Fields documentation
 
