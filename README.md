@@ -16,9 +16,9 @@ fields to your own client side Web Parts.
 Now available in more than **16 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian,
 Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish.
 
-![Overview](./assets/Logo.png)
-
 **Current stable version: 1.0.3** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+
+![Overview](./assets/Logo.png)
 
 # How to install & use
 
