@@ -64,6 +64,8 @@ Custom Field | Description |  Overview
 
 Custom Field | Description |  Overview
 ------------ | ----------- | -----------
+[PropertyFieldDatePicker](/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDatePicker) | Custom field to select a Date with a mini-calendar based on the Office UI Fabric DatePicker control | ![PropertyFieldDatePicker](./assets/OverviewDatePicker.png)
+[PropertyFieldDateTimePicker](/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDateTimePicker) | Custom field to select a Date Time with a mini-calendar based on the Office UI Fabric DatePicker control | ![PropertyFieldDateTimePicker](./assets/OverviewDateTimePicker.png)
 [PropertyFieldDropDownSelect](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownSelect) | Custom field to select multiple values in a dropdown with checkbox | ![PropertyFieldDropDownSelect](./assets/OverviewDropDownSelect.png)
 [PropertyFieldSliderRange](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSliderRange) | Custom field to select a range of numbers with a 2 levels slider | ![PropertyFieldSliderRange](./assets/OverviewSliderRange.png)
 [PropertyFieldRichTextBox](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldRichTextBox) | Custom field to insert a rich text area to generate html with WYSIWYG | ![PropertyFieldRichTextBox](./assets/OverviewRichTextBoxBasicClassic.png)
