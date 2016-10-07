@@ -7,7 +7,7 @@ This library is a kit of **23+ components** to customize SPFx web parts custom f
 This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**,
 **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**,
 **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,
-**PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**,
+**PropertyFieldSliderRange**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**,
 **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**,
 **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**,
 **PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom
@@ -66,7 +66,7 @@ Custom Field | Description |  Overview
 [PropertyFieldDateTimePicker](/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDateTimePicker) | Custom field to select a Date Time with a mini-calendar based on the Office UI Fabric DatePicker control | ![PropertyFieldDateTimePicker](./assets/OverviewDateTimePicker.png)
 [PropertyFieldDropDownSelect](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownSelect) | Custom field to select multiple values in a dropdown with checkbox | ![PropertyFieldDropDownSelect](./assets/OverviewDropDownSelect.png)
 [PropertyFieldSliderRange](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSliderRange) | Custom field to select a range of numbers with a 2 levels slider | ![PropertyFieldSliderRange](./assets/OverviewSliderRange.png)
-[PropertyFieldRichTextBox](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldRichTextBox) | Custom field to insert a rich text area to generate html with WYSIWYG | ![PropertyFieldRichTextBox](./assets/OverviewRichTextBoxBasicClassic.png)
+[PropertyFieldSliderRange](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSliderRange) | Custom field to insert a rich text area to generate html with WYSIWYG | ![PropertyFieldSliderRange](./assets/OverviewRichTextBoxBasicClassic.png)
 [PropertyFieldPassword](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword) | Custom field to select a password | ![PropertyFieldPassword](./assets/OverviewPassword.png)
 [PropertyFieldPhoneNumber](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPhoneNumber) | Custom field to select a phone number with a masked control based on phone numbers international formats. | ![PropertyFieldPhoneNumber](./assets/OverviewPhoneNumber.png)
 [PropertyFieldMaskedInput](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldMaskedInput) | Custom field to add a text input with a specified masked based on regexp. | ![PropertyFieldMaskedInput](./assets/OverviewMaskedInput.png)
