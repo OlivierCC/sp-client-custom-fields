@@ -38,7 +38,7 @@ Execute gulp in the command line
 gulp
 ```
 
-**You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.   [More information](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-install-%3F)
+**You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.   [More information](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-install-%3F). You can also consult our (list of samples)[https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-try-a-sample-%3F] to have more information.
 
 # Overview
 
