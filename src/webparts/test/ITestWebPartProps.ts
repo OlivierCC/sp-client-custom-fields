@@ -25,4 +25,5 @@ export interface ITestWebPartProps {
   align: string;
   dropDownSelect: string[];
   richTextBox: string;
+  sliderRange: string;
 }

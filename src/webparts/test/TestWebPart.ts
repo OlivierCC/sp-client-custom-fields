@@ -61,6 +61,8 @@ import { PropertyFieldAlignPicker } from '../../PropertyFieldAlignPicker';
 import { PropertyFieldDropDownSelect } from '../../PropertyFieldDropDownSelect';
 //Include the PropertyFieldRichTextBox component
 import { PropertyFieldRichTextBox } from '../../PropertyFieldRichTextBox';
+//Include the PropertyFieldSliderRange component
+import { PropertyFieldSliderRange } from '../../PropertyFieldSliderRange';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -97,7 +99,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       query: this.properties.query,
       align: this.properties.align,
       richTextBox: this.properties.richTextBox,
-      dropDownSelect: this.properties.dropDownSelect
+      dropDownSelect: this.properties.dropDownSelect,
+      sliderRange: this.properties.sliderRange
     });
 
     ReactDom.render(element, this.domElement);
@@ -240,6 +243,17 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialDate: this.properties.datetime,
                   //formatDate: this.formatDateIso,
                   onPropertyChange: this.onPropertyChange
+                }),
+                PropertyFieldSliderRange('sliderRange', {
+                  label: strings.SliderRangeFieldLabel,
+                  initialValue: this.properties.sliderRange,
+                  onPropertyChange: this.onPropertyChange,
+                  showValue: true,
+                  disabled: false,
+                  min: 0,
+                  max: 500,
+                  step: 1,
+                  orientation: 'horizontal' //'horizontal' or 'vertical'
                 }),
                 PropertyFieldPhoneNumber('phone', {
                   label: strings.PhoneNumberFieldLabel,

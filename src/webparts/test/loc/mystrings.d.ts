@@ -25,6 +25,7 @@ declare interface ITestStrings {
   AlignFieldLabel: string;
   DropDownSelectFieldLabel: string;
   RichTextBoxFieldLabel: string;
+  SliderRangeFieldLabel: string;
 }
 
 declare module 'testStrings' {

@@ -33,6 +33,40 @@ export interface IPropertyFieldSliderRangeProps {
    */
   initialValue?: string;
   /**
+   * @var
+   * Disables the slider if set to true. Default is false.
+   */
+  disabled?: boolean;
+  /**
+   * @var
+   * The minimum value of the slider. Default is 0.
+   */
+  min?: number;
+  /**
+   * @var
+   * The maximum value of the slider. Default is 100.
+   */
+  max?: number;
+  /**
+   * @var
+   * Default 1 - Determines the size or amount of each interval or step the
+   * slider takes between the min and max. The full specified value range of the
+   * slider (max - min) should be evenly divisible by the step.
+   */
+  step?: number;
+  /**
+   * @var
+   * Determines whether the slider handles move horizontally (min on left,
+   * max on right) or vertically (min on bottom, max on top).
+   * Possible values: "horizontal", "vertical".
+   */
+  orientation?: string;
+  /**
+   * @var
+   * Display the value on left & right of the slider or not
+   */
+  showValue?: boolean;
+  /**
    * @function
    * Defines a onPropertyChange function to raise when the selected Color changed.
    * Normally this function must be always defined with the 'this.onPropertyChange'
@@ -53,6 +87,13 @@ export interface IPropertyFieldSliderRangePropsInternal extends IPropertyPaneCus
   label: string;
   initialValue?: string;
   targetProperty: string;
+  showValue?: boolean;
+  guid: string;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  orientation?: string;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, newValue: any): void;
@@ -74,6 +115,13 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
   private label: string;
   private initialValue: string;
   private guid: string;
+  private disabled: boolean;
+  private min: number;
+  private max: number;
+  private step: number;
+  private orientation: string;
+  private showValue: boolean;
+
   private onPropertyChange: (propertyPath: string, newValue: any) => void;
 
   /**
@@ -85,23 +133,20 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
     this.properties = _properties;
     this.label = _properties.label;
     this.initialValue = _properties.initialValue;
+    this.disabled = _properties.disabled;
+    this.min = _properties.min;
+    this.max = _properties.max;
+    this.step = _properties.step;
+    this.showValue = _properties.showValue;
+    this.orientation = _properties.orientation;
+    this.guid = _properties.guid;
     this.properties.onDispose = this.dispose;
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
-    this.render = this.render.bind(this);
-    this.guid = this.getGuid();
+
+    ModuleLoader.loadCss('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
   }
 
-  private getGuid(): string {
-    return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' +
-      this.s4() + '-' + this.s4() + this.s4() + this.s4();
-  }
-
-  private s4(): string {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
 
   /**
    * @function
@@ -114,6 +159,12 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
       label: this.label,
       initialValue: this.initialValue,
       targetProperty: this.targetProperty,
+      disabled: this.disabled,
+      min: this.min,
+      max: this.max,
+      step: this.step,
+      orientation: this.orientation,
+      showValue: this.showValue,
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
@@ -124,13 +175,26 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
 
     var jQueryCdn = '//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js';
     var jQueryUICdn = '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js';
-    var jQRangeSliderCdn = '//cdnjs.cloudflare.com/ajax/libs/jQRangeSlider/5.7.2/jQRangeSlider.min.js';
 
-    ModuleLoader.loadScript(jQueryCdn, 'jQuery').then((jQuery: any): void => {
-      ModuleLoader.loadScript(jQueryUICdn, 'jqueryui').then((jqueryui: any): void => {
-        ModuleLoader.loadScript(jQRangeSliderCdn, 'jQRangeSlider').then((jQRangeSlider: any): void => {
-
-        });
+    ModuleLoader.loadScript(jQueryCdn, '$').then(($: any): void => {
+      ModuleLoader.loadScript(jQueryUICdn, '$').then((jqueryui: any): void => {
+          ($ as any)('#' + this.guid + '-slider').slider({
+            range: true,
+            min: this.min != null ? this.min : 0,
+            max: this.max != null ? this.max : 100,
+            step: this.step != null ? this.step : 1,
+            disabled: this.disabled != null ? this.disabled : false,
+            orientation: this.orientation != null ? this.orientation : 'horizontal',
+            values: (this.initialValue != null && this.initialValue != '' && this.initialValue.split(",").length == 2) ? [ Number(this.initialValue.split(",")[0]), Number(this.initialValue.split(",")[1]) ] : [this.min, this.max],
+            slide: function( event, ui ) {
+              var value: string = ui.values[ 0 ] + "," + ui.values[ 1];
+              if (this.onPropertyChange && value != null) {
+                this.onPropertyChange(this.targetProperty, value);
+              }
+              ($ as any)('#' + this.guid + '-min').html(ui.values[0]);
+              ($ as any)('#' + this.guid + '-max').html(ui.values[1]);
+            }.bind(this)
+          });
       });
     });
   }
@@ -143,6 +207,16 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
 
   }
 
+}
+
+
+function s4(): string {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+}
+
+function getGuid(): string {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
 }
 
 /**
@@ -158,6 +232,13 @@ export function PropertyFieldSliderRange(targetProperty: string, properties: IPr
       label: properties.label,
       targetProperty: targetProperty,
       initialValue: properties.initialValue,
+      disabled: properties.disabled,
+      min: properties.min,
+      max: properties.max,
+      step: properties.step,
+      showValue: properties.showValue,
+      orientation: properties.orientation,
+      guid: getGuid(),
       onPropertyChange: properties.onPropertyChange,
       onDispose: null,
       onRender: null

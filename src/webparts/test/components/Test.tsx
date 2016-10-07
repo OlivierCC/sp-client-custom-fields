@@ -130,6 +130,12 @@ export default class Test extends React.Component<ITestProps, {}> {
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDateTimePicker" target="_doc">(Doc)</a> :&nbsp;
                 {this.props.datetime}
               </p>
+              <p >
+                <i className="ms-Icon ms-Icon--CalendarWorkWeek" aria-hidden="true"></i>&nbsp;
+                <b>Slider Range</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSliderRange" target="_doc">(Doc)</a> :&nbsp;
+                {this.props.sliderRange}
+              </p>
 
               <p>
                 <i className="ms-Icon ms-Icon--Phone" aria-hidden="true"></i>&nbsp;
