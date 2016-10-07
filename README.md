@@ -44,8 +44,6 @@ gulp
 
 ![Overview](./assets/Logo.png)
 
-You can consult [samples on this page](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-try-a-sample-%3F).
-
 # Custom Fields documentation
 
 You can use these custom fields to your own client side web parts. You can find bellow the list of
