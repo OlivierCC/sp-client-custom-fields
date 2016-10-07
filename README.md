@@ -13,8 +13,10 @@ This kit includes Web Part property fields as **PropertyFieldDatePicker**, **Pro
 **PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom
 fields to your own client side Web Parts.
 
-Now available in more than 16 languages as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian,
+Now available in more than **16 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian,
 Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish.
+
+![Overview](./assets/Logo.png)
 
 **Current stable version: 1.0.3** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
@@ -40,11 +42,7 @@ gulp
 
 **You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.   [More information](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-install-%3F). You can also consult our [list of samples](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-try-a-sample-%3F) to have more information or sample usages.
 
-# Overview
-
-![Overview](./assets/Logo.png)
-
-# Custom Fields documentation
+# Documentation
 
 You can use these custom fields to your own client side web parts. You can find bellow the list of
 all these custom fields and you can click on the custom field name to consult the documentation.
