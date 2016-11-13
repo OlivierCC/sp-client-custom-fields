@@ -72,7 +72,8 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     this.setState(this.state);
 
      if (this.props.onPropertyChange) {
-        this.props.onPropertyChange(this.props.targetProperty, this.state.longitude + ',' + this.state.latitude);
+        this.props.properties[this.props.targetProperty] = this.state.longitude + ',' + this.state.latitude;
+        this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, this.state.longitude + ',' + this.state.latitude);
       }
   }
 
@@ -83,7 +84,8 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
   private onValueChanged(element: any): void {
     //Checks if there is a method to called
     if (this.props.onPropertyChange && element != null) {
-      this.props.onPropertyChange(this.props.targetProperty, element.currentTarget.value);
+      this.props.properties[this.props.targetProperty] = element.currentTarget.value;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, element.currentTarget.value);
     }
   }
 
@@ -93,7 +95,8 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
       this.setState(this.state);
 
       if (this.props.onPropertyChange && element != null) {
-        this.props.onPropertyChange(this.props.targetProperty, this.state.longitude + ',' + this.state.latitude);
+        this.props.properties[this.props.targetProperty] = this.state.longitude + ',' + this.state.latitude;
+        this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, this.state.longitude + ',' + this.state.latitude);
       }
   }
 
@@ -103,7 +106,8 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
       this.setState(this.state);
 
       if (this.props.onPropertyChange && element != null) {
-        this.props.onPropertyChange(this.props.targetProperty, this.state.longitude + ',' + this.state.latitude);
+        this.props.properties[this.props.targetProperty] = this.state.longitude + ',' + this.state.latitude;
+        this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, this.state.longitude + ',' + this.state.latitude);
       }
   }
 

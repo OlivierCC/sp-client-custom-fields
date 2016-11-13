@@ -11,10 +11,10 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
-  IWebPartContext
-} from '@microsoft/sp-client-preview';
+  IPropertyPaneFieldType
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldSPListMultiplePickerHost, { IPropertyFieldSPListMultiplePickerHostProps } from './PropertyFieldSPListMultiplePickerHost';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 
 /**
  * @enum
@@ -64,7 +64,12 @@ export interface IPropertyFieldSPListMultiplePickerProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -85,7 +90,8 @@ export interface IPropertyFieldSPListMultiplePickerPropsInternal extends IProper
   includeHidden?: boolean;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -96,7 +102,7 @@ export interface IPropertyFieldSPListMultiplePickerPropsInternal extends IProper
 class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPropertyFieldSPListMultiplePickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSPListMultiplePickerPropsInternal;
 
@@ -108,13 +114,15 @@ class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPr
   private orderBy: PropertyFieldSPListMultiplePickerOrderBy;
   private includeHidden: boolean;
 
-  public onPropertyChange(propertyPath: string, newValue: any): void {}
+  public onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void {}
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldSPListMultiplePickerPropsInternal) {
+    this.render = this.render.bind(this);
     this.targetProperty = _targetProperty;
     this.properties = _properties;
     this.properties.onDispose = this.dispose;
@@ -126,6 +134,7 @@ class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPr
     this.orderBy = _properties.orderBy;
     this.includeHidden = _properties.includeHidden;
     this.onPropertyChange = _properties.onPropertyChange;
+    this.customProperties = _properties.properties;
   }
 
   /**
@@ -144,7 +153,8 @@ class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPr
       includeHidden: this.includeHidden,
       onDispose: this.dispose,
       onRender: this.render,
-      onPropertyChange: this.onPropertyChange
+      onPropertyChange: this.onPropertyChange,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -178,6 +188,7 @@ export function PropertyFieldSPListMultiplePicker(targetProperty: string, proper
       orderBy: properties.orderBy,
       includeHidden: properties.includeHidden,
       onPropertyChange: properties.onPropertyChange,
+      properties: properties.properties,
       onDispose: null,
       onRender: null
     };

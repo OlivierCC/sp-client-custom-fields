@@ -12,7 +12,7 @@ import {
   IPropertyPaneField,
   IPropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
-} from '@microsoft/sp-client-preview';
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldSliderRangeHost, { IPropertyFieldSliderRangeHostProps } from './PropertyFieldSliderRangeHost';
 import ModuleLoader from '@microsoft/sp-module-loader';
 
@@ -72,7 +72,12 @@ export interface IPropertyFieldSliderRangeProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -96,7 +101,8 @@ export interface IPropertyFieldSliderRangePropsInternal extends IPropertyPaneCus
   orientation?: string;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -107,7 +113,7 @@ export interface IPropertyFieldSliderRangePropsInternal extends IPropertyPaneCus
 class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFieldSliderRangePropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSliderRangePropsInternal;
 
@@ -122,13 +128,15 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
   private orientation: string;
   private showValue: boolean;
 
-  private onPropertyChange: (propertyPath: string, newValue: any) => void;
+  private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldSliderRangePropsInternal) {
+    this.render = this.render.bind(this);
     this.targetProperty = _properties.targetProperty;
     this.properties = _properties;
     this.label = _properties.label;
@@ -143,6 +151,7 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
     this.properties.onDispose = this.dispose;
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
+    this.customProperties = _properties.properties;
 
     ModuleLoader.loadCss('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
   }
@@ -168,7 +177,8 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      guid: this.guid
+      guid: this.guid,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -189,7 +199,8 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
             slide: function( event, ui ) {
               var value: string = ui.values[ 0 ] + "," + ui.values[ 1];
               if (this.onPropertyChange && value != null) {
-                this.onPropertyChange(this.targetProperty, value);
+                this.customProperties[this.targetProperty] = value;
+                this.onPropertyChange(this.targetProperty, this.initialValue, value);
               }
               ($ as any)('#' + this.guid + '-min').html(ui.values[0]);
               ($ as any)('#' + this.guid + '-max').html(ui.values[1]);
@@ -240,6 +251,7 @@ export function PropertyFieldSliderRange(targetProperty: string, properties: IPr
       orientation: properties.orientation,
       guid: getGuid(),
       onPropertyChange: properties.onPropertyChange,
+      properties: properties.properties,
       onDispose: null,
       onRender: null
     };

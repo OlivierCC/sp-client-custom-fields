@@ -251,7 +251,7 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
         var shellStyleSpanI = {
               fontStyle: 'normal',
               color: 'transparent',
-              opacity: '0',
+              //opacity: '0',
               visibility: 'hidden'
         };
         var inputShell = {
@@ -314,7 +314,8 @@ export default class PropertyFieldMaskedInputHost extends React.Component<IPrope
   private onValueChanged(element: string): void {
     //Checks if there is a method to called
     if (this.props.onPropertyChange && element != null) {
-      this.props.onPropertyChange(this.props.targetProperty, element);
+      this.props.properties[this.props.targetProperty] = element;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, element);
     }
   }
 

@@ -128,7 +128,8 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
   private changeSelectedFont(newValue: string): void {
     //Checks if there is a method to called
     if (this.props.onPropertyChange && newValue != null) {
-      this.props.onPropertyChange(this.props.targetProperty, newValue);
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, newValue);
     }
   }
 
@@ -257,7 +258,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         width: '100%',
         position: 'relative',
         display: 'inline-block',
-        zoom: '1'
+        zoom: 1
       };
       var dropdownColor = '1px solid #c8c8c8';
       if (this.state.isOpen === true)
@@ -318,8 +319,8 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         top: '29px',
         left: '0',
         width: 'calc(100% - 2px)',
-        boxShadow: '0 4px 5px rgba(0,0,0,.15)',
-        zIndex: '999',
+        //boxShadow: '0 4px 5px rgba(0,0,0,.15)',
+        zIndex: 999,
         display: this.state.isOpen ? 'block' : 'none'
       };
       var fsResults = {

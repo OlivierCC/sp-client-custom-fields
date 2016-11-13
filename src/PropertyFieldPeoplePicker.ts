@@ -12,10 +12,10 @@ import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
   IPropertyPaneFieldType,
-  IPropertyPaneCustomFieldProps,
-  IWebPartContext
-} from '@microsoft/sp-client-preview';
+  IPropertyPaneCustomFieldProps
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldPeoplePickerHost, { IPropertyFieldPeoplePickerHostProps } from './PropertyFieldPeoplePickerHost';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 
 /**
  * @interface
@@ -87,7 +87,12 @@ export interface IPropertyFieldPeoplePickerProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -106,7 +111,8 @@ export interface IPropertyFieldPeoplePickerPropsInternal extends IPropertyPaneCu
   allowDuplicate?: boolean;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -117,7 +123,7 @@ export interface IPropertyFieldPeoplePickerPropsInternal extends IPropertyPaneCu
 class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFieldPeoplePickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldPeoplePickerPropsInternal;
 
@@ -126,13 +132,15 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
   private context: IWebPartContext;
   private initialData: IPropertyFieldPeople[];
   private allowDuplicate: boolean = true;
-  private onPropertyChange: (propertyPath: string, newValue: any) => void;
+  private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldPeoplePickerPropsInternal) {
+    this.render = this.render.bind(this);
     this.label = _properties.label;
     this.targetProperty = _properties.targetProperty;
     this.properties = _properties;
@@ -142,6 +150,7 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
     this.context = _properties.context;
     this.initialData = _properties.initialData;
     this.allowDuplicate = _properties.allowDuplicate;
+    this.customProperties = _properties.properties;
   }
 
   /**
@@ -158,7 +167,8 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      context: this.context
+      context: this.context,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -190,6 +200,7 @@ export function PropertyFieldPeoplePicker(targetProperty: string, properties: IP
       context: properties.context,
       initialData: properties.initialData,
       allowDuplicate: properties.allowDuplicate,
+      properties: properties.properties,
       onDispose: null,
       onRender: null
     };

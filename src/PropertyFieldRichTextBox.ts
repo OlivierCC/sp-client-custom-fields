@@ -12,7 +12,7 @@ import {
   IPropertyPaneField,
   IPropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
-} from '@microsoft/sp-client-preview';
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldRichTextBoxHost, { IPropertyFieldRichTextBoxHostProps } from './PropertyFieldRichTextBoxHost';
 import ModuleLoader from '@microsoft/sp-module-loader';
 
@@ -53,7 +53,12 @@ export interface IPropertyFieldRichTextBoxProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -73,7 +78,8 @@ export interface IPropertyFieldRichTextBoxPropsInternal extends IPropertyPaneCus
   minHeight?: number;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -84,7 +90,7 @@ export interface IPropertyFieldRichTextBoxPropsInternal extends IPropertyPaneCus
 class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFieldRichTextBoxPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldRichTextBoxPropsInternal;
 
@@ -95,13 +101,15 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
   private  inline: boolean;
   private minHeight: number;
   private guid: string;
-  private onPropertyChange: (propertyPath: string, newValue: any) => void;
+  private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldRichTextBoxPropsInternal) {
+    this.render = this.render.bind(this);
     this.targetProperty = _properties.targetProperty;
     this.properties = _properties;
     this.label = _properties.label;
@@ -113,6 +121,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     this.minHeight = this.minHeight;
     this.onPropertyChange = _properties.onPropertyChange;
     this.render = this.render.bind(this);
+    this.customProperties = _properties.properties;
     this.guid = this.getGuid();
   }
 
@@ -144,7 +153,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      guid: this.guid
+      guid: this.guid,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -169,7 +179,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
           CKEDITOR.instances[i].updateElement();
           var value = ((document.getElementById(this.guid + '-editor')) as any).value;
           if (this.onPropertyChange && value != null) {
-            this.onPropertyChange(this.targetProperty, value);
+            this.customProperties[this.targetProperty] = value;
+            this.onPropertyChange(this.targetProperty, this.properties.initialValue, value);
           }
         });
       }
@@ -203,6 +214,7 @@ export function PropertyFieldRichTextBox(targetProperty: string, properties: IPr
       inline: properties.inline,
       minHeight: properties.minHeight,
       onPropertyChange: properties.onPropertyChange,
+      properties: properties.properties,
       onDispose: null,
       onRender: null
     };

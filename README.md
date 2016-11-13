@@ -16,7 +16,8 @@ fields to your own client side Web Parts.
 Now available in more than **16 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian,
 Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish.
 
-**Current stable version: 1.0.3** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.0.4** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current SPFx Drop support** - [Drop 5](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-Drop-5)
 
 ![Overview](./assets/Logo.png)
 

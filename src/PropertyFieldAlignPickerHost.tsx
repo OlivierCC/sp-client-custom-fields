@@ -58,29 +58,33 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
    * @function
    * Function called when the ColorPicker Office UI Fabric component selected color changed
    */
-  private onValueChanged(element: any, value: string): void {
+  private onValueChanged(element: any, previous: string, value: string): void {
     //Checks if there is a method to called
-    if (this.props.onPropertyChange && element != null) {
-      this.props.onPropertyChange(this.props.targetProperty, value);
+    if (this.props.onPropertyChanged && element != null) {
+      this.props.properties[this.props.targetProperty] = value;
+      this.props.onPropertyChanged(this.props.targetProperty, previous, value);
     }
   }
 
   private onClickBullets(element?: any) {
+    var previous = this.state.mode;
     this.state.mode = 'left';
     this.setState(this.state);
-    this.onValueChanged(this, this.state.mode);
+    this.onValueChanged(this, previous, this.state.mode);
   }
 
   private onClickTiles(element?: any) {
+    var previous = this.state.mode;
     this.state.mode = 'center';
     this.setState(this.state);
-    this.onValueChanged(this, this.state.mode);
+    this.onValueChanged(this, previous, this.state.mode);
   }
 
   private onClickRight(element?: any) {
+    var previous = this.state.mode;
     this.state.mode = 'right';
     this.setState(this.state);
-    this.onValueChanged(this, this.state.mode);
+    this.onValueChanged(this, previous, this.state.mode);
   }
 
   private mouseListEnterDropDown() {

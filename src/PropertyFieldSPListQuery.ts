@@ -11,11 +11,10 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
-  IWebPartContext
-} from '@microsoft/sp-client-preview';
+  IPropertyPaneFieldType
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldSPListQueryHost, { IPropertyFieldSPListQueryHostProps } from './PropertyFieldSPListQueryHost';
-
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 
 export enum PropertyFieldSPListQueryOrderBy {
   Id = 0,
@@ -49,7 +48,12 @@ export interface IPropertyFieldSPListQueryProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -75,7 +79,8 @@ export interface IPropertyFieldSPListQueryPropsInternal extends IPropertyFieldSP
   max?: number;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -86,7 +91,7 @@ export interface IPropertyFieldSPListQueryPropsInternal extends IPropertyFieldSP
 class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFieldSPListQueryPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSPListQueryPropsInternal;
 
@@ -102,13 +107,15 @@ class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFie
   private showMax: boolean;
   private showFilters: boolean;
   private max: number;
-  public onPropertyChange(propertyPath: string, newValue: any): void {}
+  public onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void {}
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldSPListQueryPropsInternal) {
+    this.render = this.render.bind(this);
     this.targetProperty = _targetProperty;
     this.properties = _properties;
     this.properties.onDispose = this.dispose;
@@ -125,6 +132,7 @@ class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFie
     this.showFilters = _properties.showFilters;
     this.max = _properties.max;
     this.onPropertyChange = _properties.onPropertyChange;
+    this.customProperties = _properties.properties;
   }
 
   /**
@@ -148,7 +156,8 @@ class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFie
       max: this.max,
       onDispose: this.dispose,
       onRender: this.render,
-      onPropertyChange: this.onPropertyChange
+      onPropertyChange: this.onPropertyChange,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -187,6 +196,7 @@ export function PropertyFieldSPListQuery(targetProperty: string, properties: IPr
       showFilters: properties.showFilters,
       max: properties.max,
       onPropertyChange: properties.onPropertyChange,
+      properties: properties.properties,
       onDispose: null,
       onRender: null
     };

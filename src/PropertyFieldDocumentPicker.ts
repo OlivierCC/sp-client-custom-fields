@@ -12,9 +12,9 @@ import {
   IPropertyPaneField,
   IPropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
-} from '@microsoft/sp-client-preview';
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldDocumentPickerHost, { IPropertyFieldDocumentPickerHostProps } from './PropertyFieldDocumentPickerHost';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
 
 /**
  * @interface
@@ -43,7 +43,12 @@ export interface IPropertyFieldDocumentPickerProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -61,7 +66,8 @@ export interface IPropertyFieldDocumentPickerPropsInternal extends IPropertyPane
   context: IWebPartContext;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -72,7 +78,7 @@ export interface IPropertyFieldDocumentPickerPropsInternal extends IPropertyPane
 class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IPropertyFieldDocumentPickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldDocumentPickerPropsInternal;
 
@@ -80,13 +86,15 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
   private label: string;
   private initialValue: string;
   private context: IWebPartContext;
-  private onPropertyChange: (propertyPath: string, newValue: any) => void;
+  private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldDocumentPickerPropsInternal) {
+    this.render = this.render.bind(this);
     this.targetProperty = _properties.targetProperty;
     this.properties = _properties;
     this.label = _properties.label;
@@ -95,6 +103,7 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
     this.properties.onDispose = this.dispose;
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
+    this.customProperties = _properties.properties;
   }
 
   /**
@@ -110,7 +119,8 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
       targetProperty: this.targetProperty,
       onDispose: this.dispose,
       onRender: this.render,
-      onPropertyChange: this.onPropertyChange
+      onPropertyChange: this.onPropertyChange,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -140,6 +150,7 @@ export function PropertyFieldDocumentPicker(targetProperty: string, properties: 
       targetProperty: targetProperty,
       initialValue: properties.initialValue,
       onPropertyChange: properties.onPropertyChange,
+      properties: properties.properties,
       context: properties.context,
       onDispose: null,
       onRender: null

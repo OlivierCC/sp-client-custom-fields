@@ -7,7 +7,7 @@
  */
 import * as React from 'react';
 import { EnvironmentType } from '@microsoft/sp-client-base';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import { IPropertyFieldDocumentPickerPropsInternal } from './PropertyFieldDocumentPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
@@ -78,7 +78,8 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
   */
   private saveImageProperty(imageUrl: string): void {
     if (this.props.onPropertyChange) {
-      this.props.onPropertyChange(this.props.targetProperty, imageUrl);
+      this.props.properties[this.props.targetProperty] = imageUrl;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, imageUrl);
     }
   }
 
@@ -320,17 +321,6 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
           backgroundSize: 'cover',
           marginRight: '0px', marginBottom: '0px', paddingTop: '0px', paddingLeft: '0'
           }}>
-
-          <div className="ms-ItemTile-checkCircle" style={{
-                position: 'absolute', top: '0', right: '0', marginTop: '5px', marginRight: '5px', visibility: 'hidden'
-          }}>
-            <svg className="ms-CheckCircle is-checked" height="20" width="20">
-              <circle style={{
-                    fill: '#ffffff', stroke: '#ffffff', strokeWidth: '1px'
-              }} cx="10" cy="10" r="9" strokeWidth="1" ></circle>
-              <polyline style={{ stroke: '#ffffff'}} points="6.3,10.3 9,13 13.3,7.5" strokeWidth="1.5" fill="none"></polyline>
-            </svg>
-          </div>
         </div>
       </div>
     );

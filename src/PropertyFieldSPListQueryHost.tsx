@@ -7,7 +7,7 @@
  *
  */
 import * as React from 'react';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
@@ -245,7 +245,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         }
         queryUrl += '&';
       }
-      this.props.onPropertyChange(this.props.targetProperty, queryUrl);
+      this.props.properties[this.props.targetProperty] = queryUrl;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.query, queryUrl);
     }
   }
 

@@ -7,7 +7,7 @@
  *
  */
 import * as React from 'react';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
@@ -107,7 +107,8 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
       else {
         this.selectedKeys.push(value);
       }
-      this.props.onPropertyChange(this.props.targetProperty, this.selectedKeys);
+      this.props.properties[this.props.targetProperty] = this.selectedKeys;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.selectedLists, this.selectedKeys);
     }
   }
 

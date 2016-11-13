@@ -41,7 +41,8 @@ export default class PropertyFieldColorPickerHost extends React.Component<IPrope
   private onColorChanged(color: string): void {
     //Checks if there is a method to called
     if (this.props.onPropertyChange && color != null) {
-      this.props.onPropertyChange(this.props.targetProperty, color);
+      this.props.properties[this.props.targetProperty] = color;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialColor, color);
     }
   }
 

@@ -102,10 +102,14 @@ export default class PropertyFieldDatePickerHost extends React.Component<IProper
     //Checks if there is a method to called
     if (this.props.onPropertyChange && date != null) {
       //Checks if a formatDate function has been defined
-      if (this.props.formatDate)
-        this.props.onPropertyChange(this.props.targetProperty, this.props.formatDate(date));
-      else
-        this.props.onPropertyChange(this.props.targetProperty, date.toDateString());
+      if (this.props.formatDate) {
+        this.props.properties[this.props.targetProperty] = this.props.formatDate(date);
+        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, this.props.formatDate(date));
+      }
+      else {
+        this.props.properties[this.props.targetProperty] = date.toDateString();
+        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, date.toDateString());
+      }
     }
   }
 

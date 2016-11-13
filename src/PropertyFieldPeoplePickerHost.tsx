@@ -12,7 +12,7 @@ import { PeoplePicker, IPeoplePickerProps, PeoplePickerType } from 'office-ui-fa
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IPersonaProps, PersonaPresence, PersonaInitialsColor} from 'office-ui-fabric-react/lib/Persona';
 import { IPropertyFieldPeople } from './PropertyFieldPeoplePicker';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { EnvironmentType, IHttpClientOptions } from '@microsoft/sp-client-base';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -36,7 +36,7 @@ class PeoplePickerProperties implements IPeoplePickerProps {
      * @var
      * Kind of peoplepicker component
      */
-    public type: PeoplePickerType = PeoplePickerType.normal;
+    public type: PeoplePickerType; // = PeoplePickerType.normal;
     /**
      * @var
      * Suggested contacts text
@@ -116,7 +116,7 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
       <div>
         <Label>{this.props.label}</Label>
         <PeoplePicker suggestions={this.resultsPersonas}
-        type={this.peoplePickerProperties.type} isConnected={true}
+        type={0} isConnected={true}
         canSearchMore={false}
         onSearchFieldChanged={this.onSearchFieldChanged}
         onItemAdded={this.onItemAdded}
@@ -209,7 +209,8 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    */
   private refreshWebPartProperties(): void {
     if (this.props.onPropertyChange) {
-      this.props.onPropertyChange(this.props.targetProperty, this.selectedPeople);
+      this.props.properties[this.props.targetProperty] = this.selectedPeople;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialData, this.selectedPeople);
     }
   }
 

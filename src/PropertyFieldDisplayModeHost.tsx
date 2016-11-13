@@ -57,7 +57,8 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
   private onValueChanged(element: any, value: string): void {
     //Checks if there is a method to called
     if (this.props.onPropertyChange && element != null) {
-      this.props.onPropertyChange(this.props.targetProperty, value);
+      this.props.properties[this.props.targetProperty] = value;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, value);
     }
   }
 

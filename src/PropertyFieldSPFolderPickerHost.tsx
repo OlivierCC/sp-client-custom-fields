@@ -7,7 +7,7 @@
  */
 import * as React from 'react';
 import { EnvironmentType } from '@microsoft/sp-client-base';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import { IPropertyFieldSPFolderPickerPropsInternal } from './PropertyFieldSPFolderPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
@@ -108,7 +108,8 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
     this.currentPage = 0;
     this.setState({ isOpen: false, loading: true, selectedFolder: this.state.selectedFolder, currentSPFolder: this.state.currentSPFolder, childrenFolders: this.state.childrenFolders });
     if (this.props.onPropertyChange) {
-      this.props.onPropertyChange(this.props.targetProperty, this.state.confirmFolder);
+      this.props.properties[this.props.targetProperty] = this.state.confirmFolder;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialFolder, this.state.confirmFolder);
     }
   }
 
@@ -213,7 +214,8 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
       currentSPFolder: this.state.currentSPFolder,
       childrenFolders: this.state.childrenFolders });
     if (this.props.onPropertyChange) {
-      this.props.onPropertyChange(this.props.targetProperty, this.state.confirmFolder);
+      this.props.properties[this.props.targetProperty] = this.state.confirmFolder;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialFolder, this.state.confirmFolder);
     }
   }
 

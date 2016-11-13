@@ -7,7 +7,7 @@
  *
  */
 import * as React from 'react';
-import { IWebPartContext } from '@microsoft/sp-client-preview';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { EnvironmentType } from '@microsoft/sp-client-base';
 import { IPropertyFieldSPListPickerPropsInternal, PropertyFieldSPListPickerOrderBy } from './PropertyFieldSPListPicker';
@@ -73,7 +73,8 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
    */
   private onChanged(option: IDropdownOption, index?: number): void {
     if (this.props.onPropertyChange && option) {
-      this.props.onPropertyChange(this.props.targetProperty, option.key);
+      this.props.properties[this.props.targetProperty] = option.key;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.selectedList, option.key);
     }
   }
 

@@ -11,11 +11,10 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
-  IWebPartContext
-} from '@microsoft/sp-client-preview';
+  IPropertyPaneFieldType
+} from '@microsoft/sp-webpart-base';
 import PropertyFieldSPListPickerHost, { IPropertyFieldSPListPickerHostProps } from './PropertyFieldSPListPickerHost';
-
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 
 export enum PropertyFieldSPListPickerOrderBy {
   Id = 0,
@@ -44,7 +43,12 @@ export interface IPropertyFieldSPListPickerProps {
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+    /**
+   * @var
+   * Parent Web Part properties
+   */
+  properties: any;
 }
 
 /**
@@ -65,7 +69,8 @@ export interface IPropertyFieldSPListPickerPropsInternal extends IPropertyFieldS
   includeHidden?: boolean;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
-  onPropertyChange(propertyPath: string, newValue: any): void;
+  onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  properties: any;
 }
 
 /**
@@ -76,7 +81,7 @@ export interface IPropertyFieldSPListPickerPropsInternal extends IPropertyFieldS
 class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFieldSPListPickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = IPropertyPaneFieldType.Custom;
+  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSPListPickerPropsInternal;
 
@@ -88,13 +93,15 @@ class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFi
   private orderBy: PropertyFieldSPListPickerOrderBy;
   private includeHidden: boolean;
 
-  public onPropertyChange(propertyPath: string, newValue: any): void {}
+  public onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void {}
+  private customProperties: any;
 
   /**
    * @function
    * Ctor
    */
   public constructor(_targetProperty: string, _properties: IPropertyFieldSPListPickerPropsInternal) {
+    this.render = this.render.bind(this);
     this.targetProperty = _targetProperty;
     this.properties = _properties;
     this.properties.onDispose = this.dispose;
@@ -106,6 +113,7 @@ class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFi
     this.orderBy = _properties.orderBy;
     this.includeHidden = _properties.includeHidden;
     this.onPropertyChange = _properties.onPropertyChange;
+    this.customProperties = _properties.properties;
   }
 
   /**
@@ -124,7 +132,8 @@ class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFi
       includeHidden: this.includeHidden,
       onDispose: this.dispose,
       onRender: this.render,
-      onPropertyChange: this.onPropertyChange
+      onPropertyChange: this.onPropertyChange,
+      properties: this.customProperties
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -158,6 +167,7 @@ export function PropertyFieldSPListPicker(targetProperty: string, properties: IP
       orderBy: properties.orderBy,
       includeHidden: properties.includeHidden,
       onPropertyChange: properties.onPropertyChange,
+      properties: properties.properties,
       onDispose: null,
       onRender: null
     };

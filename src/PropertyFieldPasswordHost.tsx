@@ -40,7 +40,8 @@ export default class PropertyFieldPasswordHost extends React.Component<IProperty
   private onValueChanged(element: any): void {
     //Checks if there is a method to called
     if (this.props.onPropertyChange && element != null) {
-      this.props.onPropertyChange(this.props.targetProperty, element.currentTarget.value);
+      this.props.properties[this.props.targetProperty] = element.currentTarget.value;
+      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, element.currentTarget.value);
     }
   }
 
