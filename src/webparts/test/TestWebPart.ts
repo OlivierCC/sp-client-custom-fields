@@ -71,7 +71,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
 
     //Hack: to invoke correctly the onPropertyChange function outside this class
     //we need to bind this object on it first
-    this.onPropertyChanged = this.onPropertyChanged.bind(this);
+    this.onPropertyPaneFieldChanged = this.onPropertyPaneFieldChanged.bind(this);
     this.testPropertyChanged = this.testPropertyChanged.bind(this);
 
   }
@@ -119,7 +119,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
 
   private testPropertyChanged(propertyPath: string, oldValue: any, newValue: any): void {
     this.properties.font = newValue;
-    this.onPropertyChanged(propertyPath, oldValue, newValue);
+    this.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
   }
 
   protected get propertyPaneSettings(): IPropertyPaneSettings {
@@ -140,7 +140,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   useSafeFont: true,
                   previewFonts: true,
                   initialValue: this.properties.font,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
@@ -148,7 +148,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   usePixels: false,
                   preview: true,
                   initialValue: this.properties.fontSize,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
@@ -156,26 +156,26 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   usePixels: true,
                   preview: true,
                   initialValue: this.properties.fontSize,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldIconPicker('icon', {
                   label: strings.IconFieldLabel,
                   initialValue: this.properties.icon,
                   orderAlphabetical: true,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldColorPicker('color', {
                   label: strings.ColorFieldLabel,
                   initialColor: this.properties.color,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldAlignPicker('align', {
                   label: strings.AlignFieldLabel,
                   initialValue: this.properties.align,
-                  onPropertyChanged: this.onPropertyChanged,
+                  onPropertyChanged: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 })
               ],
@@ -210,7 +210,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                     { title: 'Folder', required: false, type: CustomListFieldType.folder, hidden: true }
                     */
                   ],
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 }),
@@ -226,13 +226,13 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                     {'key': 'Option7', 'text': 'Option 7'}
                   ],
                   initialValue: this.properties.dropDownSelect,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,
                   initialValue: this.properties.password,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldRichTextBox('richTextBox', {
@@ -241,33 +241,33 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   inline: false,
                   minHeight: 100,
                   mode: 'basic', //'basic' or 'standard' or 'full'
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldDatePicker('date', {
                   label: strings.DateFieldLabel,
                   initialDate: this.properties.date,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldDatePicker('date2', {
                   label: strings.DateFieldLabel,
                   initialDate: this.properties.date2,
                   formatDate: this.formatDateIso,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldDateTimePicker('datetime', {
                   label: strings.DateTimeFieldLabel,
                   initialDate: this.properties.datetime,
                   //formatDate: this.formatDateIso,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldSliderRange('sliderRange', {
                   label: strings.SliderRangeFieldLabel,
                   initialValue: this.properties.sliderRange,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   showValue: true,
                   disabled: false,
                   min: 0,
@@ -280,7 +280,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   label: strings.PhoneNumberFieldLabel,
                   initialValue: this.properties.phone,
                   phoneNumberFormat: IPhoneNumberFormat.UnitedStates,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldMaskedInput('maskedInput', {
@@ -289,14 +289,14 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   pattern: '\d{4} \d{4} \d{4} \d{4}',
                   placeholder: 'XXXX XXXX XXXX XXXX',
                   maxLength: '19',
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldMapPicker('geolocation', {
                   label: strings.GeoLocationFieldLabel,
                   longitude: this.properties.geolocation != null ? this.properties.geolocation.substr(0, this.properties.geolocation.indexOf(",")) : '0',
                   latitude: this.properties.geolocation != null ? this.properties.geolocation.substr(this.properties.geolocation.indexOf(",") + 1, this.properties.geolocation.length - this.properties.geolocation.indexOf(",")) : '0',
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 })
             ],
@@ -308,14 +308,14 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                 PropertyFieldPicturePicker('picture', {
                   label: strings.PictureFieldLabel,
                   initialValue: this.properties.picture,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 }),
                 PropertyFieldDocumentPicker('document', {
                   label: strings.DocumentFieldLabel,
                   initialValue: this.properties.document,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 }),
@@ -323,7 +323,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   label: strings.PeopleFieldLabel,
                   initialData: this.properties.people,
                   allowDuplicate: true,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 }),*/
@@ -333,7 +333,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   includeHidden: false,
                   //baseTemplate: 109,
                   orderBy: PropertyFieldSPListPickerOrderBy.Title,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 }),
@@ -342,7 +342,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialFolder: this.properties.folder,
                   //baseFolder: '/sites/devcenter/_catalogs',
                   context: this.context,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
                 PropertyFieldSPListMultiplePicker('listsCollection', {
@@ -351,7 +351,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   includeHidden: false,
                   baseTemplate: 109,
                   orderBy: PropertyFieldSPListMultiplePickerOrderBy.Title,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 })
@@ -370,14 +370,14 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   showMax: true,
                   showFilters: true,
                   max: 50,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties
                 }),
                  PropertyFieldDisplayMode('displayMode', {
                   label: strings.DisplayModeFieldLabel,
                   initialValue: this.properties.displayMode,
-                  onPropertyChange: this.onPropertyChanged,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 })
               ]

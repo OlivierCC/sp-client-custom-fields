@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldColorPickerHost, { IPropertyFieldColorPickerHostProps } from './PropertyFieldColorPickerHost';
@@ -71,7 +71,7 @@ export interface IPropertyFieldColorPickerPropsInternal extends IPropertyPaneCus
 class PropertyFieldColorPickerBuilder implements IPropertyPaneField<IPropertyFieldColorPickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldColorPickerPropsInternal;
 

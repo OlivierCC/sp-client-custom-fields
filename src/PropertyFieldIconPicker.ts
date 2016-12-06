@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldIconPickerHost, { IPropertyFieldIconPickerHostProps } from './PropertyFieldIconPickerHost';
@@ -83,7 +83,7 @@ export interface IPropertyFieldIconPickerPropsInternal extends IPropertyPaneCust
 class PropertyFieldIconPickerBuilder implements IPropertyPaneField<IPropertyFieldIconPickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldIconPickerPropsInternal;
 

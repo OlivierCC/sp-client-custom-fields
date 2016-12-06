@@ -9,7 +9,7 @@
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
-import { EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-client-base';
 import { IPropertyFieldSPListPickerPropsInternal, PropertyFieldSPListPickerOrderBy } from './PropertyFieldSPListPicker';
 
 /**
@@ -138,7 +138,7 @@ class SPListPickerService {
    * Gets the collection of libs in the current SharePoint site
    */
   public getLibs(): Promise<ISPLists> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.getLibsFromMock();
     }

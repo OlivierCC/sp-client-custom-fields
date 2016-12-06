@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldCustomListHost, { IPropertyFieldCustomListHostProps } from './PropertyFieldCustomListHost';
@@ -115,7 +115,7 @@ export interface IPropertyFieldCustomListPropsInternal extends IPropertyPaneCust
 class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFieldCustomListPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldCustomListPropsInternal;
 

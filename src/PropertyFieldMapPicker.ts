@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldMapPickerHost, { IPropertyFieldMapPickerHostProps } from './PropertyFieldMapPickerHost';
@@ -83,7 +83,7 @@ export interface IPropertyFieldMapPickerPropsInternal extends IPropertyPaneCusto
 class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyFieldMapPickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldMapPickerPropsInternal;
 

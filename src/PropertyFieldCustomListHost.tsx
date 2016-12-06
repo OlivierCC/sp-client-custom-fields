@@ -335,13 +335,13 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.number ?
-                                  <input type="number" id={'input-' + value.title} className='ms-TextField-field' style={{width: '100px', marginBottom: '8px'}} />
+                                  <input type="number" role="spinbutton" id={'input-' + value.title} aria-valuemax="99999" aria-valuemin="-999999" aria-valuenow="0" className='ms-TextField-field' style={{width: '100px', marginBottom: '8px'}} />
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.boolean ?
                                   <div  style={{marginBottom: '8px'}}>
                                     <input id={'input-' + value.title}  type="hidden" style={{visibility: 'hidden'}}/>
-                                    <input type="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input type="radio" role="radio" aria-checked="false" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -350,7 +350,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                         }
                                       }
                                     } /> <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
-                                    <input type="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input type="radio" role="radio"  aria-checked="false" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -499,13 +499,13 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.number ?
-                                  <input type="number" id={'input-' + value.title} className='ms-TextField-field' defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{width: '100px', marginBottom: '8px'}} />
+                                  <input type="number" role="spinbutton" id={'input-' + value.title} className='ms-TextField-field' defaultValue={this.state.data[this.state.selectedIndex][value.title]} aria-valuemax="99999" aria-valuemin="-999999" aria-valuenow={this.state.data[this.state.selectedIndex][value.title]} style={{width: '100px', marginBottom: '8px'}} />
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.boolean ?
                                   <div  style={{marginBottom: '8px'}}>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <input type="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input type="radio" role="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -515,8 +515,9 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                       }
                                     }
                                     defaultChecked={this.state.data[this.state.selectedIndex][value.title] == "true"}
+                                    aria-checked={this.state.data[this.state.selectedIndex][value.title] == "true"}
                                     /> <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
-                                    <input type="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input type="radio" role="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -526,6 +527,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                       }
                                     }
                                     defaultChecked={this.state.data[this.state.selectedIndex][value.title] == "false"}
+                                    aria-checked={this.state.data[this.state.selectedIndex][value.title] == "false"}
                                     /> <span style={{fontSize: '14px'}}>{strings.CustomListFalse}</span>
                                   </div>
                                 : ''
@@ -685,8 +687,9 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                               <td style={{paddingLeft: '6px', height:'40px'}}>
                                 <div style={{float: 'left'}}>
                                 <input id={"bulletRadio" + index} style={{width: '18px', height: '18px'}}
-                                  type="radio" name="radio1" onChange={this.onChangeSelectedItem}
-                                  value={index.toString()} checked={index == this.state.selectedIndex ? true : false}/>
+                                  type="radio" role="radio" name="radio1" onChange={this.onChangeSelectedItem}
+                                  value={index.toString()} checked={index == this.state.selectedIndex ? true : false}
+                                  aria-checked={index == this.state.selectedIndex ? true : false} />
                                 <label htmlFor={"bulletRadio" + index}>
                                   <span className="ms-Label">
                                   </span>

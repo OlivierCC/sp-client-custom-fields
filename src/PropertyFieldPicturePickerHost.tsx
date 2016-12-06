@@ -215,7 +215,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
         {strings.PicturePickerButtonReset}</Button>
         {this.state.selectedImage != null && this.state.selectedImage != '' ?
         <div style={{marginTop: '7px'}}>
-          <img src={this.state.selectedImage} width="225px" height="225px" />
+          <img src={this.state.selectedImage} width="225px" height="225px" alt="Preview" />
         </div>
         : ''}
 
@@ -236,7 +236,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
               borderLeftStyle: 'solid',
               borderLeftColor: this.state.openRecent === true ? 'blue' : 'white',
               backgroundColor: this.state.openRecent === true ? '#F4F4F4' : '#FFFFFF'
-              }} onClick={this.onClickRecent}>
+              }} onClick={this.onClickRecent} role="menuitem">
                 <i className="ms-Icon ms-Icon--Clock" style={{fontSize: '30px'}}></i>
                 &nbsp;{strings.PicturePickerRecent}
               </div>
@@ -245,7 +245,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
               borderLeftStyle: 'solid',
               borderLeftColor: this.state.openSite === true ? 'blue' : 'white',
               backgroundColor: this.state.openSite === true ? '#F4F4F4' : '#FFFFFF'
-              }} onClick={this.onClickSite}>
+              }} onClick={this.onClickSite} role="menuitem">
                 <i className="ms-Icon ms-Icon--Globe" style={{fontSize: '30px'}}></i>
                 &nbsp;{strings.PicturePickerSite}
               </div>

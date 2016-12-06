@@ -11,7 +11,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType
+  PropertyPaneFieldType
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldSPListQueryHost, { IPropertyFieldSPListQueryHostProps } from './PropertyFieldSPListQueryHost';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
@@ -91,7 +91,7 @@ export interface IPropertyFieldSPListQueryPropsInternal extends IPropertyFieldSP
 class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFieldSPListQueryPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSPListQueryPropsInternal;
 

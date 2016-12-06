@@ -276,7 +276,7 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
                 name={props.id}
-                type={props.type}
+                //type={props.type}
                 className={props.className}
                 data-placeholder={props.placeholder}
                 data-pattern={props.pattern}

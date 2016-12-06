@@ -144,8 +144,9 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             <div style={{float: 'left'}}>
 
               <input id="bulletRadio" className=""
-                onChange={this.onClickBullets} type="radio" name="radio1"
+                onChange={this.onClickBullets} type="radio" role="radio" name="radio1"
                 defaultChecked={this.state.mode == "left" ? true : false}
+                aria-checked={this.state.mode == "left" ? true : false}
                 value="left"  style={{cursor: 'pointer', width: '18px', height: '18px'}}/>
               <label htmlFor="bulletRadio" className="">
                 <span className="ms-Label">
@@ -158,8 +159,9 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
               <input id="tilesRadio" className=""
-               onChange={this.onClickTiles} type="radio" name="radio1"
+               onChange={this.onClickTiles} type="radio" name="radio1" role="radio"
                defaultChecked={this.state.mode == "center" ? true : false}
+               aria-checked={this.state.mode == "center" ? true : false}
                value="center"  style={{cursor: 'pointer', width: '18px', height: '18px'}}/>
               <label htmlFor="tilesRadio" className="">
                 <span className="ms-Label">
@@ -172,8 +174,9 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             onMouseEnter={this.mouseRightEnterDropDown} onMouseLeave={this.mouseRightLeaveDropDown}>
             <div style={{float: 'left'}}>
               <input id="rightRadio" className=""
-               onChange={this.onClickRight} type="radio" name="radio1"
+               onChange={this.onClickRight} type="radio" name="radio1" role="radio"
                defaultChecked={this.state.mode == "right" ? true : false}
+               aria-checked={this.state.mode == "right" ? true : false}
                value="right"  style={{cursor: 'pointer', width: '18px', height: '18px'}}/>
               <label htmlFor="rightRadio" className="">
                 <span className="ms-Label">

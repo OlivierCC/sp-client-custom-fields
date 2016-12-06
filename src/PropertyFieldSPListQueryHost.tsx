@@ -13,7 +13,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
-import { EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-client-base';
 import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -440,7 +440,7 @@ class SPListPickerService {
   }
 
   public getFields(listId: string): Promise<ISPFields> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.getFieldsFromMock();
     }
@@ -460,7 +460,7 @@ class SPListPickerService {
    * Gets the collection of libs in the current SharePoint site
    */
   public getLibs(): Promise<ISPLists> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.getLibsFromMock();
     }

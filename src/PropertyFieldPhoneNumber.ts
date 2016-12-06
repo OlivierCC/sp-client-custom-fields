@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldPhoneNumberHost, { IPropertyFieldPhoneNumberHostProps } from './PropertyFieldPhoneNumberHost';
@@ -123,7 +123,7 @@ export interface IPropertyFieldPhoneNumberPropsInternal extends IPropertyPaneCus
 class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFieldPhoneNumberPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldPhoneNumberPropsInternal;
 

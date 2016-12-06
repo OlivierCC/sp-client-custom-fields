@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldMaskedInputHost, { IPropertyFieldMaskedInputHostProps } from './PropertyFieldMaskedInputHost';
@@ -89,7 +89,7 @@ export interface IPropertyFieldMaskedInputPropsInternal extends IPropertyPaneCus
 class PropertyFieldMaskedInputBuilder implements IPropertyPaneField<IPropertyFieldMaskedInputPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldMaskedInputPropsInternal;
 

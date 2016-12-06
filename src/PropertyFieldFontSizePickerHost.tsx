@@ -339,7 +339,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
           <Label>{this.props.label}</Label>
           <div style={fontSelect}>
             <a style={fontSelectA} onClick={this.onOpenDialog}
-              onMouseEnter={this.mouseEnterDropDown} onMouseLeave={this.mouseLeaveDropDown}>
+              onMouseEnter={this.mouseEnterDropDown} onMouseLeave={this.mouseLeaveDropDown} role="menuitem">
               <span style={fontSelectASpan}>{this.state.selectedFont}</span>
               <div style={fontSelectADiv}>
                 <i style={fontSelectADivB} className={carret}></i>
@@ -363,7 +363,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
                     cursor: 'pointer'
                   };
                   return (
-                    <li value={font.Name} onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>{font.Name}</li>
+                    <li value={font.Name} role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>{font.Name}</li>
                   );
                 })
                 }

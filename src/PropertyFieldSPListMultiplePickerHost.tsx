@@ -11,7 +11,7 @@ import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
-import { EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-client-base';
 import { IPropertyFieldSPListMultiplePickerPropsInternal, PropertyFieldSPListMultiplePickerOrderBy } from './PropertyFieldSPListMultiplePicker';
 
 /**
@@ -136,7 +136,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
               var uniqueKey = this.props.targetProperty + '-' + item.key;
               return (
                 <div className="ms-ChoiceField">
-                  <input id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} type="checkbox" role="checkbox" />
+                  <input id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
                   <label htmlFor={uniqueKey}><span className="ms-Label">{item.text}</span></label>
                 </div>
               );
@@ -189,7 +189,7 @@ class SPListPickerService {
    * Gets the collection of SP libs in the current SharePoint site
    */
   public getLibs(): Promise<ISPLists> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.getLibsFromMock();
     }

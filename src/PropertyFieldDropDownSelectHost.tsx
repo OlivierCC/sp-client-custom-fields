@@ -268,7 +268,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
           <Label>{this.props.label}</Label>
           <div style={fontSelect}>
             <a style={fontSelectA} onClick={this.onOpenDialog}
-              onMouseEnter={this.mouseEnterDropDown} onMouseLeave={this.mouseLeaveDropDown}>
+              onMouseEnter={this.mouseEnterDropDown} onMouseLeave={this.mouseLeaveDropDown} role="menuitem">
               <span style={fontSelectASpan}>
                 {this.props.options.map((elm: IDropdownOption, index?: number) => {
                   if (elm.isSelected) {
@@ -308,8 +308,8 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
                     cursor: 'pointer'
                   };
                   return (
-                    <li value={font.text} onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
-                      <input style={{width: '18px', height: '18px'}} checked={font.isSelected} type="checkbox" role="checkbox" />
+                    <li value={font.text} onMouseEnter={this.toggleHover} role="menuitem" onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
+                      <input style={{width: '18px', height: '18px'}} checked={font.isSelected} aria-checked={font.isSelected} type="checkbox" role="checkbox" />
                       {font.text}
                     </li>
                   );

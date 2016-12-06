@@ -10,7 +10,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType,
+  PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldSliderRangeHost, { IPropertyFieldSliderRangeHostProps } from './PropertyFieldSliderRangeHost';
@@ -113,7 +113,7 @@ export interface IPropertyFieldSliderRangePropsInternal extends IPropertyPaneCus
 class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFieldSliderRangePropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSliderRangePropsInternal;
 

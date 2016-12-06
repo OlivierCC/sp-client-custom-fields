@@ -11,7 +11,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  IPropertyPaneFieldType
+  PropertyPaneFieldType
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldSPListMultiplePickerHost, { IPropertyFieldSPListMultiplePickerHostProps } from './PropertyFieldSPListMultiplePickerHost';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
@@ -102,7 +102,7 @@ export interface IPropertyFieldSPListMultiplePickerPropsInternal extends IProper
 class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPropertyFieldSPListMultiplePickerPropsInternal> {
 
   //Properties defined by IPropertyPaneField
-  public type: IPropertyPaneFieldType = 1;//IPropertyPaneFieldType.Custom;
+  public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
   public properties: IPropertyFieldSPListMultiplePickerPropsInternal;
 

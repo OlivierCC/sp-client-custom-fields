@@ -1288,7 +1288,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
           <Label>{this.props.label}</Label>
           <div style={fontSelect}>
             <a style={fontSelectA} onClick={this.onOpenDialog}
-              onMouseEnter={this.mouseEnterDropDown} onMouseLeave={this.mouseLeaveDropDown}>
+              onMouseEnter={this.mouseEnterDropDown} onMouseLeave={this.mouseLeaveDropDown} role="menuitem">
               <span style={fontSelectASpan}>
                 <i className={'ms-Icon ms-Icon--' + this.state.selectedFont} aria-hidden="true" style={{marginRight:'10px'}}></i>
                 {this.state.selectedFont}
@@ -1315,7 +1315,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
                     cursor: 'pointer'
                   };
                   return (
-                    <li value={font.Name} onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
+                    <li value={font.Name}  role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
                       <i className={'ms-Icon ' + font.SafeValue} aria-hidden="true" style={{fontSize: '24px', marginRight:'10px'}}></i>
                       {font.Name}
                     </li>
