@@ -128,7 +128,8 @@ class PropertyFieldFontPickerBuilder implements IPropertyPaneField<IPropertyFiel
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -162,7 +163,8 @@ export function PropertyFieldFontPicker(targetProperty: string, properties: IPro
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty,
     };
     //Calles the PropertyFieldFontPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

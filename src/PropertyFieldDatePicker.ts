@@ -120,7 +120,8 @@ export class PropertyFieldDatePickerBuilder implements IPropertyPaneField<IPrope
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -153,7 +154,8 @@ export function PropertyFieldDatePicker(targetProperty: string, properties: IPro
       properties: properties.properties,
       formatDate: properties.formatDate,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty,
     };
     //Calles the PropertyFieldDatePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

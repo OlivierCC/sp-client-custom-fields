@@ -168,7 +168,8 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       context: this.context,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -202,7 +203,8 @@ export function PropertyFieldPeoplePicker(targetProperty: string, properties: IP
       allowDuplicate: properties.allowDuplicate,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty,
     };
     //Calles the PropertyFieldDatePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

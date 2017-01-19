@@ -8,12 +8,13 @@
  */
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
+import { SPHttpClientConfigurations } from "@microsoft/sp-http";
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
-import { Environment, EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -449,7 +450,7 @@ class SPListPickerService {
       queryUrl += "/_api/lists(guid'";
       queryUrl += listId;
       queryUrl += "')/Fields?$select=Title,StaticName&$orderBy=Title&$filter=Hidden%20eq%20false";
-      return this.context.httpClient.get(queryUrl).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
           return response.json();
       });
     }
@@ -487,7 +488,7 @@ class SPListPickerService {
           queryUrl += "&$filter=Hidden%20eq%20false";
         }
       }
-      return this.context.httpClient.get(queryUrl).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
           return response.json();
       });
     }

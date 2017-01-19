@@ -14,7 +14,7 @@ import {
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldRichTextBoxHost, { IPropertyFieldRichTextBoxHostProps } from './PropertyFieldRichTextBoxHost';
-import ModuleLoader from '@microsoft/sp-module-loader';
+import { SPComponentLoader } from '@microsoft/sp-loader';
 
 /**
  * @interface
@@ -154,7 +154,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       guid: this.guid,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -163,7 +164,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     if (this.mode != null)
       fMode = this.mode;
     var ckEditorCdn = '//cdn.ckeditor.com/4.5.11/{0}/ckeditor.js'.replace("{0}", fMode);
-    ModuleLoader.loadScript(ckEditorCdn, 'CKEDITOR').then((CKEDITOR: any): void => {
+    SPComponentLoader.loadScript(ckEditorCdn, 'CKEDITOR').then((CKEDITOR: any): void => {
       if (this.inline == null || this.inline === false)
         CKEDITOR.replace( this.guid + '-editor', {
             skin: 'kama,//cdn.ckeditor.com/4.4.3/full-all/skins/kama/'
@@ -216,7 +217,8 @@ export function PropertyFieldRichTextBox(targetProperty: string, properties: IPr
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty,
     };
     //Calles the PropertyFieldRichTextBox builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

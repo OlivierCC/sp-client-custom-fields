@@ -6,8 +6,9 @@
  * Released under MIT licence
  */
 import * as React from 'react';
-import { EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import { SPHttpClientConfigurations } from "@microsoft/sp-http";
 import { IPropertyFieldSPFolderPickerPropsInternal } from './PropertyFieldSPFolderPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
@@ -223,7 +224,7 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
    * @function
    * User close the dialog wihout saving
    */
-  private onDismiss(ev?: React.MouseEvent): any {
+  private onDismiss(ev?: React.MouseEvent<any>): any {
     this.setState({ isOpen: false, loading: false, selectedFolder: this.state.selectedFolder, currentSPFolder: this.state.currentSPFolder, childrenFolders: this.state.childrenFolders });
   }
 
@@ -350,7 +351,7 @@ class SPFolderPickerService {
    * Gets the collection of sub folders of the given folder
    */
   public getFolders(parentFolderServerRelativeUrl?: string, currentPage?: number, pageItemCount?: number): Promise<ISPFolders> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.getFoldersMock(parentFolderServerRelativeUrl);
     }
@@ -374,7 +375,7 @@ class SPFolderPickerService {
         queryUrl += "&$skip=";
         queryUrl += skipNumber;
       }
-      return this.context.httpClient.get(queryUrl).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
           return response.json();
       });
     }

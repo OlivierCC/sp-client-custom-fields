@@ -307,7 +307,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
         textOverflow: 'ellipsis',
         cursor: 'pointer',
         fontFamily: this.state.safeSelectedFont != null && this.state.safeSelectedFont != '' ? this.state.safeSelectedFont : 'Arial',
-        fontWeight: '400'
+        fontWeight: 400
       };
       var fontSelectADiv = {
         borderRadius        : '0 0px 0px 0',

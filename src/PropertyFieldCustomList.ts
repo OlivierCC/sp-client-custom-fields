@@ -163,7 +163,8 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       context: this.context,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -198,7 +199,8 @@ export function PropertyFieldCustomList(targetProperty: string, properties: IPro
       properties: properties.properties,
       context: properties.context,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty,
     };
     //Calles the PropertyFieldCustomList builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -110,7 +110,8 @@ class PropertyFieldAlignPickerBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChanged: this.onPropertyChanged,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -142,7 +143,8 @@ export function PropertyFieldAlignPicker(targetProperty: string, properties: IPr
       onPropertyChanged: properties.onPropertyChanged,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty
     };
     //Calles the PropertyFieldAlignPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

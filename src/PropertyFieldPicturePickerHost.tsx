@@ -6,8 +6,9 @@
  * Released under MIT licence
  */
 import * as React from 'react';
-import { EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import { SPHttpClientConfigurations } from "@microsoft/sp-http";
 import { IPropertyFieldPicturePickerPropsInternal } from './PropertyFieldPicturePicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
@@ -368,7 +369,7 @@ class SPFolderPickerService {
    * Gets the collection of sub folders of the given folder
    */
   public getFolders(parentFolderServerRelativeUrl?: string, currentPage?: number, pageItemCount?: number): Promise<ISPFolders> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.getFoldersMock(parentFolderServerRelativeUrl);
     }
@@ -392,7 +393,7 @@ class SPFolderPickerService {
         queryUrl += "&$skip=";
         queryUrl += skipNumber;
       }
-      return this.context.httpClient.get(queryUrl).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
           return response.json();
       });
     }

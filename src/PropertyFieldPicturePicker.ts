@@ -120,7 +120,8 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.targetProperty,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -153,7 +154,8 @@ export function PropertyFieldPicturePicker(targetProperty: string, properties: I
       properties: properties.properties,
       context: properties.context,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: targetProperty,
     };
     //Calles the PropertyFieldPicturePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

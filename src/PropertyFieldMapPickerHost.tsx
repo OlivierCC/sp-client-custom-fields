@@ -127,7 +127,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
         <div style={{paddingTop: '10px'}}>
 
         <div style={{width:'90px', float: 'left', paddingRight: '10px'}}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Longitude
           </span>
           <input id="longitude" style={{width:'80px', borderRadius: '0px',
@@ -146,7 +146,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
         </div>
 
         <div style={{width:'90px', display: 'inline' }}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Latitude
           </span>
           <input id="latitude" style={{width:'80px', borderRadius: '0px',
@@ -191,7 +191,7 @@ return (
 
         <div style={{paddingTop: '10px'}}>
         <div style={{width:'90px', float: 'left', paddingRight: '10px'}}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Longitude
           </span>
           <input id="longitude" style={{width:'80px', borderRadius: '0px',
@@ -209,7 +209,7 @@ return (
     backgroundClip: 'padding-box'}} value={this.state.longitude} onChange={this.onLongitudeChange} />
         </div>
           <div style={{width:'90px', display: 'inline' }}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Latitude
           </span>
           <input id="latitude" style={{width:'80px', borderRadius: '0px',

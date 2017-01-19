@@ -9,7 +9,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   BaseClientSideWebPart,
-  IPropertyPaneSettings,
+  IPropertyPaneConfiguration,
   IWebPartContext
 } from '@microsoft/sp-webpart-base';
 
@@ -66,8 +66,8 @@ import { PropertyFieldSliderRange } from '../../PropertyFieldSliderRange';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
-  public constructor(context: IWebPartContext) {
-    super(context);
+  public constructor() {
+    super();
 
     //Hack: to invoke correctly the onPropertyChange function outside this class
     //we need to bind this object on it first
@@ -122,7 +122,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
     this.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
   }
 
-  protected get propertyPaneSettings(): IPropertyPaneSettings {
+  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration  {
     return {
       pages: [
         {
@@ -151,7 +151,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties
                 }),
-                PropertyFieldFontSizePicker('fontSize', {
+                PropertyFieldFontSizePicker('fontSize2', {
                   label: strings.FontSizeFieldLabel,
                   usePixels: true,
                   preview: true,
