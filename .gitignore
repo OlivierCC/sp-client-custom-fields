@@ -7,6 +7,8 @@ npm-debug.log*
 node_modules
 
 # Build generated files
+dist
+lib
 solution
 temp
 *.spapp
