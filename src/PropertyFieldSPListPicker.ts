@@ -49,6 +49,11 @@ export interface IPropertyFieldSPListPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -71,6 +76,7 @@ export interface IPropertyFieldSPListPickerPropsInternal extends IPropertyFieldS
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -95,6 +101,7 @@ class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFi
 
   public onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void {}
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -114,6 +121,7 @@ class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFi
     this.includeHidden = _properties.includeHidden;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -133,7 +141,8 @@ class PropertyFieldSPListPickerBuilder implements IPropertyPaneField<IPropertyFi
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -169,7 +178,8 @@ export function PropertyFieldSPListPicker(targetProperty: string, properties: IP
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key,
     };
     //Calles the PropertyFieldSPListPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

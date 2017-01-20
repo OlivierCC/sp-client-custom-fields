@@ -43,6 +43,12 @@ export interface IPropertyFieldColorPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -61,6 +67,7 @@ export interface IPropertyFieldColorPickerPropsInternal extends IPropertyPaneCus
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -80,6 +87,7 @@ class PropertyFieldColorPickerBuilder implements IPropertyPaneField<IPropertyFie
   private initialColor: string;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key;
 
   /**
    * @function
@@ -95,6 +103,7 @@ class PropertyFieldColorPickerBuilder implements IPropertyPaneField<IPropertyFie
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -111,7 +120,7 @@ class PropertyFieldColorPickerBuilder implements IPropertyPaneField<IPropertyFie
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
-      key: this.targetProperty,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -144,7 +153,8 @@ export function PropertyFieldColorPicker(targetProperty: string, properties: IPr
       properties: properties.properties,
       onDispose: null,
       onRender: null,
-      key: targetProperty,
+      key: properties.key,
+
     };
     //Calles the PropertyFieldColorPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

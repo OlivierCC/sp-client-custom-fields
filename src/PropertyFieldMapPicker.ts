@@ -53,6 +53,11 @@ export interface IPropertyFieldMapPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -73,6 +78,7 @@ export interface IPropertyFieldMapPickerPropsInternal extends IPropertyPaneCusto
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -95,6 +101,7 @@ class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyField
 
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -112,6 +119,7 @@ class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyField
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -130,7 +138,7 @@ class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyField
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
-      key: this.targetProperty,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -165,7 +173,7 @@ export function PropertyFieldMapPicker(targetProperty: string, properties: IProp
       properties: properties.properties,
       onDispose: null,
       onRender: null,
-      key: targetProperty,
+      key: properties.key,
     };
     //Calles the PropertyFieldMapPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

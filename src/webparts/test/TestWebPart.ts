@@ -10,7 +10,6 @@ import * as ReactDom from 'react-dom';
 import {
   BaseClientSideWebPart,
   IPropertyPaneConfiguration,
-  IWebPartContext
 } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'testStrings';
@@ -24,7 +23,7 @@ import { PropertyFieldDateTimePicker } from '../../PropertyFieldDateTimePicker';
 //Include the PropertyFieldColorPicker component
 import { PropertyFieldColorPicker } from '../../PropertyFieldColorPicker';
 //Include the PropertyFieldPeoplePicker component
-//import { PropertyFieldPeoplePicker } from '../../PropertyFieldPeoplePicker';
+import { PropertyFieldPeoplePicker } from '../../PropertyFieldPeoplePicker';
 //Include the PropertyFieldSPListPicker component
 import { PropertyFieldSPListPicker, PropertyFieldSPListPickerOrderBy } from '../../PropertyFieldSPListPicker';
 //Include the PropertyFieldSPListMultiplePicker component
@@ -141,7 +140,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   previewFonts: true,
                   initialValue: this.properties.font,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'fontField',
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
                   label: strings.FontSizeFieldLabel,
@@ -149,7 +149,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   preview: true,
                   initialValue: this.properties.fontSize,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'fontSize',
                 }),
                 PropertyFieldFontSizePicker('fontSize2', {
                   label: strings.FontSizeFieldLabel,
@@ -157,26 +158,30 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   preview: true,
                   initialValue: this.properties.fontSize,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'fontSize2',
                 }),
                 PropertyFieldIconPicker('icon', {
                   label: strings.IconFieldLabel,
                   initialValue: this.properties.icon,
                   orderAlphabetical: true,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'iconField',
                 }),
                 PropertyFieldColorPicker('color', {
                   label: strings.ColorFieldLabel,
                   initialColor: this.properties.color,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'colorField',
                 }),
                 PropertyFieldAlignPicker('align', {
                   label: strings.AlignFieldLabel,
                   initialValue: this.properties.align,
                   onPropertyChanged: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'alignField',
                 })
               ],
             },
@@ -212,7 +217,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   ],
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'customListField',
                 }),
                 PropertyFieldDropDownSelect('dropDownSelect', {
                   label: strings.DropDownSelectFieldLabel,
@@ -227,13 +233,15 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   ],
                   initialValue: this.properties.dropDownSelect,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'dropDownSelectField',
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,
                   initialValue: this.properties.password,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'passwordField',
                 }),
                 PropertyFieldRichTextBox('richTextBox', {
                   label: strings.RichTextBoxFieldLabel,
@@ -242,27 +250,31 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   minHeight: 100,
                   mode: 'basic', //'basic' or 'standard' or 'full'
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'richTextField',
                 }),
                 PropertyFieldDatePicker('date', {
                   label: strings.DateFieldLabel,
                   initialDate: this.properties.date,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'dateField',
                 }),
                 PropertyFieldDatePicker('date2', {
                   label: strings.DateFieldLabel,
                   initialDate: this.properties.date2,
                   formatDate: this.formatDateIso,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'date2Field',
                 }),
                 PropertyFieldDateTimePicker('datetime', {
                   label: strings.DateTimeFieldLabel,
                   initialDate: this.properties.datetime,
                   //formatDate: this.formatDateIso,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'dateTimeField',
                 }),
                 PropertyFieldSliderRange('sliderRange', {
                   label: strings.SliderRangeFieldLabel,
@@ -274,14 +286,16 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   max: 500,
                   step: 1,
                   orientation: 'horizontal', //'horizontal' or 'vertical'
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'sliderRangeField',
                 }),
                 PropertyFieldPhoneNumber('phone', {
                   label: strings.PhoneNumberFieldLabel,
                   initialValue: this.properties.phone,
                   phoneNumberFormat: IPhoneNumberFormat.UnitedStates,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'phoneField',
                 }),
                 PropertyFieldMaskedInput('maskedInput', {
                   label: strings.MaskedInputFieldLabel,
@@ -290,14 +304,16 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   placeholder: 'XXXX XXXX XXXX XXXX',
                   maxLength: '19',
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'maskedInputField',
                 }),
                 PropertyFieldMapPicker('geolocation', {
                   label: strings.GeoLocationFieldLabel,
                   longitude: this.properties.geolocation != null ? this.properties.geolocation.substr(0, this.properties.geolocation.indexOf(",")) : '0',
                   latitude: this.properties.geolocation != null ? this.properties.geolocation.substr(this.properties.geolocation.indexOf(",") + 1, this.properties.geolocation.length - this.properties.geolocation.indexOf(",")) : '0',
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'geolocationField',
                 })
             ],
             },
@@ -310,23 +326,26 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.picture,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'pictureField',
                 }),
                 PropertyFieldDocumentPicker('document', {
                   label: strings.DocumentFieldLabel,
                   initialValue: this.properties.document,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'documentField',
                 }),
-                /*PropertyFieldPeoplePicker('people', {
+                PropertyFieldPeoplePicker('people', {
                   label: strings.PeopleFieldLabel,
                   initialData: this.properties.people,
                   allowDuplicate: true,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
-                }),*/
+                  properties: this.properties,
+                  key: 'peopleField',
+                }),
                PropertyFieldSPListPicker('list', {
                   label: strings.SPListFieldLabel,
                   selectedList: this.properties.list,
@@ -335,7 +354,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   orderBy: PropertyFieldSPListPickerOrderBy.Title,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'listField',
                 }),
                 PropertyFieldSPFolderPicker('folder', {
                   label: strings.SPFolderFieldLabel,
@@ -343,7 +363,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   //baseFolder: '/sites/devcenter/_catalogs',
                   context: this.context,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'folderField',
                 }),
                 PropertyFieldSPListMultiplePicker('listsCollection', {
                   label: strings.SPListFieldLabel,
@@ -353,7 +374,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   orderBy: PropertyFieldSPListMultiplePickerOrderBy.Title,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'listsCollectionField',
                 })
               ]
             },
@@ -372,13 +394,15 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   max: 50,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'queryField',
                 }),
                  PropertyFieldDisplayMode('displayMode', {
                   label: strings.DisplayModeFieldLabel,
                   initialValue: this.properties.displayMode,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties
+                  properties: this.properties,
+                  key: 'displayModeField',
                 })
               ]
             }

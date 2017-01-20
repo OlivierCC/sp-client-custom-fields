@@ -35,7 +35,6 @@ export interface IPropertyFieldPeoplePickerHostProps extends IPropertyFieldPeopl
 interface IPeoplePickerState {
   resultsPeople?: Array<IPropertyFieldPeople>;
   resultsPersonas?: Array<IPersonaProps>;
-  loading?: boolean;
 }
 
 /**
@@ -65,9 +64,9 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
     this.createInitialPersonas();
 
     this.state = {
+
       resultsPeople: this.resultsPeople,
       resultsPersonas: this.resultsPersonas,
-      loading: false
     };
   }
 
@@ -78,9 +77,9 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
   public render(): JSX.Element {
 
     var suggestionProps: IBasePickerSuggestionsProps = { // TODO strings in resourcen auslagen
-      suggestionsHeaderText: "Suggested People",
-      noResultsFoundText: "No results found",
-      loadingText: "Loading",
+      suggestionsHeaderText: strings.PeoplePickerSuggestedContacts,
+      noResultsFoundText: strings.PeoplePickerNoResults,
+      loadingText: strings.PeoplePickerLoading,
     };
 
     //Renders content
@@ -101,26 +100,32 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * @function
    * A search field change occured
    */
-  private onSearchFieldChanged(newValue: any): any[] | PromiseLike<any[]> {
-    //Cleat the suggestions list
-    this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas, loading: true });
-    //Request the search service
-    this.searchService.searchPeople(newValue).then((response: IPropertyFieldPeople[]) => {
-      this.resultsPeople = [];
-      this.resultsPersonas = [];
-      //If allowDuplicate == false, so remove duplicates from results
-      if (this.props.allowDuplicate === false)
-        response = this.removeDuplicates(response);
-      response.map((element: IPropertyFieldPeople, index: number) => {
-        //Fill the results Array
-        this.resultsPeople.push(element);
-        //Transform the response in IPersonaProps object
-        this.resultsPersonas.push(this.getPersonaFromPeople(element, index));
+  private onSearchFieldChanged(searchText: string, currentSelected: IPersonaProps[]): Promise<IPersonaProps> | IPersonaProps[] {
+    if (searchText.length > 2) {
+      //Clear the suggestions list
+      this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas });
+      //Request the search service
+      var result = this.searchService.searchPeople(searchText).then((response: IPropertyFieldPeople[]) => {
+        this.resultsPeople = [];
+        this.resultsPersonas = [];
+        //If allowDuplicate == false, so remove duplicates from results
+        if (this.props.allowDuplicate === false)
+          response = this.removeDuplicates(response);
+        response.map((element: IPropertyFieldPeople, index: number) => {
+          //Fill the results Array
+          this.resultsPeople.push(element);
+          //Transform the response in IPersonaProps object
+          this.resultsPersonas.push(this.getPersonaFromPeople(element, index));
+        });
+        //Refresh the component's state
+        this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas });
+        return this.resultsPersonas;
       });
-      //Refresh the component's state
-      this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas, loading: false });
-    });
-    return undefined;
+      return result;
+    }
+    else {
+      return [];
+    }
   }
 
   /**
@@ -172,6 +177,7 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
     };
   }
 
+
   /**
    * @function
    * Refreshes the web part properties
@@ -188,8 +194,32 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * Event raises when the user changed people from hte PeoplePicker component
    */
 
-  private onItemChanged(items: IPersonaProps[]): void {
-    this.selectedPersonas = items;
+  private onItemChanged(selectedItems: IPersonaProps[]): void {
+    if (selectedItems.length > 0) {
+      if (selectedItems.length > this.selectedPersonas.length) {
+        var index: number = this.resultsPersonas.indexOf(selectedItems[selectedItems.length - 1]);
+        if (index > -1) {
+          var people: IPropertyFieldPeople = this.resultsPeople[index];
+          this.selectedPeople.push(people);
+          this.selectedPersonas.push(this.resultsPersonas[index]);
+          this.refreshWebPartProperties();
+        }
+      } else {
+        this.selectedPersonas.map((person, index) => {
+            var selectedItemIndex: number = selectedItems.indexOf(person)
+            if (selectedItemIndex === -1) {
+              this.selectedPersonas.splice(index, 1);
+              this.selectedPeople.splice(index, 1);
+            }
+          })
+
+      }
+
+    } else {
+      this.selectedPersonas.splice(0, this.selectedPersonas.length);
+      this.selectedPeople.splice(0, this.selectedPeople.length);
+    }
+
     this.refreshWebPartProperties();
   }
 

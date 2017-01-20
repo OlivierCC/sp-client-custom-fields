@@ -84,6 +84,11 @@ export interface IPropertyFieldCustomListProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -105,6 +110,7 @@ export interface IPropertyFieldCustomListPropsInternal extends IPropertyPaneCust
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -127,6 +133,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
   private context: IWebPartContext;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -145,6 +152,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -164,7 +172,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
       onPropertyChange: this.onPropertyChange,
       context: this.context,
       properties: this.customProperties,
-      key: this.targetProperty,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -200,7 +208,7 @@ export function PropertyFieldCustomList(targetProperty: string, properties: IPro
       context: properties.context,
       onDispose: null,
       onRender: null,
-      key: targetProperty,
+      key: properties.key,
     };
     //Calles the PropertyFieldCustomList builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

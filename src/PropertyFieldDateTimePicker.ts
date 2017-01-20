@@ -49,6 +49,11 @@ export interface IPropertyFieldDateTimePickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -68,6 +73,7 @@ export interface IPropertyFieldDateTimePickerPropsInternal extends IPropertyPane
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -88,6 +94,7 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
   private formatDate: (date: Date) => string;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -104,6 +111,7 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
     this.onPropertyChange = _properties.onPropertyChange;
     this.formatDate = _properties.formatDate;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -121,7 +129,7 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
-      key: this.targetProperty,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -155,7 +163,7 @@ export function PropertyFieldDateTimePicker(targetProperty: string, properties: 
       formatDate: properties.formatDate,
       onDispose: null,
       onRender: null,
-      key: targetProperty,
+      key: properties.key,
     };
     //Calles the PropertyFieldDateTimePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

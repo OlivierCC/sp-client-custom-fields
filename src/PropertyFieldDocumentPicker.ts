@@ -49,6 +49,11 @@ export interface IPropertyFieldDocumentPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -88,6 +93,7 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
   private context: IWebPartContext;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -104,6 +110,7 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -121,7 +128,7 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
-      key: this.targetProperty,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -155,7 +162,7 @@ export function PropertyFieldDocumentPicker(targetProperty: string, properties: 
       context: properties.context,
       onDispose: null,
       onRender: null,
-      key: targetProperty,
+      key: properties.key,
     };
     //Calles the PropertyFieldDocumentPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

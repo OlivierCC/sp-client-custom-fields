@@ -53,6 +53,11 @@ export interface IPropertyFieldIconPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Key to help React identify which items have changed, are added, or are removed.
+   */
+  key: string;
 }
 
 /**
@@ -73,6 +78,7 @@ export interface IPropertyFieldIconPickerPropsInternal extends IPropertyPaneCust
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -94,6 +100,7 @@ class PropertyFieldIconPickerBuilder implements IPropertyPaneField<IPropertyFiel
   private preview: boolean;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -111,6 +118,7 @@ class PropertyFieldIconPickerBuilder implements IPropertyPaneField<IPropertyFiel
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -129,7 +137,7 @@ class PropertyFieldIconPickerBuilder implements IPropertyPaneField<IPropertyFiel
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
-      key: this.targetProperty,
+      key: this.key,
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -164,7 +172,7 @@ export function PropertyFieldIconPicker(targetProperty: string, properties: IPro
       properties: properties.properties,
       onDispose: null,
       onRender: null,
-      key: targetProperty,
+      key: properties.key,
     };
     //Calles the PropertyFieldIconPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
