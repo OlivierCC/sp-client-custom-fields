@@ -11,10 +11,10 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {
   IPropertyPaneField,
-  PropertyPaneFieldType
+  PropertyPaneFieldType,
+  IWebPartContext
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldSPListPickerHost, { IPropertyFieldSPListPickerHostProps } from './PropertyFieldSPListPickerHost';
-import { IWebPartContext} from '@microsoft/sp-webpart-base';
 
 export enum PropertyFieldSPListPickerOrderBy {
   Id = 0,
