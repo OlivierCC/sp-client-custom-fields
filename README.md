@@ -12,7 +12,7 @@ Now available in more than **16 languages** as: English, French, Arabic, German,
 
 **Current SPFx Drop support** - [RC0](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-RC0)
 
-![Overview](/OlivierCC/sp-client-custom-fields/raw/master/assets/Logo.png)
+![Overview](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/Logo.png)
 
 # How to install & use
 
