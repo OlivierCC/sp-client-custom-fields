@@ -219,7 +219,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
         lineHeight: '1.8',
         textOverflow: 'ellipsis',
         cursor: 'pointer',
-        fontWeight: '400'
+        fontWeight: 400
       };
       var fontSelectADiv = {
         borderRadius        : '0 0px 0px 0',

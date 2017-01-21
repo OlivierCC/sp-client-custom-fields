@@ -54,6 +54,11 @@ export interface IPropertyFieldSPFolderPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -95,6 +100,7 @@ class PropertyFieldSPFolderPickerBuilder implements IPropertyPaneField<IProperty
   private context: IWebPartContext;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -112,6 +118,7 @@ class PropertyFieldSPFolderPickerBuilder implements IPropertyPaneField<IProperty
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -129,7 +136,8 @@ class PropertyFieldSPFolderPickerBuilder implements IPropertyPaneField<IProperty
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -163,7 +171,8 @@ export function PropertyFieldSPFolderPicker(targetProperty: string, properties: 
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldSPFolderPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -49,7 +49,7 @@ export default class PropertyFieldSliderRangeHost extends React.Component<IPrope
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <table style={{paddingTop: '8px', paddingBottom: '10px', width:"100%"}} cellpadding="0" cellspacing="10">
+        <table style={{paddingTop: '8px', paddingBottom: '10px', width:"100%"}} cellPadding="0" cellSpacing="10">
         { this.props.showValue == false ?
             <tr><td width="100%"><div id={this.props.guid + '-slider'}></div></td></tr>
           :

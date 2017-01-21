@@ -365,84 +365,84 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                 { value.type == CustomListFieldType.date ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDatePickerHost label="" properties={this.props.properties} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldDatePickerHost key={'input-' + value.title} label="" properties={this.props.properties} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.dateTime ?
                                   <div>
                                     <input id={'input-' + value.title}  type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDateTimePickerHost label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldDateTimePickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.font ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontPickerHost label=""  properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldFontPickerHost key={'input-' + value.title} label=""  properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.fontSize ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontSizePickerHost label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldFontSizePickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.color ?
                                   <div>
                                     <input id={'input-' + value.title} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldColorPickerHost label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldColorPickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.icon ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldIconPickerHost label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldIconPickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.password ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPasswordHost label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldPasswordHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.users ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPeoplePickerHost label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldPeoplePickerHost key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.list ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPListPickerHost label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldSPListPickerHost key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.folder ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPFolderPickerHost label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldSPFolderPickerHost key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.picture ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPicturePickerHost label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldPicturePickerHost  key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.document ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDocumentPickerHost label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldDocumentPickerHost  key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
@@ -535,84 +535,84 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                 { value.type == CustomListFieldType.date ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDatePickerHost properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.title]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldDatePickerHost key={'input-' + value.title} properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.title]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.dateTime ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDateTimePickerHost properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.title]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldDateTimePickerHost key={'input-' + value.title} properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.title]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.font ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontPickerHost label="" properties={this.props.properties}  initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldFontPickerHost key={'input-' + value.title} label="" properties={this.props.properties}  initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.fontSize ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontSizePickerHost  properties={this.props.properties} label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldFontSizePickerHost  key={'input-' + value.title} properties={this.props.properties} label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.color ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldColorPickerHost properties={this.props.properties}  label="" initialColor={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldColorPickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialColor={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.icon ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldIconPickerHost properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldIconPickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.password ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPasswordHost properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldPasswordHost key={'input-' + value.title} properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.users ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={JSON.stringify(this.state.data[this.state.selectedIndex][value.title])}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPeoplePickerHost properties={this.props.properties}  label="" initialData={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldPeoplePickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialData={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.list ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPListPickerHost properties={this.props.properties}  label="" selectedList={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldSPListPickerHost properties={this.props.properties}  label="" selectedList={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title} key={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.folder ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPFolderPickerHost properties={this.props.properties}  label="" initialFolder={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldSPFolderPickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialFolder={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.picture ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPicturePickerHost properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldPicturePickerHost key={'input-' + value.title} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.document ?
                                   <div>
                                     <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDocumentPickerHost properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <PropertyFieldDocumentPickerHost key={'input-' + value.title} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
                                   </div>
                                 : ''
                                 }

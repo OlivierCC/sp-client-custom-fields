@@ -8,12 +8,13 @@
  */
 import * as React from 'react';
 import { IPropertyFieldPeoplePickerPropsInternal } from './PropertyFieldPeoplePicker';
-import { PeoplePicker, IPeoplePickerProps, PeoplePickerType } from 'office-ui-fabric-react/lib/PeoplePicker';
+import { NormalPeoplePicker, IBasePickerSuggestionsProps } from 'office-ui-fabric-react/lib/Pickers';
 import { Label } from 'office-ui-fabric-react/lib/Label';
-import { IPersonaProps, PersonaPresence, PersonaInitialsColor} from 'office-ui-fabric-react/lib/Persona';
+import { IPersonaProps, PersonaPresence, PersonaInitialsColor } from 'office-ui-fabric-react/lib/Persona';
 import { IPropertyFieldPeople } from './PropertyFieldPeoplePicker';
-import { IWebPartContext} from '@microsoft/sp-webpart-base';
-import { EnvironmentType, IHttpClientOptions } from '@microsoft/sp-client-base';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import { SPHttpClient, ISPHttpClientOptions } from "@microsoft/sp-http";
+import { EnvironmentType, Environment } from '@microsoft/sp-core-library';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -27,42 +28,13 @@ export interface IPropertyFieldPeoplePickerHostProps extends IPropertyFieldPeopl
 }
 
 /**
- * @class
- * Defines the labels of the DatePicker control (as months, days, etc.)
- *
- */
-class PeoplePickerProperties implements IPeoplePickerProps {
-    /**
-     * @var
-     * Kind of peoplepicker component
-     */
-    public type: PeoplePickerType; // = PeoplePickerType.normal;
-    /**
-     * @var
-     * Suggested contacts text
-     */
-    public searchCategoryName: string = strings.PeoplePickerSuggestedContacts;
-    /**
-     * @var
-     * No results text
-     */
-    public noResultsText: string = strings.PeoplePickerNoResults;
-    /**
-     * @var
-     * Loading contacts text
-     */
-    public loadingContacts: string = strings.PeoplePickerLoading;
-}
-
-/**
  * @interface
  * Defines the state of the component
  *
  */
 interface IPeoplePickerState {
-	resultsPeople?: Array<IPropertyFieldPeople>;
+  resultsPeople?: Array<IPropertyFieldPeople>;
   resultsPersonas?: Array<IPersonaProps>;
-  loading?: boolean;
 }
 
 /**
@@ -71,7 +43,6 @@ interface IPeoplePickerState {
  */
 export default class PropertyFieldPeoplePickerHost extends React.Component<IPropertyFieldPeoplePickerHostProps, {}> {
 
-  private peoplePickerProperties: PeoplePickerProperties;
   private searchService: PropertyFieldSearchService;
   private intialPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
   private resultsPeople: Array<IPropertyFieldPeople> = new Array<IPropertyFieldPeople>();
@@ -86,18 +57,17 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
   constructor(props: IPropertyFieldPeoplePickerHostProps) {
     super(props);
 
-    this.peoplePickerProperties = new PeoplePickerProperties();
     this.searchService = new PropertyFieldSearchService(props.context);
     this.onSearchFieldChanged = this.onSearchFieldChanged.bind(this);
-    this.onItemAdded = this.onItemAdded.bind(this);
-    this.onItemRemoved = this.onItemRemoved.bind(this);
+    this.onItemChanged = this.onItemChanged.bind(this);
+
     this.createInitialPersonas();
 
     this.state = {
-			resultsPeople: this.resultsPeople,
+
+      resultsPeople: this.resultsPeople,
       resultsPersonas: this.resultsPersonas,
-      loading: false
-		};
+    };
   }
 
   /**
@@ -106,25 +76,22 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    */
   public render(): JSX.Element {
 
-    //Checks if we need to display the loading message
-    var labelToDisplay: string = this.peoplePickerProperties.noResultsText;
-    if (this.state['loading'] === true)
-      labelToDisplay = this.peoplePickerProperties.loadingContacts;
+    var suggestionProps: IBasePickerSuggestionsProps = { // TODO strings in resourcen auslagen
+      suggestionsHeaderText: strings.PeoplePickerSuggestedContacts,
+      noResultsFoundText: strings.PeoplePickerNoResults,
+      loadingText: strings.PeoplePickerLoading,
+    };
 
     //Renders content
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <PeoplePicker suggestions={this.resultsPersonas}
-        type={0} isConnected={true}
-        canSearchMore={false}
-        onSearchFieldChanged={this.onSearchFieldChanged}
-        onItemAdded={this.onItemAdded}
-        onItemRemoved={this.onItemRemoved}
-        searchCategoryName={this.peoplePickerProperties.searchCategoryName}
-        initialItems={this.intialPersonas}
-        noResultsText={labelToDisplay}
-        />
+        <NormalPeoplePicker
+          pickerSuggestionsProps={suggestionProps}
+          onResolveSuggestions={this.onSearchFieldChanged}
+          onChange={this.onItemChanged}
+          defaultSelectedItems={this.intialPersonas}
+          />
       </div>
     );
   }
@@ -133,25 +100,32 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * @function
    * A search field change occured
    */
-  private onSearchFieldChanged(newValue: any): void {
-    //Cleat the suggestions list
-    this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas, loading: true });
-    //Request the search service
-    this.searchService.searchPeople(newValue).then((response: IPropertyFieldPeople[]) => {
-      this.resultsPeople = [];
-      this.resultsPersonas = [];
-      //If allowDuplicate == false, so remove duplicates from results
-      if (this.props.allowDuplicate === false)
-        response = this.removeDuplicates(response);
-      response.map((element: IPropertyFieldPeople, index: number) => {
-        //Fill the results Array
-        this.resultsPeople.push(element);
-        //Transform the response in IPersonaProps object
-        this.resultsPersonas.push(this.getPersonaFromPeople(element, index));
+  private onSearchFieldChanged(searchText: string, currentSelected: IPersonaProps[]): Promise<IPersonaProps> | IPersonaProps[] {
+    if (searchText.length > 2) {
+      //Clear the suggestions list
+      this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas });
+      //Request the search service
+      var result = this.searchService.searchPeople(searchText).then((response: IPropertyFieldPeople[]) => {
+        this.resultsPeople = [];
+        this.resultsPersonas = [];
+        //If allowDuplicate == false, so remove duplicates from results
+        if (this.props.allowDuplicate === false)
+          response = this.removeDuplicates(response);
+        response.map((element: IPropertyFieldPeople, index: number) => {
+          //Fill the results Array
+          this.resultsPeople.push(element);
+          //Transform the response in IPersonaProps object
+          this.resultsPersonas.push(this.getPersonaFromPeople(element, index));
+        });
+        //Refresh the component's state
+        this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas });
+        return this.resultsPersonas;
       });
-      //Refresh the component's state
-      this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas, loading: false});
-    });
+      return result;
+    }
+    else {
+      return [];
+    }
   }
 
   /**
@@ -197,11 +171,12 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * Generates a IPersonaProps object from a IPropertyFieldPeople object
    */
   private getPersonaFromPeople(element: IPropertyFieldPeople, index: number): IPersonaProps {
-      return {
-        primaryText: element.fullName, secondaryText: element.jobTitle, imageUrl: element.imageUrl,
-        imageInitials: element.initials, presence: PersonaPresence.none, initialsColor: this.getRandomInitialsColor(index)
-      };
+    return {
+      primaryText: element.fullName, secondaryText: element.jobTitle, imageUrl: element.imageUrl,
+      imageInitials: element.initials, presence: PersonaPresence.none, initialsColor: this.getRandomInitialsColor(index)
+    };
   }
+
 
   /**
    * @function
@@ -216,29 +191,35 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
 
   /**
    * @function
-   * Event raises when the user is selected new people from hte PeoplePicker component
+   * Event raises when the user changed people from hte PeoplePicker component
    */
-  private onItemAdded(item: IPersonaProps): void {
-    var index: number = this.resultsPersonas.indexOf(item);
-    if (index > -1) {
-      var people: IPropertyFieldPeople = this.resultsPeople[index];
-      this.selectedPeople.push(people);
-      this.selectedPersonas.push(this.resultsPersonas[index]);
-      this.refreshWebPartProperties();
-    }
-  }
 
-  /**
-   * @function
-   * Generates a IPersonaProps object from a IPropertyFieldPeople object
-   */
-  private onItemRemoved(item: IPersonaProps): void {
-    var index: number = this.selectedPersonas.indexOf(item);
-    if (index > -1) {
-      this.selectedPersonas.splice(index, 1);
-      this.selectedPeople.splice(index, 1);
-      this.refreshWebPartProperties();
+  private onItemChanged(selectedItems: IPersonaProps[]): void {
+    if (selectedItems.length > 0) {
+      if (selectedItems.length > this.selectedPersonas.length) {
+        var index: number = this.resultsPersonas.indexOf(selectedItems[selectedItems.length - 1]);
+        if (index > -1) {
+          var people: IPropertyFieldPeople = this.resultsPeople[index];
+          this.selectedPeople.push(people);
+          this.selectedPersonas.push(this.resultsPersonas[index]);
+          this.refreshWebPartProperties();
+        }
+      } else {
+        this.selectedPersonas.map((person, index2) => {
+            var selectedItemIndex: number = selectedItems.indexOf(person);
+            if (selectedItemIndex === -1) {
+              this.selectedPersonas.splice(index2, 1);
+              this.selectedPeople.splice(index2, 1);
+            }
+          });
+      }
+
+    } else {
+      this.selectedPersonas.splice(0, this.selectedPersonas.length);
+      this.selectedPeople.splice(0, this.selectedPeople.length);
     }
+
+    this.refreshWebPartProperties();
   }
 
   /**
@@ -292,8 +273,8 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
    * @function
    * Service constructor
    */
-  constructor(pageContext: IWebPartContext){
-      this.context = pageContext;
+  constructor(pageContext: IWebPartContext) {
+    this.context = pageContext;
   }
 
   /**
@@ -301,7 +282,7 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
    * Search people from the SharePoint People database
    */
   public searchPeople(query: string): Promise<Array<IPropertyFieldPeople>> {
-    if (this.context.environment.type === EnvironmentType.Local) {
+    if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
       return this.searchPeopleFromMock(query);
     }
@@ -309,50 +290,50 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
       //If the running env is SharePoint, loads from the peoplepicker web service
       var contextInfoUrl: string = this.context.pageContext.web.absoluteUrl + "/_api/contextinfo";
       var userRequestUrl: string = this.context.pageContext.web.absoluteUrl + "/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser";
-      var httpPostOptions: IHttpClientOptions = {
-            headers: {
-               "accept": "application/json",
-               "content-type": "application/json"
-            }
+      var httpPostOptions: ISPHttpClientOptions = {
+        headers: {
+          "accept": "application/json",
+          "content-type": "application/json"
+        }
       };
-      return this.context.httpClient.post(contextInfoUrl, httpPostOptions).then((response: Response) => {
+      return this.context.spHttpClient.post(contextInfoUrl, SPHttpClient.configurations.v1, httpPostOptions).then((response: Response) => {
         return response.json().then((jsonResponse: any) => {
           var formDigestValue: string = jsonResponse.FormDigestValue;
           var data = {
-                'queryParams': {
-                    //'__metadata': {
-                    //    'type': 'SP.UI.ApplicationPages.ClientPeoplePickerQueryParameters'
-                    //},
-                    'AllowEmailAddresses': true,
-                    'AllowMultipleEntities': false,
-                    'AllUrlZones': false,
-                    'MaximumEntitySuggestions': 20,
-                    'PrincipalSource': 15,
-                    //PrincipalType controls the type of entities that are returned in the results.
-                    //Choices are All - 15, Distribution List - 2 , Security Groups - 4,
-                    //SharePoint Groups &ndash; 8, User &ndash; 1. These values can be combined
-                    'PrincipalType': 1,
-                    'QueryString': query
-                    //'Required':false,
-                    //'SharePointGroupID':null,
-                    //'UrlZone':null,
-                    //'UrlZoneSpecified':false,
-                }
-            };
+            'queryParams': {
+              //'__metadata': {
+              //    'type': 'SP.UI.ApplicationPages.ClientPeoplePickerQueryParameters'
+              //},
+              'AllowEmailAddresses': true,
+              'AllowMultipleEntities': false,
+              'AllUrlZones': false,
+              'MaximumEntitySuggestions': 20,
+              'PrincipalSource': 15,
+              //PrincipalType controls the type of entities that are returned in the results.
+              //Choices are All - 15, Distribution List - 2 , Security Groups - 4,
+              //SharePoint Groups &ndash; 8, User &ndash; 1. These values can be combined
+              'PrincipalType': 1,
+              'QueryString': query
+              //'Required':false,
+              //'SharePointGroupID':null,
+              //'UrlZone':null,
+              //'UrlZoneSpecified':false,
+            }
+          };
           httpPostOptions = {
             headers: {
-               'accept':'application/json',
-               'content-type':'application/json',
-               "X-RequestDigest": formDigestValue
+              'accept': 'application/json',
+              'content-type': 'application/json',
+              "X-RequestDigest": formDigestValue
             },
             body: JSON.stringify(data)
           };
-          return this.context.httpClient.post(userRequestUrl, httpPostOptions).then((searchResponse: Response) => {
+          return this.context.spHttpClient.post(userRequestUrl, SPHttpClient.configurations.v1, httpPostOptions).then((searchResponse: Response) => {
             return searchResponse.json().then((usersResponse: any) => {
               var res: IPropertyFieldPeople[] = [];
               var values: any = JSON.parse(usersResponse.value);
               values.map(element => {
-                var persona: IPropertyFieldPeople = {fullName: element.DisplayText, login: element.Description};
+                var persona: IPropertyFieldPeople = { fullName: element.DisplayText, login: element.Description };
                 persona.email = element.EntityData.Email;
                 persona.jobTitle = element.EntityData.Title;
                 persona.initials = this.getFullNameInitials(persona.fullName);
@@ -401,15 +382,15 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
    */
   private searchPeopleFromMock(query: string): Promise<Array<IPropertyFieldPeople>> {
     return PeoplePickerMockHttpClient.searchPeople(this.context.pageContext.web.absoluteUrl).then(() => {
-          const results: IPropertyFieldPeople[] = [
-                { fullName: "Olivier Carpentier", initials: "OC", jobTitle: "Architect", email: "olivierc@contoso.com", login: "olivierc@contoso.com"},
-                { fullName: "Katie Jordan", initials: "KJ", jobTitle: "VIP Marketing", email: "katiej@contoso.com", login: "katiej@contoso.com"},
-                { fullName: "Gareth Fort", initials: "GF", jobTitle: "Sales Lead", email: "garethf@contoso.com", login: "garethf@contoso.com"},
-                { fullName: "Sara Davis", initials: "SD", jobTitle: "Assistant", email: "sarad@contoso.com", login: "sarad@contoso.com"},
-                { fullName: "John Doe", initials: "JD", jobTitle: "Developer", email: "johnd@contoso.com", login: "johnd@contoso.com"}
-              ];
-          return results;
-      }) as Promise<Array<IPropertyFieldPeople>>;
+      const results: IPropertyFieldPeople[] = [
+        { fullName: "Olivier Carpentier", initials: "OC", jobTitle: "Architect", email: "olivierc@contoso.com", login: "olivierc@contoso.com" },
+        { fullName: "Katie Jordan", initials: "KJ", jobTitle: "VIP Marketing", email: "katiej@contoso.com", login: "katiej@contoso.com" },
+        { fullName: "Gareth Fort", initials: "GF", jobTitle: "Sales Lead", email: "garethf@contoso.com", login: "garethf@contoso.com" },
+        { fullName: "Sara Davis", initials: "SD", jobTitle: "Assistant", email: "sarad@contoso.com", login: "sarad@contoso.com" },
+        { fullName: "John Doe", initials: "JD", jobTitle: "Developer", email: "johnd@contoso.com", login: "johnd@contoso.com" }
+      ];
+      return results;
+    }) as Promise<Array<IPropertyFieldPeople>>;
   }
 }
 
@@ -419,20 +400,20 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
  */
 class PeoplePickerMockHttpClient {
 
-    /**
-     * @var
-     * Mock SharePoint result sample
-     */
-    private static _results: IPropertyFieldPeople[] = [];
+  /**
+   * @var
+   * Mock SharePoint result sample
+   */
+  private static _results: IPropertyFieldPeople[] = [];
 
-    /**
-     * @function
-     * Mock search People method
-     */
-    public static searchPeople(restUrl: string, options?: any): Promise<IPropertyFieldPeople[]> {
-      return new Promise<IPropertyFieldPeople[]>((resolve) => {
-            resolve(PeoplePickerMockHttpClient._results);
-        });
-    }
+  /**
+   * @function
+   * Mock search People method
+   */
+  public static searchPeople(restUrl: string, options?: any): Promise<IPropertyFieldPeople[]> {
+    return new Promise<IPropertyFieldPeople[]>((resolve) => {
+      resolve(PeoplePickerMockHttpClient._results);
+    });
+  }
 
 }

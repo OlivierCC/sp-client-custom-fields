@@ -11,7 +11,8 @@ import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
-import { Environment, EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IPropertyFieldSPListMultiplePickerPropsInternal, PropertyFieldSPListMultiplePickerOrderBy } from './PropertyFieldSPListMultiplePicker';
 
 /**
@@ -216,7 +217,7 @@ class SPListPickerService {
           queryUrl += "&$filter=Hidden%20eq%20false";
         }
       }
-      return this.context.httpClient.get(queryUrl).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
           return response.json();
       });
     }

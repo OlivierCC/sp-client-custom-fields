@@ -94,6 +94,11 @@ export interface IPropertyFieldPhoneNumberProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -133,6 +138,7 @@ class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFie
   private phoneNumberFormat: IPhoneNumberFormat;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -149,6 +155,7 @@ class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFie
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -165,7 +172,8 @@ class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -198,7 +206,8 @@ export function PropertyFieldPhoneNumber(targetProperty: string, properties: IPr
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldPhoneNumber builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -54,6 +54,11 @@ export interface IPropertyFieldSPListQueryProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -81,6 +86,7 @@ export interface IPropertyFieldSPListQueryPropsInternal extends IPropertyFieldSP
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -109,6 +115,7 @@ class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFie
   private max: number;
   public onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void {}
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -133,6 +140,7 @@ class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFie
     this.max = _properties.max;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -157,7 +165,8 @@ class PropertyFieldSPListQueryBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -198,7 +207,8 @@ export function PropertyFieldSPListQuery(targetProperty: string, properties: IPr
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldSPListQuery builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

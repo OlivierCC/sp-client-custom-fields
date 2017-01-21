@@ -10,8 +10,8 @@ import * as React from 'react';
 import { IPropertyFieldMapPickerPropsInternal } from './PropertyFieldMapPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
-
-var MapComponent    = require('react-cartographer/lib/components/Map');
+//import Map from 'react-cartographer/lib/components/Map';
+var MapComponent: any = require('react-cartographer/lib/components/Map');
 
 /**
  * @interface
@@ -127,7 +127,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
         <div style={{paddingTop: '10px'}}>
 
         <div style={{width:'90px', float: 'left', paddingRight: '10px'}}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Longitude
           </span>
           <input id="longitude" style={{width:'80px', borderRadius: '0px',
@@ -146,7 +146,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
         </div>
 
         <div style={{width:'90px', display: 'inline' }}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Latitude
           </span>
           <input id="latitude" style={{width:'80px', borderRadius: '0px',
@@ -180,9 +180,22 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
               height={250}
               width={283}
               />
-          </div>
+        </div>
       </div>
     );
+
+    /*
+<MapComponent
+              provider='bing'
+              providerKey='Ag3-9ixwWbFk4BdNzkj6MCnFN2_pQiL2hedXxiiuaF_DSuzDqAVp2mW9wPE0coeL'
+              mapId='map'
+              latitude={this.state.latitude}
+              longitude={this.state.longitude}
+              zoom={15}
+              height={250}
+              width={283}
+              />
+    */
     }
     else {
 return (
@@ -191,7 +204,7 @@ return (
 
         <div style={{paddingTop: '10px'}}>
         <div style={{width:'90px', float: 'left', paddingRight: '10px'}}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
           Longitude
           </span>
           <input id="longitude" style={{width:'80px', borderRadius: '0px',
@@ -209,7 +222,7 @@ return (
     backgroundClip: 'padding-box'}} value={this.state.longitude} onChange={this.onLongitudeChange} />
         </div>
           <div style={{width:'90px', display: 'inline' }}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: '400'}}>
+          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px'}}>
           Latitude
           </span>
           <input id="latitude" style={{width:'80px', borderRadius: '0px',

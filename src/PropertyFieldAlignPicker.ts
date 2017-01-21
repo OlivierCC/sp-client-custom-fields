@@ -43,6 +43,11 @@ export interface IPropertyFieldAlignPickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -61,6 +66,7 @@ export interface IPropertyFieldAlignPickerPropsInternal extends IPropertyPaneCus
   onDispose(elem: HTMLElement): void;
   onPropertyChanged(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  key: string;
 }
 
 /**
@@ -80,6 +86,7 @@ class PropertyFieldAlignPickerBuilder implements IPropertyPaneField<IPropertyFie
   private initialValue: string;
   private onPropertyChanged: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -95,6 +102,7 @@ class PropertyFieldAlignPickerBuilder implements IPropertyPaneField<IPropertyFie
     this.properties.onRender = this.render;
     this.onPropertyChanged = _properties.onPropertyChanged;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -110,7 +118,8 @@ class PropertyFieldAlignPickerBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChanged: this.onPropertyChanged,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -142,7 +151,8 @@ export function PropertyFieldAlignPicker(targetProperty: string, properties: IPr
       onPropertyChanged: properties.onPropertyChanged,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldAlignPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -14,7 +14,7 @@ import {
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
 import PropertyFieldSliderRangeHost, { IPropertyFieldSliderRangeHostProps } from './PropertyFieldSliderRangeHost';
-import ModuleLoader from '@microsoft/sp-module-loader';
+import { SPComponentLoader } from '@microsoft/sp-loader';
 
 /**
  * @interface
@@ -78,6 +78,11 @@ export interface IPropertyFieldSliderRangeProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -130,6 +135,7 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
 
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -152,8 +158,9 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
 
-    ModuleLoader.loadCss('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
+    SPComponentLoader.loadCss('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
   }
 
 
@@ -178,7 +185,8 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       guid: this.guid,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -186,8 +194,8 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
     var jQueryCdn = '//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js';
     var jQueryUICdn = '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js';
 
-    ModuleLoader.loadScript(jQueryCdn, '$').then(($: any): void => {
-      ModuleLoader.loadScript(jQueryUICdn, '$').then((jqueryui: any): void => {
+    SPComponentLoader.loadScript(jQueryCdn, '$').then(($: any): void => {
+      SPComponentLoader.loadScript(jQueryUICdn, '$').then((jqueryui: any): void => {
           ($ as any)('#' + this.guid + '-slider').slider({
             range: true,
             min: this.min != null ? this.min : 0,
@@ -253,7 +261,8 @@ export function PropertyFieldSliderRange(targetProperty: string, properties: IPr
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldSliderRange builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

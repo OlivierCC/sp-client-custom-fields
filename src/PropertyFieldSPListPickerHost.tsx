@@ -9,8 +9,9 @@
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
-import { Environment, EnvironmentType } from '@microsoft/sp-client-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IPropertyFieldSPListPickerPropsInternal, PropertyFieldSPListPickerOrderBy } from './PropertyFieldSPListPicker';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 
 /**
  * @interface
@@ -165,7 +166,7 @@ class SPListPickerService {
           queryUrl += "&$filter=Hidden%20eq%20false";
         }
       }
-      return this.context.httpClient.get(queryUrl).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
           return response.json();
       });
     }

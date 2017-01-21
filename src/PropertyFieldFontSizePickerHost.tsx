@@ -291,7 +291,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         cursor: 'pointer',
         //fontFamily: this.state.safeSelectedFont != null && this.state.safeSelectedFont != '' ? this.state.safeSelectedFont : 'Arial',
         //fontSize: this.state.safeSelectedFont,
-        fontWeight: '400'
+        fontWeight: 400
       };
       var fontSelectADiv = {
         borderRadius        : '0 0px 0px 0',

@@ -192,20 +192,20 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
       <div>
         <Label>{this.props.label}</Label>
         <div style={{display: 'inline-flex'}}>
-          <div style={{width:'180px', paddingTop: '10px', marginRight:'2px'}}>
+          <div style={{width:'152px', paddingTop: '10px', marginRight:'2px'}}>
               <DatePicker value={this.state.day} strings={dateStrings}
                 isMonthPickerVisible={false} onSelectDate={this.onSelectDate} allowTextInput={false}
                 />
           </div>
-          <div style={{display: 'inline-flex', marginBottom: '8px'}}>
-            <div style={{width:'47px'}}>
+          <div style={{display: 'inline-flex', marginTop: '10px'}}>
+            <div style={{width:'61px'}}>
               <Dropdown
                 label=""
                 options={hours} onChanged={this.dropdownHoursChanged}
                 />
             </div>
             <div style={{paddingTop: '16px', paddingLeft: '2px', paddingRight: '2px'}}>:</div>
-            <div style={{width:'47px'}}>
+            <div style={{width:'61px'}}>
                 <Dropdown
                 label=""
                 options={minutes} onChanged={this.dropdownMinutesChanged} />

@@ -93,6 +93,11 @@ export interface IPropertyFieldPeoplePickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -134,6 +139,7 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
   private allowDuplicate: boolean = true;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -151,6 +157,7 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
     this.initialData = _properties.initialData;
     this.allowDuplicate = _properties.allowDuplicate;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -168,7 +175,8 @@ class PropertyFieldPeoplePickerBuilder implements IPropertyPaneField<IPropertyFi
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       context: this.context,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -202,7 +210,8 @@ export function PropertyFieldPeoplePicker(targetProperty: string, properties: IP
       allowDuplicate: properties.allowDuplicate,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldDatePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

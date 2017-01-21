@@ -84,6 +84,11 @@ export interface IPropertyFieldCustomListProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -127,6 +132,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
   private context: IWebPartContext;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -145,6 +151,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -163,7 +170,8 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       context: this.context,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -198,7 +206,8 @@ export function PropertyFieldCustomList(targetProperty: string, properties: IPro
       properties: properties.properties,
       context: properties.context,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldCustomList builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

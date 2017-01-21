@@ -53,6 +53,11 @@ export interface IPropertyFieldFontSizePickerProps {
    * Parent Web Part properties
    */
   properties: any;
+  /**
+   * @var
+   * Initial value
+   */
+  key?: string;
 }
 
 /**
@@ -94,6 +99,7 @@ class PropertyFieldFontSizePickerBuilder implements IPropertyPaneField<IProperty
   private preview: boolean;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
+  private key: string;
 
   /**
    * @function
@@ -111,6 +117,7 @@ class PropertyFieldFontSizePickerBuilder implements IPropertyPaneField<IProperty
     this.properties.onRender = this.render;
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
+    this.key = _properties.key;
   }
 
   /**
@@ -128,7 +135,8 @@ class PropertyFieldFontSizePickerBuilder implements IPropertyPaneField<IProperty
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      properties: this.customProperties
+      properties: this.customProperties,
+      key: this.key
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -162,7 +170,8 @@ export function PropertyFieldFontSizePicker(targetProperty: string, properties: 
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
-      onRender: null
+      onRender: null,
+      key: properties.key
     };
     //Calles the PropertyFieldFontSizePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
