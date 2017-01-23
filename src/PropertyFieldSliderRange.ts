@@ -194,8 +194,8 @@ class PropertyFieldSliderRangeBuilder implements IPropertyPaneField<IPropertyFie
     var jQueryCdn = '//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js';
     var jQueryUICdn = '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js';
 
-    SPComponentLoader.loadScript(jQueryCdn, '$').then(($: any): void => {
-      SPComponentLoader.loadScript(jQueryUICdn, '$').then((jqueryui: any): void => {
+    SPComponentLoader.loadScript(jQueryCdn, { globalExportsName: '$' }).then(($: any): void => {
+      SPComponentLoader.loadScript(jQueryUICdn, { globalExportsName: '$' }).then((jqueryui: any): void => {
           ($ as any)('#' + this.guid + '-slider').slider({
             range: true,
             min: this.min != null ? this.min : 0,
