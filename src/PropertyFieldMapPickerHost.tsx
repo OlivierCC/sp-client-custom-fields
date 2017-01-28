@@ -142,7 +142,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     color: 'rgb(68, 68, 68)',
     textDecoration: 'none',
     backgroundColor: 'rgb(255, 255, 255)',
-    backgroundClip: 'padding-box'}} value={this.state.longitude}  onChange={this.onLongitudeChange} />
+    backgroundClip: 'padding-box'}} value={this.state.longitude} disabled={this.props.disabled}  onChange={this.onLongitudeChange} />
         </div>
 
         <div style={{width:'90px', display: 'inline' }}>
@@ -161,12 +161,12 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     color: 'rgb(68, 68, 68)',
     textDecoration: 'none',
     backgroundColor: 'rgb(255, 255, 255)',
-    backgroundClip: 'padding-box'}} value={this.state.latitude} onChange={this.onLatitudeChange}/>
+    backgroundClip: 'padding-box'}} value={this.state.latitude} onChange={this.onLatitudeChange} disabled={this.props.disabled}/>
         </div>
         <div style={{width:'80px', float: 'right',top: '-30px', position: 'relative' }}>
-          <div style={{float: 'left' }}><Button buttonType={ButtonType.icon} icon="MapPin" onClick={this.onGetCurrentLocation}  /></div>
+          <div style={{float: 'left' }}><Button buttonType={ButtonType.icon} icon="MapPin" disabled={this.props.disabled} onClick={this.onGetCurrentLocation}  /></div>
           <div style={{display:'inline'}}>
-          <Button buttonType={ButtonType.icon} icon="ChevronUpSmall"  onClick={this.onClickChevron}  /></div>
+          <Button buttonType={ButtonType.icon} disabled={this.props.disabled} icon="ChevronUpSmall"  onClick={this.onClickChevron}  /></div>
         </div>
         </div>
         <div style={{position: 'relative', top: '0px', paddingBottom: '30px'}}>

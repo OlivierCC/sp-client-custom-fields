@@ -327,6 +327,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
           onChanged={this.onChangedList}
           options={this.state.lists}
           selectedKey={this.state.selectedList}
+          disabled={this.props.disabled}
         />
 
         {this.props.showOrderBy != false ?
@@ -336,14 +337,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
               options={this.state.fields}
               selectedKey={this.state.selectedField}
               onChanged={this.onChangedField}
-              isDisabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+              isDisabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
             />
             <Dropdown
               label={strings.SPListQueryArranged}
               options={this.state.arranged}
               selectedKey={this.state.selectedArrange}
               onChanged={this.onChangedArranged}
-              isDisabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+              isDisabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
             />
            </div>
           : ''}
@@ -354,7 +355,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
             max={this.props.max == null ? 500 : this.props.max}
             defaultValue={this.state.max}
             onChange={this.onChangedMax}
-            disabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+            disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
           />
           : ''}
 
@@ -364,18 +365,20 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
               <Label>Filter</Label>
               <Dropdown
                 label=''
+                disabled={this.props.disabled}
                 options={this.state.fields}
                 selectedKey={value.field}
                 onChanged={(option: IDropdownOption, selectIndex?: number) => this.onChangedFilterField(option, selectIndex, index)}
               />
               <Dropdown
                 label=''
+                disabled={this.props.disabled}
                 options={this.state.operators}
                 selectedKey={value.operator}
                 onChanged={(option: IDropdownOption, selectIndex?: number) => this.onChangedFilterOperator(option, selectIndex, index)}
               />
-              <TextField defaultValue={value.value} onChanged={(value2: string) => this.onChangedFilterValue(value2, index)} />
-              <Button buttonType={ButtonType.command} onClick={() => this.onClickRemoveFilter(index)} icon="Delete">
+              <TextField disabled={this.props.disabled} defaultValue={value.value} onChanged={(value2: string) => this.onChangedFilterValue(value2, index)} />
+              <Button disabled={this.props.disabled} buttonType={ButtonType.command} onClick={() => this.onClickRemoveFilter(index)} icon="Delete">
                 {strings.SPListQueryRemove}
               </Button>
             </div>
@@ -385,7 +388,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
 
         {this.props.showFilters != false ?
           <Button buttonType={ButtonType.command} onClick={this.onClickAddFilter}
-          disabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true } icon="Add">
+          disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true } icon="Add">
           {strings.SPListQueryAdd}
           </Button>
           : ''}

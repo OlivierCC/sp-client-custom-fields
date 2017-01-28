@@ -147,6 +147,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.font,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'fontFieldId'
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
@@ -156,6 +157,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.fontSize,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'fontSizeFieldId'
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
@@ -165,6 +167,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.fontSize,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'fontSizeField2Id'
                 }),
                 PropertyFieldIconPicker('icon', {
@@ -173,6 +176,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   orderAlphabetical: true,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'iconFieldId'
                 }),
                 PropertyFieldColorPicker('color', {
@@ -187,6 +191,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.align,
                   onPropertyChanged: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'alignFieldId'
                 })
               ],
@@ -224,6 +229,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  disabled: false,
                   key: 'customListFieldId'
                 }),
                 PropertyFieldDropDownSelect('dropDownSelect', {
@@ -240,6 +246,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.dropDownSelect,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'dropDownSelectFieldId'
                 }),
                 PropertyFieldPassword('password', {
@@ -247,6 +254,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.password,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'passwordFieldId'
                 }),
                 PropertyFieldRichTextBox('richTextBox', {
@@ -257,6 +265,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   mode: 'basic', //'basic' or 'standard' or 'full'
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'richFieldId'
                 }),
                 PropertyFieldDatePicker('date', {
@@ -301,6 +310,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   phoneNumberFormat: IPhoneNumberFormat.UnitedStates,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'phoneFieldId'
                 }),
                 PropertyFieldMaskedInput('maskedInput', {
@@ -311,6 +321,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   maxLength: '19',
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'maskedFieldId'
                 }),
                 PropertyFieldMapPicker('geolocation', {
@@ -319,6 +330,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   latitude: this.properties.geolocation != null ? this.properties.geolocation.substr(this.properties.geolocation.indexOf(",") + 1, this.properties.geolocation.length - this.properties.geolocation.indexOf(",")) : '0',
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'geoLocationFieldId'
                 })
             ],
@@ -333,6 +345,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  disabled: false,
                   key: 'pictureFieldId'
                 }),
                 PropertyFieldDocumentPicker('document', {
@@ -341,6 +354,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  disabled: false,
                   key: 'documentFieldId'
                 }),
                 PropertyFieldPeoplePicker('people', {
@@ -361,6 +375,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  disabled: false,
                   key: 'listFieldId'
                 }),
                 PropertyFieldSPFolderPicker('folder', {
@@ -370,6 +385,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'folderFieldId'
                 }),
                 PropertyFieldSPListMultiplePicker('listsCollection', {
@@ -381,6 +397,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  disabled: false,
                   key: 'listCollectionFieldId'
                 })
               ]
@@ -401,6 +418,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  disabled: false,
                   key: 'spListFieldId'
                 }),
                  PropertyFieldDisplayMode('displayMode', {
@@ -408,6 +426,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialValue: this.properties.displayMode,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  disabled: false,
                   key: 'displayModeFieldId'
                 })
               ]

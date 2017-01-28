@@ -36,6 +36,7 @@ interface IMaskedInputProps {
   value?: string;
   initialValue?: string;
   onChange?(newValue?: string): void;
+  disabled?: boolean;
 }
 
 /**
@@ -228,7 +229,8 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
                  label: this.props.label,
                  dataCharset: this.props['data-charset'],
                  required: this.props.required,
-                 initialValue: this.props.initialValue
+                 initialValue: this.props.initialValue,
+                 disabled: this.props.disabled
              };
 
         var shellStyle = {
@@ -271,6 +273,7 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
                   id={props.id + 'Mask'}><i style={shellStyleSpanI}>{this.state.value}</i>{placeHolderContent}</span>
                 <input style={inputShell}
                 id={props.id}
+                disabled={props.disabled}
                 ref="inputShell"
                 onChange={this.handleChange}
                 onFocus={this.handleFocus}
@@ -393,6 +396,7 @@ export default class PropertyFieldPhoneNumberHost extends React.Component<IPrope
         <MaskedInput
             id="tel"
             type="tel"
+            disabled={this.props.disabled}
             placeholder={selectedPattern.placeHolder}
             pattern={selectedPattern.pattern}
             className="ms-TextField-field"

@@ -80,7 +80,7 @@ export interface IPropertyFieldSliderRangeProps {
   properties: any;
   /**
    * @var
-   * Initial value
+   * An UNIQUE key indicates the identity of this control
    */
   key?: string;
 }

@@ -96,9 +96,13 @@ export interface IPropertyFieldPhoneNumberProps {
   properties: any;
   /**
    * @var
-   * Initial value
+   * An UNIQUE key indicates the identity of this control
    */
   key?: string;
+  /**
+   * Whether the property pane field is enabled or not.
+   */
+  disabled?: boolean;
 }
 
 /**
@@ -118,6 +122,7 @@ export interface IPropertyFieldPhoneNumberPropsInternal extends IPropertyPaneCus
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  disabled?: boolean;
 }
 
 /**
@@ -139,6 +144,7 @@ class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFie
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private disabled: boolean = false;
 
   /**
    * @function
@@ -156,6 +162,8 @@ class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFie
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
     this.key = _properties.key;
+    if (_properties.disabled === true)
+      this.disabled = _properties.disabled;
   }
 
   /**
@@ -173,7 +181,8 @@ class PropertyFieldPhoneNumberBuilder implements IPropertyPaneField<IPropertyFie
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
-      key: this.key
+      key: this.key,
+      disabled: this.disabled
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -207,7 +216,8 @@ export function PropertyFieldPhoneNumber(targetProperty: string, properties: IPr
       properties: properties.properties,
       onDispose: null,
       onRender: null,
-      key: properties.key
+      key: properties.key,
+      disabled: properties.disabled
     };
     //Calles the PropertyFieldPhoneNumber builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

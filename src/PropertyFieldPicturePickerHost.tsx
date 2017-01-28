@@ -211,8 +211,8 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <Button onClick={this.onOpenPanel}>{strings.PicturePickerButtonSelect}</Button>
-        <Button onClick={this.onEraseButton} disabled={this.state.selectedImage != null && this.state.selectedImage != '' ? false: true}>
+        <Button disabled={this.props.disabled} onClick={this.onOpenPanel}>{strings.PicturePickerButtonSelect}</Button>
+        <Button onClick={this.onEraseButton} disabled={this.props.disabled === false &&  (this.state.selectedImage != null && this.state.selectedImage) != '' ? false: true}>
         {strings.PicturePickerButtonReset}</Button>
         {this.state.selectedImage != null && this.state.selectedImage != '' ?
         <div style={{marginTop: '7px'}}>

@@ -243,9 +243,9 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
       <div>
         <Label>{this.props.label}</Label>
         <div style={{display:'flex'}}>
-          <TextField style={{width:'220px'}} readOnly={true} value={this.state.confirmFolder} />
-          <Button buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
-          <Button buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
+          <TextField disabled={this.props.disabled} style={{width:'220px'}} readOnly={true} value={this.state.confirmFolder} />
+          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
+          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
         </div>
 
         <Dialog type={DialogType.close} title={strings.SPFolderPickerDialogTitle} isOpen={this.state.isOpen} isDarkOverlay={true} isBlocking={false} onDismiss={this.onDismiss}>

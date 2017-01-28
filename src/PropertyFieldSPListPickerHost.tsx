@@ -88,6 +88,7 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
     return (
       <div>
         <Dropdown
+          disabled={this.props.disabled}
           label={this.props.label}
           onChanged={this.onChanged}
           options={this.options}

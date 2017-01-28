@@ -54,7 +54,7 @@ export default class PropertyFieldPasswordHost extends React.Component<IProperty
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <input label={this.props.label} type="password" value={this.props.initialValue} className="ms-TextField-field"
+        <input disabled={this.props.disabled} label={this.props.label} type="password" value={this.props.initialValue} className="ms-TextField-field"
           onChange={this.onValueChanged}
           />
       </div>

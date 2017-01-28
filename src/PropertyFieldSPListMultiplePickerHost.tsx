@@ -129,6 +129,9 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
     }
     else
     {
+        var styleOfLabel: any = {
+          color: this.props.disabled === true ? '#A6A6A6' : 'auto'
+        };
         //Renders content
         return (
           <div>
@@ -137,8 +140,8 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
               var uniqueKey = this.props.targetProperty + '-' + item.key;
               return (
                 <div className="ms-ChoiceField">
-                  <input id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
-                  <label htmlFor={uniqueKey}><span className="ms-Label">{item.text}</span></label>
+                  <input disabled={this.props.disabled} id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
+                  <label htmlFor={uniqueKey}><span className="ms-Label" style={styleOfLabel}>{item.text}</span></label>
                 </div>
               );
             })

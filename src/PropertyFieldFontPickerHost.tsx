@@ -155,6 +155,8 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
    * Function to open the dialog
    */
   private onOpenDialog(): void {
+    if (this.props.disabled === true)
+      return;
     this.state.isOpen = !this.state.isOpen;
     this.setState(this.state);
   }
@@ -265,7 +267,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
       });
       return (
         <Dropdown label={this.props.label} options={dropDownOptions} selectedKey={selectedKey}
-          onChanged={this.onFontDropdownChanged} />
+          onChanged={this.onFontDropdownChanged} disabled={this.props.disabled} />
       );
     }
     else {
@@ -278,12 +280,15 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
         zoom: 1
       };
       var dropdownColor = '1px solid #c8c8c8';
-      if (this.state.isOpen === true)
+      if (this.props.disabled === true)
+        dropdownColor = '1px solid #f4f4f4';
+      else if (this.state.isOpen === true)
         dropdownColor = '1px solid #3091DE';
       else if (this.state.isHoverDropdown === true)
         dropdownColor = '1px solid #767676';
+
       var fontSelectA = {
-        backgroundColor: '#fff',
+        backgroundColor: this.props.disabled === true ? '#f4f4f4' : '#fff',
         borderRadius        : '0px',
         backgroundClip        : 'padding-box',
         border: dropdownColor,
@@ -294,9 +299,9 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
         height: '26px',
         lineHeight: '26px',
         padding: '0 0 0 8px',
-        color: '#444',
+        color: this.props.disabled === true ? '#a6a6a6' : '#444',
         textDecoration: 'none',
-        cursor: 'pointer'
+        cursor: this.props.disabled === true ? 'default' : 'pointer'
       };
       var fontSelectASpan = {
         marginRight: '26px',
@@ -305,7 +310,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
         whiteSpace: 'nowrap',
         lineHeight: '1.8',
         textOverflow: 'ellipsis',
-        cursor: 'pointer',
+        cursor: this.props.disabled === true ? 'default' : 'pointer',
         fontFamily: this.state.safeSelectedFont != null && this.state.safeSelectedFont != '' ? this.state.safeSelectedFont : 'Arial',
         fontWeight: 400
       };
@@ -324,7 +329,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
         display: 'block',
         width: '100%',
         height: '100%',
-        cursor: 'pointer',
+        cursor: this.props.disabled === true ? 'default' : 'pointer',
         marginTop: '2px'
       };
       var fsDrop = {

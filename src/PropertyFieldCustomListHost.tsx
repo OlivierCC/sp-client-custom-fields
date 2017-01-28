@@ -720,7 +720,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
           </div>
         </Dialog>
 
-        <Button onClick={this.onOpenPanel}>{this.props.headerText}</Button>
+        <Button disabled={this.props.disabled} onClick={this.onOpenPanel}>{this.props.headerText}</Button>
 
       </div>
     );

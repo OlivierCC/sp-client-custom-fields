@@ -61,9 +61,13 @@ export interface IPropertyFieldRichTextBoxProps {
   properties: any;
   /**
    * @var
-   * Initial value
+   * An UNIQUE key indicates the identity of this control
    */
   key?: string;
+  /**
+   * Whether the property pane field is enabled or not.
+   */
+  disabled?: boolean;
 }
 
 /**
@@ -85,6 +89,7 @@ export interface IPropertyFieldRichTextBoxPropsInternal extends IPropertyPaneCus
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
+  disabled?: boolean;
 }
 
 /**
@@ -109,6 +114,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private disabled: boolean = false;
 
   /**
    * @function
@@ -130,6 +136,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     this.customProperties = _properties.properties;
     this.guid = this.getGuid();
     this.key = _properties.key;
+    if (_properties.disabled === true)
+      this.disabled = _properties.disabled;
   }
 
   private getGuid(): string {
@@ -162,7 +170,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       onPropertyChange: this.onPropertyChange,
       guid: this.guid,
       properties: this.customProperties,
-      key: this.key
+      key: this.key,
+      disabled: this.disabled
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -226,7 +235,8 @@ export function PropertyFieldRichTextBox(targetProperty: string, properties: IPr
       properties: properties.properties,
       onDispose: null,
       onRender: null,
-      key: properties.key
+      key: properties.key,
+      disabled: properties.disabled
     };
     //Calles the PropertyFieldRichTextBox builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -75,21 +75,29 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
   }
 
   private mouseListEnterDropDown() {
+    if (this.props.disabled === true)
+      return;
     this.state.overList = true;
     this.setState(this.state);
   }
 
   private mouseListLeaveDropDown() {
+    if (this.props.disabled === true)
+      return;
     this.state.overList = false;
     this.setState(this.state);
   }
 
   private mouseTilesEnterDropDown() {
+    if (this.props.disabled === true)
+      return;
     this.state.overTiles = true;
     this.setState(this.state);
   }
 
   private mouseTilesLeaveDropDown() {
+    if (this.props.disabled === true)
+      return;
     this.state.overTiles = false;
     this.setState(this.state);
   }
@@ -113,33 +121,35 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
         <Label>{this.props.label}</Label>
 
         <div style={{display: 'inline-flex'}}>
-          <div style={{cursor: 'pointer', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundLists}}
+          <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundLists}}
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
             <div style={{float: 'left'}}>
 
-              <input id="bulletRadio" className=""
+              <input id={"bulletRadio-" + this.props.key } className=""
                 onChange={this.onClickBullets} type="radio" name="radio1" role="radio"
+                disabled={this.props.disabled}
                 defaultChecked={this.state.mode == "list" ? true : false}
                 aria-checked={this.state.mode == "list" ? true : false}
-                value="list"  style={{cursor: 'pointer', width: '18px', height: '18px'}}/>
-              <label htmlFor="bulletRadio" className="">
+                value="list"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
+              <label htmlFor={"bulletRadio-" + this.props.key } className="">
                 <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--List' aria-hidden="true" style={{cursor: 'pointer',fontSize:'60px', paddingLeft: '30px', color: '#808080'}}></i>
+                  <i className='ms-Icon ms-Icon--List' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'60px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
               </label>
             </div>
           </div>
-          <div style={{cursor: 'pointer', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundTiles}}
+          <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <input id="tilesRadio" className=""
+              <input id={"tilesRadio-" + this.props.key} className=""
                onChange={this.onClickTiles} type="radio" name="radio1" role="radio"
+               disabled={this.props.disabled}
                defaultChecked={this.state.mode == "tiles" ? true : false}
                aria-checked={this.state.mode == "tiles" ? true : false}
-               value="tiles"  style={{cursor: 'pointer', width: '18px', height: '18px'}}/>
-              <label htmlFor="tilesRadio" className="">
+               value="tiles"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
+              <label htmlFor={"tilesRadio-" + this.props.key} className="">
                 <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--Tiles' aria-hidden="true" style={{cursor: 'pointer',fontSize:'48px', paddingLeft: '30px', color: '#808080'}}></i>
+                  <i className='ms-Icon ms-Icon--Tiles' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'48px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
               </label>
             </div>
