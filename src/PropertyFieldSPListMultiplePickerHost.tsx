@@ -8,11 +8,12 @@
  */
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
-import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
-import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { IPropertyFieldSPListMultiplePickerPropsInternal, PropertyFieldSPListMultiplePickerOrderBy } from './PropertyFieldSPListMultiplePicker';
 
 /**
@@ -24,18 +25,32 @@ export interface IPropertyFieldSPListMultiplePickerHostProps extends IPropertyFi
 }
 
 /**
+ * @interface
+ * PropertyFieldSPListMultiplePickerHost state interface
+ *
+ */
+export interface IPropertyFieldSPListMultiplePickerHostState {
+  results: IChoiceGroupOption[];
+  selectedKeys: string[];
+  loaded: boolean;
+  errorMessage?: string;
+}
+
+/**
  * @class
  * Renders the controls for PropertyFieldSPListMultiplePicker component
  */
-export default class PropertyFieldSPListMultiplePickerHost extends React.Component<IPropertyFieldSPListMultiplePickerHostProps, {}> {
+export default class PropertyFieldSPListMultiplePickerHost extends React.Component<IPropertyFieldSPListMultiplePickerHostProps, IPropertyFieldSPListMultiplePickerHostState> {
 
   private options: IChoiceGroupOption[] = [];
   private selectedKeys: string[] = [];
   private loaded: boolean = false;
+  private async: Async;
+  private delayedValidate: (value: string[]) => void;
 
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSPListMultiplePickerHostProps) {
     super(props);
@@ -44,8 +59,15 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
     this.state = {
 			results: this.options,
       selectedKeys: this.selectedKeys,
-      loaded: this.loaded
+      loaded: this.loaded,
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
+
     this.loadLists();
   }
 
@@ -98,7 +120,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
    * Raises when a list has been selected
    */
   private onChanged(element: any): void {
-    if (this.props.onPropertyChange && element) {
+    if (element) {
       var isChecked: boolean = element.currentTarget.checked;
       var value: string = element.currentTarget.value;
 
@@ -108,14 +130,64 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
       else {
         this.selectedKeys.push(value);
       }
-      this.props.properties[this.props.targetProperty] = this.selectedKeys;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.selectedLists, this.selectedKeys);
+      this.delayedValidate(this.selectedKeys);
     }
   }
 
   /**
    * @function
-   * Renders the SPListpicker controls with Office UI  Fabric
+   * Validates the new custom field value
+   */
+  private validate(value: string[]): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.selectedLists, value);
+      return;
+    }
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || []);
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.selectedLists, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.selectedLists, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.selectedLists, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string[], newValue: string[]) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
+  }
+
+  /**
+   * @function
+   * Renders the SPListMultiplePicker controls with Office UI  Fabric
    */
   public render(): JSX.Element {
 
@@ -139,13 +211,20 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
             {this.options.map((item: IChoiceGroupOption, index: number) => {
               var uniqueKey = this.props.targetProperty + '-' + item.key;
               return (
-                <div className="ms-ChoiceField">
+                <div className="ms-ChoiceField" key={this.props.key + '-multiplelistpicker-' + index}>
                   <input disabled={this.props.disabled} id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
                   <label htmlFor={uniqueKey}><span className="ms-Label" style={styleOfLabel}>{item.text}</span></label>
                 </div>
               );
             })
             }
+            { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
           </div>
         );
     }

@@ -19,7 +19,6 @@ export interface IPropertyFieldSliderRangeHostProps extends IPropertyFieldSlider
 
 
 export interface IPropertyFieldSliderRangeHostState {
-  scripLoaded: boolean;
 }
 
 /**
@@ -30,19 +29,17 @@ export default class PropertyFieldSliderRangeHost extends React.Component<IPrope
 
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSliderRangeHostProps) {
     super(props);
     //Bind the current object to the external called onSelectDate method
-
-    //this.setState({scripLoaded: false});
   }
 
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
     //Renders content
@@ -50,6 +47,7 @@ export default class PropertyFieldSliderRangeHost extends React.Component<IPrope
       <div>
         <Label>{this.props.label}</Label>
         <table style={{paddingTop: '8px', paddingBottom: '10px', width:"100%"}} cellPadding="0" cellSpacing="10">
+        <tbody>
         { this.props.showValue == false ?
             <tr><td width="100%"><div id={this.props.guid + '-slider'}></div></td></tr>
           :
@@ -68,7 +66,18 @@ export default class PropertyFieldSliderRangeHost extends React.Component<IPrope
                 <td width="35" style={{textAlign: 'right'}}><div className="ms-Label" id={this.props.guid + '-max'}>{(this.props.initialValue != null && this.props.initialValue != '' && this.props.initialValue.split(",").length == 2) ? this.props.initialValue.split(",")[1] : '0' }</div></td>
               </tr>
         }
+        </tbody>
         </table>
+        <div>
+            <div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>
+              <span id={this.props.guid + '-errorMssg1'}/>
+            </div>
+            <span>
+              <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>
+                <span id={this.props.guid + '-errorMssg2'}/>
+              </p>
+            </span>
+        </div>
       </div>
     );
   }

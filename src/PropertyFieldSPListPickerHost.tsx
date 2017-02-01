@@ -9,6 +9,7 @@
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IPropertyFieldSPListPickerPropsInternal, PropertyFieldSPListPickerOrderBy } from './PropertyFieldSPListPicker';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
@@ -22,17 +23,32 @@ export interface IPropertyFieldSPListPickerHostProps extends IPropertyFieldSPLis
 }
 
 /**
+ * @interface
+ * PropertyFieldSPListPickerHost state interface
+ *
+ */
+export interface IPropertyFieldFontPickerHostState {
+  results: IDropdownOption[];
+  selectedKey: string;
+  errorMessage?: string;
+}
+
+/**
  * @class
  * Renders the controls for PropertyFieldSPListPicker component
  */
-export default class PropertyFieldSPListPickerHost extends React.Component<IPropertyFieldSPListPickerHostProps, {}> {
+export default class PropertyFieldSPListPickerHost extends React.Component<IPropertyFieldSPListPickerHostProps, IPropertyFieldFontPickerHostState> {
 
   private options: IDropdownOption[] = [];
   private selectedKey: string;
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSPListPickerHostProps) {
     super(props);
@@ -40,8 +56,15 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
     this.onChanged = this.onChanged.bind(this);
     this.state = {
 			results: this.options,
-      selectedKey: this.selectedKey
+      selectedKey: this.selectedKey,
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
+
     this.loadLists();
   }
 
@@ -73,10 +96,63 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
    * Raises when a list has been selected
    */
   private onChanged(option: IDropdownOption, index?: number): void {
-    if (this.props.onPropertyChange && option) {
-      this.props.properties[this.props.targetProperty] = option.key;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.selectedList, option.key);
+    var newValue: string = option.key as string;
+    this.delayedValidate(newValue);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.selectedList, value);
+      return;
     }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.selectedList, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.selectedList, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.selectedList, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -94,6 +170,13 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
           options={this.options}
           selectedKey={this.selectedKey}
         />
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }

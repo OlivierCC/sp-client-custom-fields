@@ -8,14 +8,15 @@
  */
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
-import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
-import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
-import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -44,6 +45,7 @@ export interface IPropertyFieldSPListQueryHostState {
   max?: number;
   operators?: IDropdownOption[];
   filters?: IFilter[];
+  errorMessage?: string;
 }
 
 /**
@@ -52,9 +54,13 @@ export interface IPropertyFieldSPListQueryHostState {
  */
 export default class PropertyFieldSPListQueryHost extends React.Component<IPropertyFieldSPListQueryHostProps, IPropertyFieldSPListQueryHostState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSPListQueryHostProps) {
     super(props);
@@ -87,11 +93,17 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
                {key: 'Ge', text: strings.SPListQueryOperatorGe}
       ],
       filters: [],
-      max: 20
+      max: 20,
+      errorMessage: ''
     };
 
     this.loadDefaultData();
     this.loadLists();
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   private loadDefaultData(): void {
@@ -104,8 +116,6 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       var indexOfEndGuid: number = listId.indexOf("')/items");
       listId = listId.substr(0, indexOfEndGuid);
       this.state.selectedList = listId;
-      if (listId != null && listId != '')
-        this.loadFields();
     }
     var indexOfOrderBy: number = this.props.query.indexOf("$orderBy=");
     if (indexOfOrderBy > -1) {
@@ -154,6 +164,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         }
       }
     }
+    if (listId != null && listId != '')
+      this.loadFields();
   }
 
   /**
@@ -166,9 +178,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       this.state.lists = [];
       response.value.map((list: ISPList) => {
         var isSelected: boolean = false;
-        if (this.props.selectedList == list.Id) {
+        if (this.state.selectedList == list.Id) {
           isSelected = true;
-          this.state.selectedList = list.Id;
         }
         this.state.lists.push({
           key: list.Id,
@@ -184,11 +195,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
     var listService: SPListPickerService = new SPListPickerService(this.props, this.props.context);
     listService.getFields(this.state.selectedList).then((response: ISPFields) => {
       this.state.fields = [];
-      response.value.map((list: ISPField) => {
+      response.value.map((field: ISPField) => {
         var isSelected: boolean = false;
+        if (this.state.selectedField == field.StaticName) {
+          isSelected = true;
+        }
         this.state.fields.push({
-          key: list.StaticName,
-          text: list.Title,
+          key: field.StaticName,
+          text: field.Title,
           isSelected: isSelected
         });
       });
@@ -197,21 +211,10 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
   }
 
   private saveState(): void {
-      this.setState({
-        selectedField: this.state.selectedField,
-        selectedArrange: this.state.selectedArrange,
-        selectedList: this.state.selectedList,
-        lists: this.state.lists,
-        fields: this.state.fields,
-        max: this.state.max,
-        arranged: this.state.arranged,
-        operators: this.state.operators,
-        filters: this.state.filters
-      });
+      this.setState(this.state);
   }
 
   private saveQuery(): void {
-    if (this.props.onPropertyChange) {
 
       var queryUrl: string = this.props.context.pageContext.web.absoluteUrl;
       queryUrl += "/_api/lists(guid'";
@@ -246,9 +249,64 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         }
         queryUrl += '&';
       }
-      this.props.properties[this.props.targetProperty] = queryUrl;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.query, queryUrl);
+      if (this.delayedValidate !== null && this.delayedValidate !== undefined) {
+        this.delayedValidate(queryUrl);
+      }
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.query, value);
+      return;
     }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.query, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.query, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.query, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -315,7 +373,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
 
   /**
    * @function
-   * Renders the SPListpicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
     //Renders content
@@ -337,14 +395,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
               options={this.state.fields}
               selectedKey={this.state.selectedField}
               onChanged={this.onChangedField}
-              isDisabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+              disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
             />
             <Dropdown
               label={strings.SPListQueryArranged}
               options={this.state.arranged}
               selectedKey={this.state.selectedArrange}
               onChanged={this.onChangedArranged}
-              isDisabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+              disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
             />
            </div>
           : ''}
@@ -392,6 +450,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
           {strings.SPListQueryAdd}
           </Button>
           : ''}
+
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
 
       </div>
     );

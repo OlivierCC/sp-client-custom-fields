@@ -123,6 +123,176 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
     this.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
   }
 
+
+/*
+  //Samples of validation method, to use
+  //with the onGetErrorMessage function of Propery Fields.
+  //See https://dev.office.com/sharepoint/docs/spfx/web-parts/guidance/validate-web-part-property-values
+
+  private canNotBeEmpty(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return 'Provide a value';
+    }
+    return '';
+  }
+
+  private canNotBeEmptyPromise(value: string): Promise<string> {
+    return new Promise<string>((resolve: (validationErrorMessage: string) => void, reject: (error: any) => void): void => {
+      if (value === null || value.length === 0) {
+        resolve('Provide a value');
+        return;
+      }
+      resolve('');
+    });
+  }
+
+  private canNotBeArial(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("Arial") !== -1)
+      return 'Font can not be Arial';
+    return '';
+  }
+
+  private canNotBeXSmall(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("x-small") !== -1)
+      return 'Font size can not be x-small';
+    return '';
+  }
+
+  private canNotBeAADLogo(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("AADLogo") !== -1)
+      return 'Icon can not be AADLogo';
+    return '';
+  }
+
+  private canNotBeBlack(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("#000000") !== -1)
+      return 'Color can not be black';
+    return '';
+  }
+
+  private canNotBeAlignLeft(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("left") !== -1)
+      return 'Align can not be left';
+    return '';
+  }
+
+  private arrayCanNotBeEmpty(value: string[]): string {
+    if (value === null || value.length === 0) {
+      return 'Array can not be empty';
+    }
+    return '';
+  }
+
+  private canNotBeIn2016(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("2016") !== -1)
+      return 'Date can not be during 2016.';
+    return '';
+  }
+
+  private canNotBe0Location(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value == '0,0')
+      return 'Bad geoLocation.';
+    return '';
+  }
+
+  private badPhoneNumber(value: string): string {
+    if (value === null || value.trim().length === 0 || value == '(') {
+      return 'Provide a valid phone number.';
+    }
+    if (value.indexOf("(00") != 0) {
+      return 'Phone number must be begin with (00.';
+    }
+    return '';
+  }
+
+  private canNotSelectThisList(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("6770c83b") !== -1) {
+      return 'You can not select this list.';
+    }
+    return '';
+  }
+
+  private canNotBeMock(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf('mock'))
+      return 'The mock is not allowed';
+    return '';
+  }
+
+  private canNotBeList(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("list") !== -1) {
+      return 'You can not select the list mode.';
+    }
+    return '';
+  }
+
+  private canNotBeOrderById(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf("orderBy=ID") !== -1) {
+      return 'You can not order by ID.';
+    }
+    return '';
+  }
+
+  private canNotChooseMoreThan2People(value: any[]): string {
+    if (value.length > 2) {
+      return 'You can not choose more than 2 people.';
+    }
+    return '';
+  }
+
+  private canNotBeDoc(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value.indexOf(".doc") !== -1) {
+      return 'You can not choose a *.doc file.';
+    }
+    return '';
+  }
+
+  private invalidRange(value: string): string {
+    if (value === null || value.trim().length === 0) {
+      return '';
+    }
+    if (value === '0,500') {
+      return 'Invalid range.';
+    }
+    return '';
+  }
+*/
+
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }
@@ -148,6 +318,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'fontFieldId'
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
@@ -158,6 +330,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'fontSizeFieldId'
                 }),
                 PropertyFieldFontSizePicker('fontSize', {
@@ -168,6 +342,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'fontSizeField2Id'
                 }),
                 PropertyFieldIconPicker('icon', {
@@ -177,6 +353,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'iconFieldId'
                 }),
                 PropertyFieldColorPicker('color', {
@@ -184,6 +362,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialColor: this.properties.color,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'colorFieldId'
                 }),
                 PropertyFieldAlignPicker('align', {
@@ -192,6 +372,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChanged: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'alignFieldId'
                 })
               ],
@@ -247,6 +429,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'dropDownSelectFieldId'
                 }),
                 PropertyFieldPassword('password', {
@@ -255,6 +439,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'passwordFieldId'
                 }),
                 PropertyFieldRichTextBox('richTextBox', {
@@ -266,6 +452,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'richFieldId'
                 }),
                 PropertyFieldDatePicker('date', {
@@ -273,6 +461,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   initialDate: this.properties.date,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'dateFieldId'
                 }),
                 PropertyFieldDatePicker('date2', {
@@ -281,6 +471,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   formatDate: this.formatDateIso,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'date2FieldId'
                 }),
                 PropertyFieldDateTimePicker('datetime', {
@@ -289,6 +481,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   //formatDate: this.formatDateIso,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'dateTimeFieldId'
                 }),
                 PropertyFieldSliderRange('sliderRange', {
@@ -302,6 +496,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   step: 1,
                   orientation: 'horizontal', //'horizontal' or 'vertical'
                   properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'sliderRangeFieldId'
                 }),
                 PropertyFieldPhoneNumber('phone', {
@@ -311,6 +507,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'phoneFieldId'
                 }),
                 PropertyFieldMaskedInput('maskedInput', {
@@ -322,6 +520,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'maskedFieldId'
                 }),
                 PropertyFieldMapPicker('geolocation', {
@@ -331,6 +531,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'geoLocationFieldId'
                 })
             ],
@@ -346,6 +548,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'pictureFieldId'
                 }),
                 PropertyFieldDocumentPicker('document', {
@@ -355,6 +559,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'documentFieldId'
                 }),
                 PropertyFieldPeoplePicker('people', {
@@ -364,6 +570,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'peopleFieldId'
                 }),
                PropertyFieldSPListPicker('list', {
@@ -376,6 +584,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'listFieldId'
                 }),
                 PropertyFieldSPFolderPicker('folder', {
@@ -386,6 +596,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'folderFieldId'
                 }),
                 PropertyFieldSPListMultiplePicker('listsCollection', {
@@ -398,6 +610,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'listCollectionFieldId'
                 })
               ]
@@ -419,6 +633,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'spListFieldId'
                 }),
                  PropertyFieldDisplayMode('displayMode', {
@@ -427,6 +643,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
                   key: 'displayModeFieldId'
                 })
               ]

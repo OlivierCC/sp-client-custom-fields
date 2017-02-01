@@ -198,9 +198,9 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
 
 /**
  * @function
- * Helper method to create a Color Picker on the PropertyPane.
- * @param targetProperty - Target property the Color picker is associated to.
- * @param properties - Strongly typed Color Picker properties.
+ * Helper method to create the customer field on the PropertyPane.
+ * @param targetProperty - Target property the custom field is associated to.
+ * @param properties - Strongly typed custom field properties.
  */
 export function PropertyFieldCustomList(targetProperty: string, properties: IPropertyFieldCustomListProps): IPropertyPaneField<IPropertyFieldCustomListPropsInternal> {
 
@@ -219,7 +219,7 @@ export function PropertyFieldCustomList(targetProperty: string, properties: IPro
       key: properties.key,
       disabled: properties.disabled
     };
-    //Calles the PropertyFieldCustomList builder object
+    //Calls the PropertyFieldCustomList builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
     return new PropertyFieldCustomListBuilder(targetProperty, newProperties);
 }

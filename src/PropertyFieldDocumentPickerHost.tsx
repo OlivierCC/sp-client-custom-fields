@@ -8,11 +8,12 @@
 import * as React from 'react';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IPropertyFieldDocumentPickerPropsInternal } from './PropertyFieldDocumentPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
-import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -31,6 +32,7 @@ export interface IPropertyFieldDocumentPickerHostState {
   openUpload?: boolean;
   recentImages?: string[];
   selectedImage: string;
+  errorMessage?: string;
 }
 
 /**
@@ -39,9 +41,13 @@ export interface IPropertyFieldDocumentPickerHostState {
  */
 export default class PropertyFieldDocumentPickerHost extends React.Component<IPropertyFieldDocumentPickerHostProps, IPropertyFieldDocumentPickerHostState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldDocumentPickerHostProps) {
     super(props);
@@ -64,8 +70,14 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
       openRecent: false,
       openSite: true,
       openUpload: false,
-      recentImages: []
+      recentImages: [],
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
 
     //Load recent images
     this.LoadRecentImages();
@@ -78,9 +90,53 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
   *
   */
   private saveImageProperty(imageUrl: string): void {
-    if (this.props.onPropertyChange) {
-      this.props.properties[this.props.targetProperty] = imageUrl;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, imageUrl);
+    this.delayedValidate(imageUrl);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialValue, value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialValue, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialValue, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialValue, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
     }
   }
 
@@ -167,6 +223,7 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
   */
   public componentWillUnmount() {
     window.removeEventListener('message', this.handleIframeData, false);
+    this.async.dispose();
   }
 
   private onClickSite(element?: any): void {
@@ -219,6 +276,15 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
         <Button disabled={this.props.disabled} onClick={this.onOpenPanel}>{strings.DocumentPickerButtonSelect}</Button>
         <Button onClick={this.onEraseButton} disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true}>
         {strings.DocumentPickerButtonReset}</Button>
+
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
+
         {this.state.selectedImage != null && this.state.selectedImage != '' ?
         <div style={{marginTop: '7px'}}>
           <img src={previewUrl} width="225px" height="225px" alt="Preview" />
@@ -318,7 +384,6 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
     return (
       <div style={{padding: '2px', width: '191px', height: '191px', display:'inline-block'}} onMouseEnter={this.mouseEnterImage} onMouseLeave={this.mouseLeaveImage}>
         <div style={{cursor: 'pointer',width: '187px', height: '187px',
-          backgroundImage: "url('https://ocarpenmsdn.sharepoint.com/sites/devcenter/Pictures/09.jpg')",
           backgroundSize: 'cover',
           marginRight: '0px', marginBottom: '0px', paddingTop: '0px', paddingLeft: '0'
           }}>

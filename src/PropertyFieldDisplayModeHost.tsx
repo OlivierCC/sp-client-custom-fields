@@ -8,6 +8,7 @@
 import * as React from 'react';
 import { IPropertyFieldDisplayModePropsInternal } from './PropertyFieldDisplayMode';
 import { Label } from 'office-ui-fabric-react/lib/Label';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 /**
  * @interface
@@ -21,6 +22,7 @@ export interface IPropertyFieldDisplayModeHostState {
   mode?: string;
   overList?: boolean;
   overTiles?: boolean;
+  errorMessage?: string;
 }
 
 /**
@@ -29,9 +31,13 @@ export interface IPropertyFieldDisplayModeHostState {
  */
 export default class PropertyFieldDisplayModeHost extends React.Component<IPropertyFieldDisplayModeHostProps, IPropertyFieldDisplayModeHostState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldDisplayModeHostProps) {
     super(props);
@@ -46,20 +52,77 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
 
     this.state = {
       mode: this.props.initialValue != null && this.props.initialValue != '' ? this.props.initialValue : '',
-      overList: false, overTiles: false
+      overList: false, overTiles: false,
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
    * @function
-   * Function called when the ColorPicker Office UI Fabric component selected color changed
+   * Function called when the selected value changed
    */
   private onValueChanged(element: any, value: string): void {
-    //Checks if there is a method to called
-    if (this.props.onPropertyChange && element != null) {
-      this.props.properties[this.props.targetProperty] = value;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, value);
+    this.delayedValidate(value);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialValue, value);
+      return;
     }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialValue, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialValue, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialValue, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   private onClickBullets(element?: any) {
@@ -104,7 +167,7 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the control
    */
   public render(): JSX.Element {
 
@@ -126,7 +189,7 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
             <div style={{float: 'left'}}>
 
               <input id={"bulletRadio-" + this.props.key } className=""
-                onChange={this.onClickBullets} type="radio" name="radio1" role="radio"
+                onChange={this.onClickBullets} type="radio" name={"display-mode-" + this.props.key} role="radio"
                 disabled={this.props.disabled}
                 defaultChecked={this.state.mode == "list" ? true : false}
                 aria-checked={this.state.mode == "list" ? true : false}
@@ -142,7 +205,7 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
               <input id={"tilesRadio-" + this.props.key} className=""
-               onChange={this.onClickTiles} type="radio" name="radio1" role="radio"
+               onChange={this.onClickTiles} type="radio" name={"display-mode-" + this.props.key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "tiles" ? true : false}
                aria-checked={this.state.mode == "tiles" ? true : false}
@@ -155,6 +218,13 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
             </div>
           </div>
         </div>
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }

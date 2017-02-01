@@ -67,6 +67,25 @@ export interface IPropertyFieldMaskedInputProps {
    * Whether the property pane field is enabled or not.
    */
   disabled?: boolean;
+  /**
+   * The method is used to get the validation error message and determine whether the input value is valid or not.
+   *
+   *   When it returns string:
+   *   - If valid, it returns empty string.
+   *   - If invalid, it returns the error message string and the text field will
+   *     show a red border and show an error message below the text field.
+   *
+   *   When it returns Promise<string>:
+   *   - The resolved value is display as error message.
+   *   - The rejected, the value is thrown away.
+   *
+   */
+   onGetErrorMessage?: (value: string) => string | Promise<string>;
+   /**
+    * Custom Field will start to validate after users stop typing for `deferredValidationTime` milliseconds.
+    * Default value is 200.
+    */
+   deferredValidationTime?: number;
 }
 
 /**
@@ -89,6 +108,8 @@ export interface IPropertyFieldMaskedInputPropsInternal extends IPropertyPaneCus
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
   disabled?: boolean;
+  onGetErrorMessage?: (value: string) => string | Promise<string>;
+  deferredValidationTime?: number;
 }
 
 /**
@@ -114,6 +135,8 @@ class PropertyFieldMaskedInputBuilder implements IPropertyPaneField<IPropertyFie
   private customProperties: any;
   private key: string;
   private disabled: boolean = false;
+  private onGetErrorMessage: (value: string) => string | Promise<string>;
+  private deferredValidationTime: number = 200;
 
   /**
    * @function
@@ -135,6 +158,9 @@ class PropertyFieldMaskedInputBuilder implements IPropertyPaneField<IPropertyFie
     this.key = _properties.key;
     if (_properties.disabled === true)
       this.disabled = _properties.disabled;
+    this.onGetErrorMessage = _properties.onGetErrorMessage;
+    if (_properties.deferredValidationTime !== undefined)
+      this.deferredValidationTime = _properties.deferredValidationTime;
   }
 
   /**
@@ -155,7 +181,9 @@ class PropertyFieldMaskedInputBuilder implements IPropertyPaneField<IPropertyFie
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
       key: this.key,
-      disabled: this.disabled
+      disabled: this.disabled,
+      onGetErrorMessage: this.onGetErrorMessage,
+      deferredValidationTime: this.deferredValidationTime
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -173,9 +201,9 @@ class PropertyFieldMaskedInputBuilder implements IPropertyPaneField<IPropertyFie
 
 /**
  * @function
- * Helper method to create a Color Picker on the PropertyPane.
- * @param targetProperty - Target property the Color picker is associated to.
- * @param properties - Strongly typed Color Picker properties.
+ * Helper method to create the customer field on the PropertyPane.
+ * @param targetProperty - Target property the custom field is associated to.
+ * @param properties - Strongly typed custom field properties.
  */
 export function PropertyFieldMaskedInput(targetProperty: string, properties: IPropertyFieldMaskedInputProps): IPropertyPaneField<IPropertyFieldMaskedInputPropsInternal> {
 
@@ -192,9 +220,11 @@ export function PropertyFieldMaskedInput(targetProperty: string, properties: IPr
       onDispose: null,
       onRender: null,
       key: properties.key,
-      disabled: properties.disabled
+      disabled: properties.disabled,
+      onGetErrorMessage: properties.onGetErrorMessage,
+      deferredValidationTime: properties.deferredValidationTime
     };
-    //Calles the PropertyFieldMaskedInput builder object
+    //Calls the PropertyFieldMaskedInput builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
     return new PropertyFieldMaskedInputBuilder(targetProperty, newProperties);
 }

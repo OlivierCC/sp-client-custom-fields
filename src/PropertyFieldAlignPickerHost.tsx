@@ -8,6 +8,7 @@
 import * as React from 'react';
 import { IPropertyFieldAlignPickerPropsInternal } from './PropertyFieldAlignPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 /**
  * @interface
@@ -22,6 +23,7 @@ export interface IPropertyFieldAlignPickerHostState {
   overList?: boolean;
   overTiles?: boolean;
   overRight?: boolean;
+  errorMessage?: string;
 }
 
 /**
@@ -30,9 +32,13 @@ export interface IPropertyFieldAlignPickerHostState {
  */
 export default class PropertyFieldAlignPickerHost extends React.Component<IPropertyFieldAlignPickerHostProps, IPropertyFieldAlignPickerHostState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldAlignPickerHostProps) {
     super(props);
@@ -50,20 +56,77 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
 
     this.state = {
       mode: this.props.initialValue != null && this.props.initialValue != '' ? this.props.initialValue : '',
-      overList: false, overTiles: false, overRight: false
+      overList: false, overTiles: false, overRight: false,
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
    * @function
-   * Function called when the ColorPicker Office UI Fabric component selected color changed
+   * Function called when the component selected value changed
    */
   private onValueChanged(element: any, previous: string, value: string): void {
-    //Checks if there is a method to called
-    if (this.props.onPropertyChanged && element != null) {
-      this.props.properties[this.props.targetProperty] = value;
-      this.props.onPropertyChanged(this.props.targetProperty, previous, value);
+    this.delayedValidate(value);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialValue, value);
+      return;
     }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialValue, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialValue, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialValue, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChanged && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChanged(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   private onClickBullets(element?: any) {
@@ -131,7 +194,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
 
@@ -155,13 +218,13 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
             <div style={{float: 'left'}}>
 
-              <input id={"bulletRadio-" + this.props.key} className=""
+              <input id={"leftRadio-" + this.props.key} className=""
                 disabled={this.props.disabled}
-                onChange={this.onClickBullets} type="radio" role="radio" name="radio1"
+                onChange={this.onClickBullets} type="radio" role="radio" name={"align-picker-" + this.props.key}
                 defaultChecked={this.state.mode == "left" ? true : false}
                 aria-checked={this.state.mode == "left" ? true : false}
                 value="left"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"bulletRadio-" + this.props.key} className="">
+              <label htmlFor={"leftRadio-" + this.props.key} className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--AlignLeft' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
@@ -171,13 +234,13 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <input id={"tilesRadio-" + this.props.key } className=""
-               onChange={this.onClickTiles} type="radio" name="radio1" role="radio"
+              <input id={"centerRadio-" + this.props.key } className=""
+               onChange={this.onClickTiles} type="radio" name={"align-picker-" + this.props.key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "center" ? true : false}
                aria-checked={this.state.mode == "center" ? true : false}
                value="center"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"tilesRadio-" + this.props.key } className="">
+              <label htmlFor={"centerRadio-" + this.props.key } className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--AlignCenter' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
@@ -188,7 +251,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             onMouseEnter={this.mouseRightEnterDropDown} onMouseLeave={this.mouseRightLeaveDropDown}>
             <div style={{float: 'left'}}>
               <input id={"rightRadio-" + this.props.key } className=""
-               onChange={this.onClickRight} type="radio" name="radio1" role="radio"
+               onChange={this.onClickRight} type="radio" name={"align-picker-" + this.props.key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "right" ? true : false}
                aria-checked={this.state.mode == "right" ? true : false}
@@ -201,6 +264,13 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             </div>
           </div>
         </div>
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }

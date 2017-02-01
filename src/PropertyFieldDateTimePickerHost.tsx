@@ -10,6 +10,7 @@ import { IPropertyFieldDateTimePickerPropsInternal } from './PropertyFieldDateTi
 import { DatePicker, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import * as strings from 'sp-client-custom-fields/strings';
 
 /**
@@ -84,6 +85,7 @@ export interface IPropertyFieldDateTimePickerHostPropsState {
   day?: Date;
   hours?: number;
   minutes?: number;
+  errorMessage?: string;
 }
 
 /**
@@ -92,9 +94,13 @@ export interface IPropertyFieldDateTimePickerHostPropsState {
  */
 export default class PropertyFieldDateTimePickerHost extends React.Component<IPropertyFieldDateTimePickerHostProps, IPropertyFieldDateTimePickerHostPropsState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldDateTimePickerHostProps) {
     super(props);
@@ -107,8 +113,13 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
       day: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate) : null,
       hours: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate).getHours() : 0,
       minutes: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate).getMinutes() : 0,
+      errorMessage: ''
     };
-    this.setState(this.state);
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
@@ -142,22 +153,76 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
     finalDate.setHours(this.state.hours);
     finalDate.setMinutes(this.state.minutes);
 
-    if (this.props.onPropertyChange && finalDate != null) {
-      //Checks if a formatDate function has been defined
+    if (finalDate != null) {
+      var finalDateAsString: string = '';
       if (this.props.formatDate) {
-        this.props.properties[this.props.targetProperty] = this.props.formatDate(finalDate);
-        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, this.props.formatDate(finalDate));
+        finalDateAsString = this.props.formatDate(finalDate);
       }
       else {
-        this.props.properties[this.props.targetProperty] = finalDate.toString();
-        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, finalDate.toString());
+        finalDateAsString = finalDate.toString();
       }
+      this.delayedValidate(finalDateAsString);
     }
   }
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialDate, value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialDate, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialDate, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialDate, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
+  }
+
+  /**
+   * @function
+   * Renders the control
    */
   public render(): JSX.Element {
     //Defines the DatePicker control labels
@@ -212,6 +277,13 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
             </div>
           </div>
         </div>
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }

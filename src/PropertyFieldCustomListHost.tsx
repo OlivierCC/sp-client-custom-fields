@@ -323,9 +323,9 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
               <table className="ms-Table" cellSpacing="0" style={{marginTop: '30px', width: '100%', paddingRight:'10px'}}>
                   <tbody>
                       {
-                        this.props.fields.map((value: ICustomListField) => {
+                        this.props.fields.map((value: ICustomListField, indexF: number) => {
                           return (
-                            <tr>
+                            <tr key={this.props.key + '-customListTr1-' + indexF}>
                               <td><Label>{value.title}
                               {value.required === true ? ' (*)': ''}
                               </Label></td>
@@ -487,9 +487,9 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                   <table className="ms-Table" cellSpacing="0" style={{marginTop: '30px', width: '100%', paddingRight:'10px'}}>
                   <tbody>
                       {
-                        this.props.fields.map((value: ICustomListField) => {
+                        this.props.fields.map((value: ICustomListField, indexM: number) => {
                           return (
-                            <tr>
+                            <tr key={this.props.key + '-customListTr2-' + indexM}>
                               <td><Label>{value.title}
                               {value.required === true ? ' (*)': ''}
                               </Label></td>
@@ -664,10 +664,12 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                     <tr>
                       <th style={{width: '35px', backgroundColor: '#F4F4F4', borderBottom: '1px', borderBottomColor: '#999999', borderBottomStyle: 'solid'}}></th>
                       {
-                        this.props.fields.map((value: ICustomListField) => {
+                        this.props.fields.map((value: ICustomListField, indexJ: number) => {
                           if (value.hidden != true) {
                             return (
-                              <th style={{textAlign: 'left', backgroundColor: '#F4F4F4', borderBottom: '1px', borderBottomColor: '#999999', borderBottomStyle: 'solid'}}>
+                              <th
+                                key={this.props.key + '-customListTr3-' + indexJ}
+                                style={{textAlign: 'left', backgroundColor: '#F4F4F4', borderBottom: '1px', borderBottomColor: '#999999', borderBottomStyle: 'solid'}}>
                                 <Label style={{color: '#999999'}}>{value.title}</Label></th>
                             );
                           }
@@ -683,7 +685,9 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                           return (
                             <tr style={{backgroundColor: index == this.state.selectedIndex ? '#E8E8E8': ''}}
                               onMouseEnter={index != this.state.selectedIndex ? this.onEnterHoverItem : null}
-                              onMouseLeave={index != this.state.selectedIndex ? this.onLeaveHoverItem : null} >
+                              onMouseLeave={index != this.state.selectedIndex ? this.onLeaveHoverItem : null}
+                              key={this.props.key + '-customListTr4-' + index}
+                              >
                               <td style={{paddingLeft: '6px', height:'40px'}}>
                                 <div style={{float: 'left'}}>
                                 <input id={"bulletRadio" + index} style={{width: '18px', height: '18px'}}
@@ -697,10 +701,10 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                               </div>
                               </td>
                             {
-                              this.props.fields.map((field: ICustomListField) => {
+                              this.props.fields.map((field: ICustomListField, indexI: number) => {
                                 if (value != null && field != null && field.hidden != true) {
                                   return (
-                                    <td><Label htmlFor={"bulletRadio" + index} >{value[field.title]}</Label></td>
+                                    <td key={this.props.key + '-customListTr5-' + indexI}><Label htmlFor={"bulletRadio" + index} >{value[field.title]}</Label></td>
                                   );
                                 }
                               })

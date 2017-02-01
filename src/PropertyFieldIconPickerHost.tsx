@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldIconPickerPropsInternal } from './PropertyFieldIconPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 /**
  * @interface
@@ -29,6 +30,7 @@ export interface IPropertyFieldIconPickerHostState {
   hoverFont?: string;
   selectedFont?: string;
   safeSelectedFont?: string;
+  errorMessage?: string;
 }
 
 /**
@@ -684,9 +686,13 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
     {Name: "PowerApps2Logo", SafeValue: 'ms-Icon--PowerApps2Logo'}
   ];
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldIconPickerHostProps) {
     super(props);
@@ -706,8 +712,14 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
     //Init the state
     this.state = {
         isOpen: false,
-        isHoverDropdown: false
+        isHoverDropdown: false,
+        errorMessage: ''
       };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
 
     //Inits the default value
     if (props.initialValue != null && props.initialValue != '') {
@@ -742,11 +754,62 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
    * Function to refresh the Web Part properties
    */
   private changeSelectedFont(newValue: string): void {
-    //Checks if there is a method to called
+    this.delayedValidate(newValue);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialValue, value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialValue, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialValue, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialValue, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, newValue);
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
     }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -833,7 +896,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
 
@@ -855,8 +918,17 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
         );
       });
       return (
-        <Dropdown label={this.props.label} options={dropDownOptions} selectedKey={selectedKey}
-          onChanged={this.onFontDropdownChanged} />
+        <div>
+          <Dropdown label={this.props.label} options={dropDownOptions} selectedKey={selectedKey}
+            onChanged={this.onFontDropdownChanged} disabled={this.props.disabled} />
+          { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
+        </div>
       );
     }
     else {
@@ -960,7 +1032,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
             </a>
             <div style={fsDrop}>
               <ul style={fsResults}>
-                {this.fonts.map((font: ISafeFont) => {
+                {this.fonts.map((font: ISafeFont, index: number) => {
                   var backgroundColor: string = 'transparent';
                   if (this.state.selectedFont === font.Name)
                     backgroundColor = '#c7e0f4';
@@ -976,7 +1048,10 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
                     cursor: 'pointer'
                   };
                   return (
-                    <li value={font.Name}  role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
+                    <li value={font.Name}  role="menuitem"
+                      key={this.props.key + '-iconpicker-' + index}
+                      onMouseEnter={this.toggleHover} onClick={this.onClickFont}
+                      onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
                       <i className={'ms-Icon ' + font.SafeValue} aria-hidden="true" style={{fontSize: '24px', marginRight:'10px'}}></i>
                       {font.Name}
                     </li>
@@ -986,6 +1061,13 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
               </ul>
             </div>
           </div>
+          { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
         </div>
       );
     }

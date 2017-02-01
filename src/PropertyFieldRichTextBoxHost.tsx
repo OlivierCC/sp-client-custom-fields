@@ -20,7 +20,6 @@ export interface IPropertyFieldRichTextBoxHostProps extends IPropertyFieldRichTe
 
 
 export interface IPropertyFieldRichTextBoxHostState {
-  scripLoaded: boolean;
 }
 
 /**
@@ -31,19 +30,18 @@ export default class PropertyFieldRichTextBoxHost extends React.Component<IPrope
 
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldRichTextBoxHostProps) {
     super(props);
-    //Bind the current object to the external called onSelectDate method
 
-    //this.setState({scripLoaded: false});
+    //Bind the current object to the external called onSelectDate method
   }
 
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
     //Renders content
@@ -53,7 +51,23 @@ export default class PropertyFieldRichTextBoxHost extends React.Component<IPrope
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <div style={{border: '1px solid #c8c8c8', minHeight: minHeight + 'px'}}><textarea disabled={this.props.disabled} name={this.props.guid + '-editor'} id={this.props.guid + '-editor'}>{this.props.initialValue}</textarea></div>
+        <div style={{border: '1px solid #c8c8c8', minHeight: minHeight + 'px'}}>
+          <textarea disabled={this.props.disabled}
+            name={this.props.guid + '-editor'}
+            id={this.props.guid + '-editor'}
+            defaultValue={this.props.initialValue}
+            ></textarea>
+        </div>
+        <div>
+            <div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>
+              <span id={this.props.guid + '-errorMssg1'}/>
+            </div>
+            <span>
+              <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>
+                <span id={this.props.guid + '-errorMssg2'}/>
+              </p>
+            </span>
+        </div>
       </div>
     );
   }
