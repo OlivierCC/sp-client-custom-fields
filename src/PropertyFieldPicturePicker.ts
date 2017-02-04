@@ -38,6 +38,20 @@ export interface IPropertyFieldPicturePickerProps {
    */
   context: IWebPartContext;
   /**
+   * Whether the image preview is enabled or not. Default is true.
+   */
+  previewImage?: boolean;
+  /**
+   * Defines the file extensions allowed in the picker. You need to specifies all the extensions with
+   * a dot and to separate them with a comma without spaces. For example a good value is: `.gif,.png,.jpg`.
+   * The default value is `.gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png`
+   */
+  allowedFileExtensions?: string;
+  /**
+   * Whether the image path can be edit manually or not. Default is true.
+   */
+  readOnly?: boolean;
+  /**
    * @function
    * Defines a onPropertyChange function to raise when the selected Color changed.
    * Normally this function must be always defined with the 'this.onPropertyChange'
@@ -99,6 +113,9 @@ export interface IPropertyFieldPicturePickerPropsInternal extends IPropertyPaneC
   disabled?: boolean;
   onGetErrorMessage?: (value: string) => string | Promise<string>;
   deferredValidationTime?: number;
+  previewImage?: boolean;
+  readOnly?: boolean;
+  allowedFileExtensions?: string;
 }
 
 /**
@@ -123,6 +140,9 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
   private disabled: boolean = false;
   private onGetErrorMessage: (value: string) => string | Promise<string>;
   private deferredValidationTime: number = 200;
+  private previewImage: boolean = true;
+  private readOnly: boolean = true;
+  private allowedFileExtensions: string = ".gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png";
 
   /**
    * @function
@@ -145,6 +165,12 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
     this.onGetErrorMessage = _properties.onGetErrorMessage;
     if (_properties.deferredValidationTime !== undefined)
       this.deferredValidationTime = _properties.deferredValidationTime;
+    if (_properties.previewImage != null && _properties.previewImage != undefined)
+      this.previewImage = _properties.previewImage;
+    if (_properties.readOnly === false)
+      this.readOnly = _properties.readOnly;
+    if (_properties.allowedFileExtensions != null && _properties.allowedFileExtensions !== undefined && _properties.allowedFileExtensions != '')
+      this.allowedFileExtensions = _properties.allowedFileExtensions;
   }
 
   /**
@@ -165,7 +191,10 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
       key: this.key,
       disabled: this.disabled,
       onGetErrorMessage: this.onGetErrorMessage,
-      deferredValidationTime: this.deferredValidationTime
+      deferredValidationTime: this.deferredValidationTime,
+      previewImage: this.previewImage,
+      readOnly: this.readOnly,
+      allowedFileExtensions: this.allowedFileExtensions
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -202,7 +231,10 @@ export function PropertyFieldPicturePicker(targetProperty: string, properties: I
       key: properties.key,
       disabled: properties.disabled,
       onGetErrorMessage: properties.onGetErrorMessage,
-      deferredValidationTime: properties.deferredValidationTime
+      deferredValidationTime: properties.deferredValidationTime,
+      previewImage: properties.previewImage,
+      readOnly: properties.readOnly,
+      allowedFileExtensions: properties.allowedFileExtensions
     };
     //Calls the PropertyFieldPicturePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

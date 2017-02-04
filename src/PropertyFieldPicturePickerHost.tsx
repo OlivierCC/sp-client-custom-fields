@@ -52,6 +52,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
   constructor(props: IPropertyFieldPicturePickerHostProps) {
     super(props);
     //Bind the current object to the external called onSelectDate method
+    this.onTextFieldChanged = this.onTextFieldChanged.bind(this);
     this.onOpenPanel = this.onOpenPanel.bind(this);
     this.onClosePanel = this.onClosePanel.bind(this);
     this.onImageRender = this.onImageRender.bind(this);
@@ -140,7 +141,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     }
   }
 
-  /**
+ /**
   * @function
   * Click on erase button
   *
@@ -151,7 +152,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     this.saveImageProperty('');
   }
 
-  /**
+ /**
   * @function
   * Open the panel
   *
@@ -159,6 +160,20 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
   private onOpenPanel(element?: any): void {
     this.state.openPanel = true;
     this.setState(this.state);
+  }
+
+ /**
+  * @function
+  * The text field value changed
+  *
+  */
+  private onTextFieldChanged(e?: any): void {
+    if (e != null) {
+      var newValue: string = e.currentTarget.value;
+      this.state.selectedImage = newValue;
+      this.setState(this.state);
+      this.saveImageProperty(newValue);
+    }
   }
 
   /**
@@ -194,14 +209,19 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
       if (messageObject.type == "cancel") {
         this.onClosePanel();
       } else if (messageObject.type == "success") {
-        var imageUrl = messageObject.items[0].sharePoint.url;
-        if (imageUrl.indexOf(".jpg") > -1 || imageUrl.indexOf(".png") > -1 || imageUrl.indexOf(".jpeg") > -1 ||
-         imageUrl.indexOf(".gif") > -1 || imageUrl.indexOf(".tiff") > -1) {
-          this.state.selectedImage = imageUrl;
-          this.setState(this.state);
-          this.saveImageProperty(imageUrl);
-          this.onClosePanel();
+        var imageUrl: string = messageObject.items[0].sharePoint.url;
+        var extensions: string[] = this.props.allowedFileExtensions.split(',');
+        var lowerUrl: string = imageUrl.toLowerCase();
+        for (var iExt = 0; iExt < extensions.length; iExt++) {
+          var ext = extensions[iExt].toLowerCase();
+          if (lowerUrl.indexOf(ext) > -1) {
+            this.state.selectedImage = imageUrl;
+            this.setState(this.state);
+            this.saveImageProperty(imageUrl);
+            this.onClosePanel();
+            break;
           }
+        }
       }
     }
   }
@@ -261,16 +281,25 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     iframeUrl += "%22%7D&id=";
     iframeUrl += encodeURI(this.props.context.pageContext.web.serverRelativeUrl);
     iframeUrl += '&view=2&typeFilters=';
-    iframeUrl += encodeURI('folder,.gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png');
+    iframeUrl += encodeURI('folder,' + this.props.allowedFileExtensions);
     iframeUrl += '&p=2';
 
     //Renders content
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <Button disabled={this.props.disabled} onClick={this.onOpenPanel}>{strings.PicturePickerButtonSelect}</Button>
-        <Button onClick={this.onEraseButton} disabled={this.props.disabled === false &&  (this.state.selectedImage != null && this.state.selectedImage) != '' ? false: true}>
-        {strings.PicturePickerButtonReset}</Button>
+        <div style={{display:'flex'}}>
+          <input
+            disabled={this.props.disabled}
+            value={this.state.selectedImage}
+            style={{width:'220px'}}
+            className="ms-TextField-field"
+            onChange={this.onTextFieldChanged}
+            readOnly={this.props.readOnly}
+          />
+          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
+          <Button disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
+        </div>
 
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
               <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
@@ -280,7 +309,7 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
               </div>
             : ''}
 
-        {this.state.selectedImage != null && this.state.selectedImage != '' ?
+        {this.state.selectedImage != null && this.state.selectedImage != '' && this.props.previewImage === true ?
         <div style={{marginTop: '7px'}}>
           <img src={this.state.selectedImage} width="225px" height="225px" alt="Preview" />
         </div>

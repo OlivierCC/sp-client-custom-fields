@@ -16,6 +16,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -46,6 +47,8 @@ export interface IPropertyFieldSPListQueryHostState {
   operators?: IDropdownOption[];
   filters?: IFilter[];
   errorMessage?: string;
+  loadedList: boolean;
+  loadedFields: boolean;
 }
 
 /**
@@ -76,6 +79,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
     this.onChangedFilterValue = this.onChangedFilterValue.bind(this);
 
     this.state = {
+      loadedList: false,
+      loadedFields: false,
 			lists: [],
       fields: [],
       arranged: [{key: 'asc', text: 'Asc'}, {key: 'desc', text: 'Desc'}],
@@ -107,8 +112,10 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
   }
 
   private loadDefaultData(): void {
-    if (this.props.query == null || this.props.query == '')
+    if (this.props.query == null || this.props.query == '') {
+      this.state.loadedFields = true;
       return;
+    }
     var indexOfGuid: number = this.props.query.indexOf("lists(guid'");
     if (indexOfGuid > -1) {
       var listId: string = this.props.query.substr(indexOfGuid);
@@ -166,6 +173,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
     }
     if (listId != null && listId != '')
       this.loadFields();
+    else
+      this.state.loadedFields = true;
   }
 
   /**
@@ -187,6 +196,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
           isSelected: isSelected
         });
       });
+      this.state.loadedList = true;
       this.saveState();
     });
   }
@@ -206,6 +216,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
           isSelected: isSelected
         });
       });
+      this.state.loadedFields = true;
       this.saveState();
     });
   }
@@ -376,6 +387,16 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
    * Renders the controls
    */
   public render(): JSX.Element {
+
+    if (this.state.loadedList === false || this.state.loadedFields === false) {
+      return (
+        <div>
+          <Label>{this.props.label}</Label>
+          <Spinner type={ SpinnerType.normal } />
+        </div>
+      );
+    }
+
     //Renders content
     return (
       <div>

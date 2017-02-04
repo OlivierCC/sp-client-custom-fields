@@ -548,6 +548,9 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  readOnly: true,
+                  previewImage: true,
+                  allowedFileExtensions: '.gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png',
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'pictureFieldId'
@@ -559,6 +562,9 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   context: this.context,
                   properties: this.properties,
                   disabled: false,
+                  readOnly: true,
+                  previewDocument: true,
+                  allowedFileExtensions: '.doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf,.txt',
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'documentFieldId'

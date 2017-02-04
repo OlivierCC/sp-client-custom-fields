@@ -292,7 +292,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
    * Disposes the current object
    */
   private dispose(elem: HTMLElement): void {
-    this.async.dispose();
+    if (this.async != null && this.async != undefined)
+      this.async.dispose();
   }
 
 }

@@ -51,7 +51,9 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
    */
   constructor(props: IPropertyFieldDocumentPickerHostProps) {
     super(props);
+
     //Bind the current object to the external called onSelectDate method
+    this.onTextFieldChanged = this.onTextFieldChanged.bind(this);
     this.onOpenPanel = this.onOpenPanel.bind(this);
     this.onClosePanel = this.onClosePanel.bind(this);
     this.onImageRender = this.onImageRender.bind(this);
@@ -163,6 +165,20 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
 
   /**
   * @function
+  * The text field value changed
+  *
+  */
+  private onTextFieldChanged(e?: any): void {
+    if (e != null) {
+      var newValue: string = e.currentTarget.value;
+      this.state.selectedImage = newValue;
+      this.setState(this.state);
+      this.saveImageProperty(newValue);
+    }
+  }
+
+  /**
+  * @function
   * Close the panel
   *
   */
@@ -194,15 +210,19 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
       if (messageObject.type == "cancel") {
         this.onClosePanel();
       } else if (messageObject.type == "success") {
-        var imageUrl = messageObject.items[0].sharePoint.url;
-        if (imageUrl.indexOf(".doc") > -1 || imageUrl.indexOf(".docx") > -1 || imageUrl.indexOf(".ppt") > -1 ||
-         imageUrl.indexOf(".pptx") > -1 || imageUrl.indexOf(".xls") > -1 || imageUrl.indexOf(".xlsx") > -1 ||
-         imageUrl.indexOf(".pdf") > -1  || imageUrl.indexOf(".txt") > -1) {
-          this.state.selectedImage = imageUrl;
-          this.setState(this.state);
-          this.saveImageProperty(imageUrl);
-          this.onClosePanel();
-         }
+        var imageUrl: string = messageObject.items[0].sharePoint.url;
+        var extensions: string[] = this.props.allowedFileExtensions.split(',');
+        var lowerUrl: string = imageUrl.toLowerCase();
+        for (var iExt = 0; iExt < extensions.length; iExt++) {
+          var ext = extensions[iExt].toLowerCase();
+          if (lowerUrl.indexOf(ext) > -1) {
+            this.state.selectedImage = imageUrl;
+            this.setState(this.state);
+            this.saveImageProperty(imageUrl);
+            this.onClosePanel();
+            break;
+          }
+        }
       }
     }
   }
@@ -262,7 +282,7 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
     iframeUrl += "%22%7D&id=";
     iframeUrl += encodeURI(this.props.context.pageContext.web.serverRelativeUrl);
     iframeUrl += '&view=2&typeFilters=';
-    iframeUrl += encodeURI('folder,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf,.txt');
+    iframeUrl += encodeURI('folder,' + this.props.allowedFileExtensions);
     iframeUrl += '&p=2';
 
     var previewUrl = this.props.context.pageContext.web.absoluteUrl;
@@ -273,9 +293,18 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <Button disabled={this.props.disabled} onClick={this.onOpenPanel}>{strings.DocumentPickerButtonSelect}</Button>
-        <Button onClick={this.onEraseButton} disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true}>
-        {strings.DocumentPickerButtonReset}</Button>
+        <div style={{display:'flex'}}>
+          <input
+            disabled={this.props.disabled}
+            value={this.state.selectedImage}
+            style={{width:'220px'}}
+            className="ms-TextField-field"
+            onChange={this.onTextFieldChanged}
+            readOnly={this.props.readOnly}
+          />
+          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
+          <Button disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
+        </div>
 
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
               <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
@@ -285,7 +314,7 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
               </div>
             : ''}
 
-        {this.state.selectedImage != null && this.state.selectedImage != '' ?
+        {this.state.selectedImage != null && this.state.selectedImage != '' && this.props.previewDocument === true ?
         <div style={{marginTop: '7px'}}>
           <img src={previewUrl} width="225px" height="225px" alt="Preview" />
         </div>
