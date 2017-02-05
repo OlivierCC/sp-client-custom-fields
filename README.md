@@ -52,7 +52,7 @@ Custom Field | Description |  Overview
 [PropertyFieldAlignPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldAlignPicker)| Custom field to select an alignement (left, center or right) | ![PropertyFieldAlignPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewAlignPicker.png)
 [PropertyFieldIconPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldIconPicker)| Custom field to select an Icon style in the Office UI Fabric icons list | ![PropertyFieldIconPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewIconPicker.png)
 [PropertyFieldDisplayMode](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDisplayMode)| Custom field to select a list display mode (list or tiles) | ![PropertyFieldDisplayMode](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewDisplayMode.png)
-[PropertyFieldDimensionPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDimensionPicker)| Custom field to select a dimension (width and height | ![PropertyFieldDimensionPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewDimensionPicker.png)
+[PropertyFieldDimensionPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDimensionPicker)| Custom field to select a dimension (width and height) | ![PropertyFieldDimensionPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewDimensionPicker.png)
 
 ## Text & Form Inputs
 
