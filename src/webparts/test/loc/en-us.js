@@ -24,6 +24,7 @@ define([], function() {
     "AlignFieldLabel": "Align Field",
     "DropDownSelectFieldLabel": "Drop down with select Field",
     "RichTextBoxFieldLabel": "Rich Text Box Field",
-    "SliderRangeFieldLabel": "Slider Range Field"
+    "SliderRangeFieldLabel": "Slider Range Field",
+    "DimensionFieldLabel": "Dimension Field"
   }
 });

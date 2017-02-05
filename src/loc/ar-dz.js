@@ -1,6 +1,11 @@
 define([], function() {
   return {
-    //Custom List labels
+     //Dimension Picker labels
+    "DimensionWidth": "العرض",
+    "DimensionHeight": "الارتفاع",
+    "DimensionRatio": "المحافظة على نسبة",
+
+   //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "إضافة",
     "CustomListBack": "العودة",

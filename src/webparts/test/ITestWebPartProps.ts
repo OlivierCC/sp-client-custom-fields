@@ -1,4 +1,5 @@
 import { IPropertyFieldPeople } from '../../PropertyFieldPeoplePicker';
+import { IPropertyFieldDimension } from '../../PropertyFieldDimensionPicker';
 
 export interface ITestWebPartProps {
   description: string;
@@ -26,4 +27,5 @@ export interface ITestWebPartProps {
   dropDownSelect: string[];
   richTextBox: string;
   sliderRange: string;
+  dimension: IPropertyFieldDimension;
 }

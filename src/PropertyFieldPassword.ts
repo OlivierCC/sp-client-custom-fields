@@ -33,7 +33,7 @@ export interface IPropertyFieldPasswordProps {
   initialValue?: string;
   /**
    * @function
-   * Defines a onPropertyChange function to raise when the selected Color changed.
+   * Defines a onPropertyChange function to raise when the selected value changed.
    * Normally this function must be always defined with the 'this.onPropertyChange'
    * method of the web part object.
    */
@@ -140,7 +140,7 @@ class PropertyFieldPasswordBuilder implements IPropertyPaneField<IPropertyFieldP
 
   /**
    * @function
-   * Renders the ColorPicker field content
+   * Renders the picker field content
    */
   private render(elem: HTMLElement): void {
     //Construct the JSX properties

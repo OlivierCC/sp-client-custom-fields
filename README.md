@@ -3,13 +3,13 @@
 
 # SPFx Custom Fields Library
 
-This library is a kit of **23+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
+This library is a kit of **24+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
 
-This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,  **PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**, **PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
+This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,  **PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**, **PropertyFieldMapPicker**, **PropertyFieldDimensionPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
 
-Now available in more than **16 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian, Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish.
+Now available in more than **20 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian, Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish, Thai, Hungarian, Greek, Turkish.
 
-**Current stable version: 1.1.0** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.1.1** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 **Current SPFx Drop support** - [RC0](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-RC0)
 
@@ -52,6 +52,7 @@ Custom Field | Description |  Overview
 [PropertyFieldAlignPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldAlignPicker)| Custom field to select an alignement (left, center or right) | ![PropertyFieldAlignPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewAlignPicker.png)
 [PropertyFieldIconPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldIconPicker)| Custom field to select an Icon style in the Office UI Fabric icons list | ![PropertyFieldIconPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewIconPicker.png)
 [PropertyFieldDisplayMode](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDisplayMode)| Custom field to select a list display mode (list or tiles) | ![PropertyFieldDisplayMode](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewDisplayMode.png)
+[PropertyFieldDimensionPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDimensionPicker)| Custom field to select a dimension (width and height | ![PropertyFieldDimensionPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewDimensionPicker.png)
 
 ## Text & Form Inputs
 

@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "Ancho",
+    "DimensionHeight": "Altura",
+    "DimensionRatio": "Preservar la relación",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "Añadir",

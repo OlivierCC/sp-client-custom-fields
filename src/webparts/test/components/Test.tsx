@@ -55,7 +55,7 @@ export default class Test extends React.Component<ITestProps, {}> {
 
               </p>
               <p >
-                <i className="ms-Icon ms-Icon--FontColor" aria-hidden="true"></i>&nbsp;
+                <i className="ms-Icon ms-Icon--Color" aria-hidden="true"></i>&nbsp;
                 <b>Color</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldColorPicker" target="_doc">(Doc)</a> : &nbsp;
                 {this.props.color}
@@ -72,6 +72,12 @@ export default class Test extends React.Component<ITestProps, {}> {
                 <b>Align</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldAlignPicker" target="_doc">(Doc)</a> : &nbsp;
                 {this.props.align}
+              </p>
+              <p >
+                <i className="ms-Icon ms-Icon--FullScreen" aria-hidden="true"></i>&nbsp;
+                <b>Dimension</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDimensionPicker" target="_doc">(Doc)</a> : &nbsp;
+                {this.props.dimension != null ? this.props.dimension.width + ' x ' + this.props.dimension.height : ''}
               </p>
 
               <p className="ms-fontSize-xxl">

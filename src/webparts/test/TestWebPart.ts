@@ -64,6 +64,9 @@ import { PropertyFieldDropDownSelect } from '../../PropertyFieldDropDownSelect';
 import { PropertyFieldRichTextBox } from '../../PropertyFieldRichTextBox';
 //Include the PropertyFieldSliderRange component
 import { PropertyFieldSliderRange } from '../../PropertyFieldSliderRange';
+//Include the PropertyFieldDimensionPicker component
+import { PropertyFieldDimensionPicker } from '../../PropertyFieldDimensionPicker';
+
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -103,7 +106,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       align: this.properties.align,
       richTextBox: this.properties.richTextBox,
       dropDownSelect: this.properties.dropDownSelect,
-      sliderRange: this.properties.sliderRange
+      sliderRange: this.properties.sliderRange,
+      dimension: this.properties.dimension
     });
 
     ReactDom.render(element, this.domElement);
@@ -375,6 +379,18 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'alignFieldId'
+                }),
+                PropertyFieldDimensionPicker('dimension', {
+                  label: strings.DimensionFieldLabel,
+                  initialValue: this.properties.dimension,
+                  preserveRatio: true,
+                  preserveRatioEnabled: true,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'dimensionFieldId'
                 })
               ],
             },
