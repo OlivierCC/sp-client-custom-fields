@@ -9,7 +9,7 @@ This kit includes Web Part property fields as **PropertyFieldDatePicker**, **Pro
 
 Now available in more than **20 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian, Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish, Thai, Hungarian, Greek, Turkish.
 
-**Current stable version: 1.1.1** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.1.2** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 **Current SPFx Drop support** - [RC0](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-RC0)
 

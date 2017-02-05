@@ -111,7 +111,8 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
     if (element != null) {
       var newValue: string = element.currentTarget.value;
       if (this.state.widthUnit === this.state.heightUnit && this.state.conserveRatio === true && this.props.preserveRatioEnabled === true) {
-        this.state.height = Math.round((this.state.height / this.state.width) * +newValue);
+        if (this.state.width != 0)
+          this.state.height = Math.round((this.state.height / this.state.width) * +newValue);
       }
       this.state.width = Math.round(+newValue);
       this.setState(this.state);
@@ -127,7 +128,8 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
     if (element != null) {
       var newValue: string = element.currentTarget.value;
       if (this.state.widthUnit === this.state.heightUnit && this.state.conserveRatio === true && this.props.preserveRatioEnabled === true) {
-        this.state.width = Math.round((this.state.width / this.state.height) * +newValue);
+        if (this.state.height != 0)
+          this.state.width = Math.round((this.state.width / this.state.height) * +newValue);
       }
       this.state.height = Math.round(+newValue);
       this.setState(this.state);
