@@ -21,7 +21,7 @@ import { ITestWebPartProps } from './ITestWebPartProps';
 //Include the PropertyFieldDatePicker component
 import { PropertyFieldDatePicker } from '../../PropertyFieldDatePicker';
 //Include the PropertyFieldDateTimePicker component
-import { PropertyFieldDateTimePicker } from '../../PropertyFieldDateTimePicker';
+import { PropertyFieldDateTimePicker, ITimeConvention } from '../../PropertyFieldDateTimePicker';
 //Include the PropertyFieldColorPicker component
 import { PropertyFieldColorPicker } from '../../PropertyFieldColorPicker';
 //Include the PropertyFieldPeoplePicker component
@@ -495,6 +495,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   label: strings.DateTimeFieldLabel,
                   initialDate: this.properties.datetime,
                   //formatDate: this.formatDateIso,
+                  timeConvention: ITimeConvention.Hours12,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   onGetErrorMessage: null,

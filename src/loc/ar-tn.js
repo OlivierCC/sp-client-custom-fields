@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "الجمعة",
     "DatePickerDayShortFriday": "الجمعة",
     "DatePickerDayLongSaturday": "السبت",
-    "DatePickerDayShortSaturday": "السبت"
+    "DatePickerDayShortSaturday": "السبت",
+
+    "DateTimePickerDate": "تاريخ",
+    "DateTimePickerTime": "ساعة"
   }
 });

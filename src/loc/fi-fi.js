@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Perjantai",
     "DatePickerDayShortFriday": "Per",
     "DatePickerDayLongSaturday": "Lauantai",
-    "DatePickerDayShortSaturday": "Lau"
+    "DatePickerDayShortSaturday": "Lau",
+
+    "DateTimePickerDate": "Päivämäärä",
+    "DateTimePickerTime": "Fi"
   }
 });

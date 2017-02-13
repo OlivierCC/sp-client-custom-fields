@@ -16,6 +16,23 @@ import {
 import PropertyFieldDateTimePickerHost, { IPropertyFieldDateTimePickerHostProps } from './PropertyFieldDateTimePickerHost';
 
 /**
+  * @enum
+  * Time convention
+  */
+export enum ITimeConvention {
+  /**
+   * The 12-hour clock is a time convention in which the 24 hours of the day are
+   * divided into two periods: a.m. and p.m.
+   */
+  Hours12 = 0,
+  /**
+   * The 24-hour clock is the convention of time keeping in which the day runs from midnight to
+   * midnight and is divided into 24 hours, indicated by the hours passed since midnight, from 0 to 23
+   */
+  Hours24 = 1
+}
+
+/**
  * @interface
  * Public properties of the PropertyFieldDateTimePicker custom field
  *
@@ -37,6 +54,11 @@ export interface IPropertyFieldDateTimePickerProps {
    * By defaut date.toDateString() is used.
    */
   formatDate?: (date: Date) => string;
+  /**
+   * @var
+   * Defines the time convention to use. The default value is the 24-hour clock convention.
+   */
+  timeConvention?: ITimeConvention;
   /**
    * @function
    * Defines a onPropertyChange function to raise when the selected date changed.
@@ -88,6 +110,7 @@ export interface IPropertyFieldDateTimePickerPropsInternal extends IPropertyPane
   initialDate?: string;
   targetProperty: string;
   formatDate?: (date: Date) => string;
+  timeConvention?: ITimeConvention;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
@@ -112,6 +135,7 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
   private label: string;
   private initialDate: string;
   private formatDate: (date: Date) => string;
+  private timeConvention: ITimeConvention;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
@@ -137,6 +161,10 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
     this.onGetErrorMessage = _properties.onGetErrorMessage;
     if (_properties.deferredValidationTime !== undefined)
       this.deferredValidationTime = _properties.deferredValidationTime;
+    if (_properties.timeConvention !== undefined)
+      this.timeConvention = _properties.timeConvention;
+    else
+      this.timeConvention = ITimeConvention.Hours24;
   }
 
   /**
@@ -150,6 +178,7 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
       initialDate: this.initialDate,
       targetProperty: this.targetProperty,
       formatDate: this.formatDate,
+      timeConvention: this.timeConvention,
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
@@ -185,6 +214,7 @@ export function PropertyFieldDateTimePicker(targetProperty: string, properties: 
       label: properties.label,
       targetProperty: targetProperty,
       initialDate: properties.initialDate,
+      timeConvention: properties.timeConvention,
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       formatDate: properties.formatDate,

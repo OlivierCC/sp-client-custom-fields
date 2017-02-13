@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Παρασκευή",
     "DatePickerDayShortFriday": "Παρ",
     "DatePickerDayLongSaturday": "Σάββατο",
-    "DatePickerDayShortSaturday": "Σάβ"
+    "DatePickerDayShortSaturday": "Σάβ",
+
+    "DateTimePickerDate": "Ημερομηνία",
+    "DateTimePickerTime": "Ώρα"
   }
 });

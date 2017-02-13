@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "วันศุกร์",
     "DatePickerDayShortFriday": "วันศุกร์",
     "DatePickerDayLongSaturday": "วันเสาร์",
-    "DatePickerDayShortSaturday": "วันเสาร์"
+    "DatePickerDayShortSaturday": "วันเสาร์",
+
+    "DateTimePickerDate": "วัน",
+    "DateTimePickerTime": "ชั่วโมง"
   }
 });

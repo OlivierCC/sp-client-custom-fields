@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Friday",
     "DatePickerDayShortFriday": "Fri",
     "DatePickerDayLongSaturday": "Saturday",
-    "DatePickerDayShortSaturday": "Sat"
+    "DatePickerDayShortSaturday": "Sat",
+
+    "DateTimePickerDate": "Date",
+    "DateTimePickerTime": "Time"
   }
 });

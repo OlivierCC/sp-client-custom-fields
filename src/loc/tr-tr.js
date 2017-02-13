@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Cuma",
     "DatePickerDayShortFriday": "Cuma",
     "DatePickerDayLongSaturday": "Cumartesi",
-    "DatePickerDayShortSaturday": "Cumar"
+    "DatePickerDayShortSaturday": "Cumar",
+
+    "DateTimePickerDate": "Tarihi",
+    "DateTimePickerTime": "Saat"
   }
 });

@@ -102,6 +102,9 @@ declare interface IStrings {
   DatePickerDayShortFriday: string;
   DatePickerDayLongSaturday: string;
   DatePickerDayShortSaturday: string;
+
+  DateTimePickerDate: string;
+  DateTimePickerTime: string;
 }
 
 declare module 'sp-client-custom-fields/strings' {

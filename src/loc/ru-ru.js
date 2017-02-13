@@ -109,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Пятница",
     "DatePickerDayShortFriday": "Пят",
     "DatePickerDayLongSaturday": "Суббота",
-    "DatePickerDayShortSaturday": "Суб"
+    "DatePickerDayShortSaturday": "Суб",
+
+    "DateTimePickerDate": "Дата",
+    "DateTimePickerTime": "Стойка"
   }
 });
