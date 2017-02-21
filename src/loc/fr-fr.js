@@ -14,7 +14,7 @@ define([], function() {
     "CustomListOK": "OK",
     "CustomListCancel": "Annuler",
     "CustomListEdit": "Editer",
-    "CustomListDel": "Supprimer",
+    "CustomListDel": "Suppr",
     "CustomListYes": "Oui",
     "CustomListNo": "Non",
     "CustomListConfirmDel": "Confirmation",

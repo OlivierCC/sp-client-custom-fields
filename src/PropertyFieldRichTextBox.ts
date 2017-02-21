@@ -217,16 +217,16 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     var fMode = 'basic';
     if (this.mode != null)
       fMode = this.mode;
-    var ckEditorCdn = '//cdn.ckeditor.com/4.5.11/{0}/ckeditor.js'.replace("{0}", fMode);
+    var ckEditorCdn = '//cdn.ckeditor.com/4.6.2/{0}/ckeditor.js'.replace("{0}", fMode);
 
     SPComponentLoader.loadScript(ckEditorCdn, { globalExportsName: 'CKEDITOR' }).then((CKEDITOR: any): void => {
       if (this.inline == null || this.inline === false)
         CKEDITOR.replace( this.guid + '-editor', {
-            skin: 'kama,//cdn.ckeditor.com/4.4.3/full-all/skins/kama/'
+            skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
         }  );
       else
         CKEDITOR.inline( this.guid + '-editor', {
-            skin: 'kama,//cdn.ckeditor.com/4.4.3/full-all/skins/kama/'
+            skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
         }   );
 
       for (var i in CKEDITOR.instances) {
