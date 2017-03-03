@@ -1,7 +1,7 @@
 
 # SPFx Custom Fields Library
 
-![release](https://img.shields.io/badge/release-v1.1.5-blue.svg)
+![release](https://img.shields.io/badge/release-v1.1.6-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
@@ -12,7 +12,7 @@ This kit includes Web Part property fields as **PropertyFieldDatePicker**, **Pro
 
 Now available in more than **20 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian, Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish, Thai, Hungarian, Greek, Turkish.
 
-**Current stable version: 1.1.5** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.1.6** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 **Current SPFx Release support** - ![GA](https://img.shields.io/badge/SPFx-General%20Availability-red.svg) - [Release Note](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-GA)
 

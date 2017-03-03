@@ -410,7 +410,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                     { title: 'Active', required: false, type: CustomListFieldType.boolean },
                     { title: 'Start Date', required: false, type: CustomListFieldType.date, hidden: true },
                     { title: 'End Date', required: false, type: CustomListFieldType.date, hidden: true },
-                    { title: 'Picture', required: false, type: CustomListFieldType.picture, hidden: true }
+                    { title: 'Picture', required: false, type: CustomListFieldType.picture, hidden: true },
+                    { title: 'Users', required: false, type: CustomListFieldType.users, hidden: true }
                     /*,
                     { title: 'Font', required: false, type: CustomListFieldType.font, hidden: true },
                     { title: 'Font size', required: false, type: CustomListFieldType.fontSize, hidden: true },

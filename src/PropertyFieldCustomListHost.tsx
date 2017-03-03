@@ -269,14 +269,14 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     this.onClickCancel();
   }
 
-  private onPropertyChange(targetProperty: string, value?: any): void {
+  private onPropertyChange(targetProperty: string, oldValue?: any, newValue?: any): void {
     var input = document.getElementById(targetProperty);
-    input['value'] = value;
+    input['value'] = newValue;
   }
 
-  private onPropertyChangeJson(targetProperty: string, value?: any): void {
+  private onPropertyChangeJson(targetProperty: string, oldValue?: any, newValue?: any): void {
     var input = document.getElementById(targetProperty);
-    input['value'] = JSON.stringify(value);
+    input['value'] = JSON.stringify(newValue);
   }
 
   private onChangedCheckbox(isChecked: boolean): void {
