@@ -14,6 +14,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 import { IPropertyFieldSPListMultiplePickerPropsInternal, PropertyFieldSPListMultiplePickerOrderBy } from './PropertyFieldSPListMultiplePicker';
 
 /**
@@ -47,6 +48,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
   private loaded: boolean = false;
   private async: Async;
   private delayedValidate: (value: string[]) => void;
+  private _key: string;
 
   /**
    * @function
@@ -55,6 +57,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
   constructor(props: IPropertyFieldSPListMultiplePickerHostProps) {
     super(props);
 
+    this._key = GuidHelper.getGuid();
     this.onChanged = this.onChanged.bind(this);
     this.state = {
 			results: this.options,
@@ -211,7 +214,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
             {this.options.map((item: IChoiceGroupOption, index: number) => {
               var uniqueKey = this.props.targetProperty + '-' + item.key;
               return (
-                <div className="ms-ChoiceField" key={this.props.key + '-multiplelistpicker-' + index}>
+                <div className="ms-ChoiceField" key={this._key + '-multiplelistpicker-' + index}>
                   <input disabled={this.props.disabled} id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
                   <label htmlFor={uniqueKey}><span className="ms-Label" style={styleOfLabel}>{item.text}</span></label>
                 </div>

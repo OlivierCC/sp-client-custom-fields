@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldAlignPickerPropsInternal } from './PropertyFieldAlignPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -35,6 +36,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
   private latestValidateValue: string;
   private async: Async;
   private delayedValidate: (value: string) => void;
+  private _key: string;
 
   /**
    * @function
@@ -53,6 +55,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
     this.mouseTilesLeaveDropDown = this.mouseTilesLeaveDropDown.bind(this);
     this.mouseRightEnterDropDown = this.mouseRightEnterDropDown.bind(this);
     this.mouseRightLeaveDropDown = this.mouseRightLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     this.state = {
       mode: this.props.initialValue != null && this.props.initialValue != '' ? this.props.initialValue : '',
@@ -218,13 +221,13 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
             <div style={{float: 'left'}}>
 
-              <input id={"leftRadio-" + this.props.key} className=""
+              <input id={"leftRadio-" + this._key} className=""
                 disabled={this.props.disabled}
-                onChange={this.onClickBullets} type="radio" role="radio" name={"align-picker-" + this.props.key}
+                onChange={this.onClickBullets} type="radio" role="radio" name={"align-picker-" + this._key}
                 defaultChecked={this.state.mode == "left" ? true : false}
                 aria-checked={this.state.mode == "left" ? true : false}
                 value="left"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"leftRadio-" + this.props.key} className="">
+              <label htmlFor={"leftRadio-" + this._key} className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--AlignLeft' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
@@ -234,13 +237,13 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <input id={"centerRadio-" + this.props.key } className=""
-               onChange={this.onClickTiles} type="radio" name={"align-picker-" + this.props.key} role="radio"
+              <input id={"centerRadio-" + this._key } className=""
+               onChange={this.onClickTiles} type="radio" name={"align-picker-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "center" ? true : false}
                aria-checked={this.state.mode == "center" ? true : false}
                value="center"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"centerRadio-" + this.props.key } className="">
+              <label htmlFor={"centerRadio-" + this._key } className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--AlignCenter' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
@@ -250,13 +253,13 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundRight}}
             onMouseEnter={this.mouseRightEnterDropDown} onMouseLeave={this.mouseRightLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <input id={"rightRadio-" + this.props.key } className=""
-               onChange={this.onClickRight} type="radio" name={"align-picker-" + this.props.key} role="radio"
+              <input id={"rightRadio-" + this._key } className=""
+               onChange={this.onClickRight} type="radio" name={"align-picker-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "right" ? true : false}
                aria-checked={this.state.mode == "right" ? true : false}
                value="right"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"rightRadio-" + this.props.key } className="">
+              <label htmlFor={"rightRadio-" + this._key } className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--AlignRight' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>

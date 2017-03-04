@@ -10,6 +10,7 @@ import { IPropertyFieldFontPickerPropsInternal } from './PropertyFieldFontPicker
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -105,6 +106,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
   private latestValidateValue: string;
   private async: Async;
   private delayedValidate: (value: string) => void;
+  private _key: string;
 
   /**
    * @function
@@ -120,6 +122,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
     this.onFontDropdownChanged = this.onFontDropdownChanged.bind(this);
     this.mouseEnterDropDown = this.mouseEnterDropDown.bind(this);
     this.mouseLeaveDropDown = this.mouseLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     //Init the state
     this.state = {
@@ -457,7 +460,7 @@ export default class PropertyFieldFontPickerHost extends React.Component<IProper
                     cursor: 'pointer'
                   };
                   return (
-                    <li value={font.Name} key={this.props.key + '-fontpicker-' + index} role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>{font.Name}</li>
+                    <li value={font.Name} key={this._key + '-fontpicker-' + index} role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>{font.Name}</li>
                   );
                 })
                 }

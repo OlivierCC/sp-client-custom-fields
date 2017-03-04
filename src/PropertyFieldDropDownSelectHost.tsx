@@ -10,6 +10,7 @@ import { IPropertyFieldDropDownSelectPropsInternal } from './PropertyFieldDropDo
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -41,6 +42,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
 
   private async: Async;
   private delayedValidate: (value: string[]) => void;
+  private _key: string;
 
   /**
    * @function
@@ -56,6 +58,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
     this.onClickFont = this.onClickFont.bind(this);
     this.mouseEnterDropDown = this.mouseEnterDropDown.bind(this);
     this.mouseLeaveDropDown = this.mouseLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     //Init the state
     this.state = {
@@ -316,12 +319,12 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
                     if (foundSelected == false) {
                       foundSelected = true;
                       return (
-                          <span>{elm.text}</span>
+                          <span key={this._key + '-spanselect-' + index}>{elm.text}</span>
                       );
                     }
                     else {
                       return (
-                          <span>, {elm.text}</span>
+                          <span key={this._key + '-spanselect-' + index}>, {elm.text}</span>
                       );
                     }
                   }
@@ -350,9 +353,9 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
                   };
                   return (
                     <li value={font.text}
-                      key={this.props.key + '-dropdownselect-' + index}
+                      key={this._key + '-dropdownselect-' + index}
                       onMouseEnter={this.toggleHover} role="menuitem" onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
-                      <input style={{width: '18px', height: '18px'}} checked={font.isSelected} aria-checked={font.isSelected} type="checkbox" role="checkbox" />
+                      <input style={{width: '18px', height: '18px'}} defaultChecked={font.isSelected} aria-checked={font.isSelected} type="checkbox" role="checkbox" />
                       {font.text}
                     </li>
                   );

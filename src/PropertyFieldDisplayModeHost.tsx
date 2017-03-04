@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldDisplayModePropsInternal } from './PropertyFieldDisplayMode';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -34,6 +35,7 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
   private latestValidateValue: string;
   private async: Async;
   private delayedValidate: (value: string) => void;
+  private _key: string;
 
   /**
    * @function
@@ -49,6 +51,7 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
     this.mouseListLeaveDropDown = this.mouseListLeaveDropDown.bind(this);
     this.mouseTilesEnterDropDown = this.mouseTilesEnterDropDown.bind(this);
     this.mouseTilesLeaveDropDown = this.mouseTilesLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     this.state = {
       mode: this.props.initialValue != null && this.props.initialValue != '' ? this.props.initialValue : '',
@@ -188,13 +191,13 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
             <div style={{float: 'left'}}>
 
-              <input id={"bulletRadio-" + this.props.key } className=""
-                onChange={this.onClickBullets} type="radio" name={"display-mode-" + this.props.key} role="radio"
+              <input id={"bulletRadio-" + this._key } className=""
+                onChange={this.onClickBullets} type="radio" name={"display-mode-" + this._key} role="radio"
                 disabled={this.props.disabled}
                 defaultChecked={this.state.mode == "list" ? true : false}
                 aria-checked={this.state.mode == "list" ? true : false}
                 value="list"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"bulletRadio-" + this.props.key } className="">
+              <label htmlFor={"bulletRadio-" + this._key } className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--List' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'60px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>
@@ -204,13 +207,13 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <input id={"tilesRadio-" + this.props.key} className=""
-               onChange={this.onClickTiles} type="radio" name={"display-mode-" + this.props.key} role="radio"
+              <input id={"tilesRadio-" + this._key} className=""
+               onChange={this.onClickTiles} type="radio" name={"display-mode-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "tiles" ? true : false}
                aria-checked={this.state.mode == "tiles" ? true : false}
                value="tiles"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
-              <label htmlFor={"tilesRadio-" + this.props.key} className="">
+              <label htmlFor={"tilesRadio-" + this._key} className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--Tiles' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'48px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
                 </span>

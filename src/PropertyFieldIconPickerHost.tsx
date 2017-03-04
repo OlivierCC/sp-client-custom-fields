@@ -10,6 +10,7 @@ import { IPropertyFieldIconPickerPropsInternal } from './PropertyFieldIconPicker
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -689,6 +690,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
   private latestValidateValue: string;
   private async: Async;
   private delayedValidate: (value: string) => void;
+  private _key: string;
 
   /**
    * @function
@@ -705,6 +707,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
     this.onFontDropdownChanged = this.onFontDropdownChanged.bind(this);
     this.mouseEnterDropDown = this.mouseEnterDropDown.bind(this);
     this.mouseLeaveDropDown = this.mouseLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     if (this.props.orderAlphabetical === true)
       this.orderAlphabetical();
@@ -1049,7 +1052,7 @@ export default class PropertyFieldIconPickerHost extends React.Component<IProper
                   };
                   return (
                     <li value={font.Name}  role="menuitem"
-                      key={this.props.key + '-iconpicker-' + index}
+                      key={this._key + '-iconpicker-' + index}
                       onMouseEnter={this.toggleHover} onClick={this.onClickFont}
                       onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
                       <i className={'ms-Icon ' + font.SafeValue} aria-hidden="true" style={{fontSize: '24px', marginRight:'10px'}}></i>

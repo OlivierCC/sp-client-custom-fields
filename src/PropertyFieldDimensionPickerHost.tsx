@@ -10,6 +10,7 @@ import { IPropertyFieldDimensionPickerPropsInternal, IPropertyFieldDimension } f
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -38,6 +39,7 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
 
   private async: Async;
   private delayedValidate: (value: IPropertyFieldDimension) => void;
+  private _key: string;
   private units: IDropdownOption[] = [
     { key: 'px', text: 'px'},
     { key: '%', text: '%'}
@@ -50,6 +52,7 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
   constructor(props: IPropertyFieldDimensionPickerHostProps) {
     super(props);
 
+    this._key = GuidHelper.getGuid();
     this.async = new Async(this);
 
     this.state = ({
@@ -300,10 +303,10 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
               <td colSpan={2}>
                 <div className="ms-ChoiceField" style={{paddingLeft: '0px'}}>
                   <input disabled={this.props.disabled} style={{width: '18px', height: '18px'}}
-                    id={this.props.key} name={this.props.key}
+                    id={this._key} name={this._key}
                     onClick={this.onRatioChanged} defaultChecked={this.state.conserveRatio} aria-checked={this.state.conserveRatio}
                     type="checkbox" role="checkbox" />
-                  <label htmlFor={this.props.key}>
+                  <label htmlFor={this._key}>
                     <span className="ms-Label" style={{paddingLeft: '0px', color: this.props.disabled === true ? '#a6a6a6': 'auto'}}>
                       {strings.DimensionRatio}
                     </span>
