@@ -28,4 +28,5 @@ export interface ITestWebPartProps {
   richTextBox: string;
   sliderRange: string;
   dimension: IPropertyFieldDimension;
+  sortableList: string[];
 }

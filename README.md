@@ -1,18 +1,19 @@
 
 # SPFx Custom Fields Library
 
-![release](https://img.shields.io/badge/release-v1.1.7-blue.svg)
+![release](https://img.shields.io/badge/release-v1.1.8-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-This library is a kit of **24+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
+This library is a kit of **25+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
 
-This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,  **PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**, **PropertyFieldMapPicker**, **PropertyFieldDimensionPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
+This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,  **PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**, **PropertyFieldMapPicker**, **PropertyFieldDimensionPicker**,
+**PropertyFieldSortableList**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
 
 Now available in more than **20 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian, Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish, Thai, Hungarian, Greek, Turkish.
 
-**Current stable version: 1.1.7** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.1.8** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 **Current SPFx Release support** - ![GA](https://img.shields.io/badge/SPFx-General%20Availability-red.svg) - [Release Note](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-GA)
 
@@ -66,6 +67,7 @@ Custom Field | Description |  Overview
 [PropertyFieldSliderRange](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSliderRange)| Custom field to select a range of numbers with a 2 levels slider | ![PropertyFieldSliderRange](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewSliderRange.png)
 [PropertyFieldRichTextBox](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldRichTextBox)| Custom field to insert a rich text area to generate html with WYSIWYG | ![PropertyFieldRichTextBox](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewRichTextBoxBasicClassic.png)
 [PropertyFieldDropDownSelect](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownSelect)| Custom field to select multiple values in a dropdown with checkbox | ![PropertyFieldDropDownSelect](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewDropDownSelect.png)
+[PropertyFieldSortableList](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSortableList)| Custom field to select multiple values in a checkboxes list with buttons to sort desc or asc | ![PropertyFieldSortableList](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewPropertyFieldSortableList.png)
 [PropertyFieldPassword](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword)|  Custom field to select a password.  | ![PropertyFieldPassword](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewPassword.png)
 [PropertyFieldPhoneNumber](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPhoneNumber)|  Custom field to select a phone number with a masked control based on phone numbers international formats. | ![PropertyFieldPhoneNumber](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewPhoneNumber.png)
 [PropertyFieldMaskedInput](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldMaskedInput)| Custom field to add a text input with a specified masked based on regexp. | ![PropertyFieldMaskedInput](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewMaskedInput.png)

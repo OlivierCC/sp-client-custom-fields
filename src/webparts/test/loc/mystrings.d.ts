@@ -27,6 +27,7 @@ declare interface ITestStrings {
   RichTextBoxFieldLabel: string;
   SliderRangeFieldLabel: string;
   DimensionFieldLabel: string;
+  SortableListFieldLabel: string;
 }
 
 declare module 'testStrings' {

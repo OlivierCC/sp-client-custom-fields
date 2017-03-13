@@ -66,7 +66,8 @@ import { PropertyFieldRichTextBox } from '../../PropertyFieldRichTextBox';
 import { PropertyFieldSliderRange } from '../../PropertyFieldSliderRange';
 //Include the PropertyFieldDimensionPicker component
 import { PropertyFieldDimensionPicker } from '../../PropertyFieldDimensionPicker';
-
+//Include the PropertyFieldSortableList component
+import { PropertyFieldSortableList, ISortableListOrder } from '../../PropertyFieldSortableList';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -107,7 +108,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       richTextBox: this.properties.richTextBox,
       dropDownSelect: this.properties.dropDownSelect,
       sliderRange: this.properties.sliderRange,
-      dimension: this.properties.dimension
+      dimension: this.properties.dimension,
+      sortableList: this.properties.sortableList
     });
 
     ReactDom.render(element, this.domElement);
@@ -449,6 +451,24 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'dropDownSelectFieldId'
+                }),
+                PropertyFieldSortableList('sortableList', {
+                  label: strings.SortableListFieldLabel,
+                  items: [
+                    {'key': 'Option1', 'text': 'Option 1'},
+                    {'key': 'Option2', 'text': 'Option 2'},
+                    {'key': 'Option3', 'text': 'Option 3'},
+                    {'key': 'Option4', 'text': 'Option 4'},
+                    {'key': 'Option5', 'text': 'Option 5'}
+                  ],
+                  selectedItems: this.properties.sortableList,
+                  sortBy: ISortableListOrder.Text,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'sortableListFieldId'
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,

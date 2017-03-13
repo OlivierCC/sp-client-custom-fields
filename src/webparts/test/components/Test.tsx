@@ -92,13 +92,28 @@ export default class Test extends React.Component<ITestProps, {}> {
                 { this.props.dropDownSelect != null ?
                   this.props.dropDownSelect.map((element: string, i:number) => {
                     return (
-                      <li>{element}</li>
+                      <li key={i}>{element}</li>
                     );
                   })
                   : ''
                 }
                 </ul>
 
+              </div>
+              <div>
+                <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
+                <b>Sortable List</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSortableList" target="_doc">(Doc)</a> :&nbsp;
+                <ul>
+                { this.props.sortableList != null ?
+                  this.props.sortableList.map((element: string, i:number) => {
+                    return (
+                      <li key={i}>{element}</li>
+                    );
+                  })
+                  : ''
+                }
+                </ul>
               </div>
               <p >
                 <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
