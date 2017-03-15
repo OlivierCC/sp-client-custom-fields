@@ -28,6 +28,7 @@ declare interface ITestStrings {
   SliderRangeFieldLabel: string;
   DimensionFieldLabel: string;
   SortableListFieldLabel: string;
+  TreeViewFieldLabel: string;
 }
 
 declare module 'testStrings' {

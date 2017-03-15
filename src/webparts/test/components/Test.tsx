@@ -115,6 +115,21 @@ export default class Test extends React.Component<ITestProps, {}> {
                 }
                 </ul>
               </div>
+              <div>
+                <i className="ms-Icon ms-Icon--Breadcrumb" aria-hidden="true"></i>&nbsp;
+                <b>Treeview</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldTreeView" target="_doc">(Doc)</a> :&nbsp;
+                <ul>
+                { this.props.treeView != null ?
+                  this.props.treeView.map((element: string, i:number) => {
+                    return (
+                      <li key={i}>{element}</li>
+                    );
+                  })
+                  : ''
+                }
+                </ul>
+              </div>
               <p >
                 <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
                 <b>Custom List</b>

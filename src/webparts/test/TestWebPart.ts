@@ -68,6 +68,8 @@ import { PropertyFieldSliderRange } from '../../PropertyFieldSliderRange';
 import { PropertyFieldDimensionPicker } from '../../PropertyFieldDimensionPicker';
 //Include the PropertyFieldSortableList component
 import { PropertyFieldSortableList, ISortableListOrder } from '../../PropertyFieldSortableList';
+//Include the PropertyFieldTreeView component
+import { PropertyFieldTreeView } from '../../PropertyFieldTreeView';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -109,7 +111,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       dropDownSelect: this.properties.dropDownSelect,
       sliderRange: this.properties.sliderRange,
       dimension: this.properties.dimension,
-      sortableList: this.properties.sortableList
+      sortableList: this.properties.sortableList,
+      treeView: this.properties.treeView
     });
 
     ReactDom.render(element, this.domElement);
@@ -469,6 +472,87 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'sortableListFieldId'
+                }),
+                PropertyFieldTreeView('treeView', {
+                  label: strings.TreeViewFieldLabel,
+                  tree: [
+                    {
+                      id: 'Analytics', label: 'Analytics',
+                      pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-1.png',
+                      expandedPictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-20.png',
+                      children: [
+                        {
+                          id: 'Market analyses', label: 'Market analyses',
+                          collapsed: true,
+                          pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-1.png',
+                          expandedPictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-20.png',
+                          children: [{
+                            id: 'Key-on-screen.jpg', label: 'Key-on-screen.jpg',
+                            pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-picture-1.png',
+                            leaf: true
+                          }]
+                        },
+                        {
+                          id: 'Northwind marketing', label: 'Northwind marketing',
+                          pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-1.png',
+                          expandedPictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-20.png',
+                          children: [{
+                            id: 'New Product Overview.pptx',
+                            label: 'New Product Overview.pptx',
+                            pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2014/96/iconmonstr-flip-chart-2.png',
+                            leaf: true
+                          }, {
+                            id: 'RD Expenses Q1 to Q3.xlsx', label: 'RD Expenses Q1 to Q3.xlsx',
+                            pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2017/96/iconmonstr-flip-chart-9.png',
+                            leaf: true
+                          }, {
+                            id: 'Sat Survey.xlsx', label: 'Sat Survey.xlsx',
+                            pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2017/96/iconmonstr-flip-chart-9.png',
+                            leaf: true
+                          }]
+                        },
+                        {
+                          id: 'Project Budget Audit.docx', label: 'Project Budget Audit.docx',
+                          pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2013/96/iconmonstr-note-14.png',
+                          selectedPictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2013/96/iconmonstr-note-13.png',
+                          leaf: true
+                        }, {
+                          id: 'Engineering Costs Q1.pptx', label: 'Engineering Costs Q1.pptx',
+                          pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2014/96/iconmonstr-flip-chart-2.png',
+                          leaf: true
+                        }]
+                    },
+                    {
+                      id: 'Notebooks', label: 'Notebooks',
+                      pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-1.png',
+                      expandedPictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-folder-20.png',
+                      children: [{
+                        id: 'New Project Timeline.docx', label: 'New Project Timeline.docx',
+                        pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2013/96/iconmonstr-note-14.png',
+                        selectedPictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2013/96/iconmonstr-note-13.png',
+                        leaf: true
+                      }, {
+                        id: 'Marketing Video.mp4', label: 'Marketing Video.mp4',
+                        pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-video-8.png',
+                        leaf: true
+                      }, {
+                        id: 'Meeting Audio Record.mp3', label: 'Meeting Audio Record.mp3',
+                        pictureUrl: 'http://iconmonstr.com/wp-content/assets/preview/2012/96/iconmonstr-equalizer-1.png',
+                        leaf: true
+                      }]
+                    }
+                  ],
+                  selectedNodesIDs: this.properties.treeView,
+                  allowMultipleSelections: true,
+                  allowFoldersSelections: false,
+                  nodesPaddingLeft: 15,
+                  checkboxEnabled: true,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'treeViewFieldId'
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,

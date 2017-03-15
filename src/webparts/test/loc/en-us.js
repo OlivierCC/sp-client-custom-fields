@@ -26,6 +26,7 @@ define([], function() {
     "RichTextBoxFieldLabel": "Rich Text Box Field",
     "SliderRangeFieldLabel": "Slider Range Field",
     "DimensionFieldLabel": "Dimension Field",
-    "SortableListFieldLabel": "Sortable List Field"
+    "SortableListFieldLabel": "Sortable List Field",
+    "TreeViewFieldLabel": "TreeView Field"
   }
 });

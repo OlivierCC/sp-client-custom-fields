@@ -29,4 +29,5 @@ export interface ITestWebPartProps {
   sliderRange: string;
   dimension: IPropertyFieldDimension;
   sortableList: string[];
+  treeView: string[];
 }
