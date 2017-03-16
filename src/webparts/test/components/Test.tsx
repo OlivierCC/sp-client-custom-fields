@@ -117,6 +117,21 @@ export default class Test extends React.Component<ITestProps, {}> {
               </div>
               <div>
                 <i className="ms-Icon ms-Icon--Breadcrumb" aria-hidden="true"></i>&nbsp;
+                <b>DropDown Treeview</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownTreeView" target="_doc">(Doc)</a> :&nbsp;
+                <ul>
+                { this.props.dropDownTreeView != null ?
+                  this.props.dropDownTreeView.map((element: string, i:number) => {
+                    return (
+                      <li key={i}>{element}</li>
+                    );
+                  })
+                  : ''
+                }
+                </ul>
+              </div>
+              <div>
+                <i className="ms-Icon ms-Icon--Breadcrumb" aria-hidden="true"></i>&nbsp;
                 <b>Treeview</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldTreeView" target="_doc">(Doc)</a> :&nbsp;
                 <ul>

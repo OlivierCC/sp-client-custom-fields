@@ -27,6 +27,7 @@ define([], function() {
     "SliderRangeFieldLabel": "Slider Range Field",
     "DimensionFieldLabel": "Dimension Field",
     "SortableListFieldLabel": "Sortable List Field",
-    "TreeViewFieldLabel": "TreeView Field"
+    "TreeViewFieldLabel": "TreeView Field",
+    "DropDownTreeViewFieldLabel": "DropDown TreeView Field"
   }
 });

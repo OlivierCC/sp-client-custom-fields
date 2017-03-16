@@ -29,6 +29,7 @@ declare interface ITestStrings {
   DimensionFieldLabel: string;
   SortableListFieldLabel: string;
   TreeViewFieldLabel: string;
+  DropDownTreeViewFieldLabel: string;
 }
 
 declare module 'testStrings' {

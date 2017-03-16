@@ -70,6 +70,8 @@ import { PropertyFieldDimensionPicker } from '../../PropertyFieldDimensionPicker
 import { PropertyFieldSortableList, ISortableListOrder } from '../../PropertyFieldSortableList';
 //Include the PropertyFieldTreeView component
 import { PropertyFieldTreeView } from '../../PropertyFieldTreeView';
+//Include the PropertyFieldDropDownTreeView component
+import { PropertyFieldDropDownTreeView } from '../../PropertyFieldDropDownTreeView';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -112,7 +114,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       sliderRange: this.properties.sliderRange,
       dimension: this.properties.dimension,
       sortableList: this.properties.sortableList,
-      treeView: this.properties.treeView
+      treeView: this.properties.treeView,
+      dropDownTreeView: this.properties.dropDownTreeView
     });
 
     ReactDom.render(element, this.domElement);
@@ -472,6 +475,68 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'sortableListFieldId'
+                }),
+                PropertyFieldDropDownTreeView('dropDownTreeView', {
+                  label: strings.DropDownTreeViewFieldLabel,
+                  tree: [
+                    {
+                      id: 'Analytics', label: 'Analytics',
+                      children: [
+                        {
+                          id: 'Market analyses', label: 'Market analyses',
+                          collapsed: true,
+                          children: [{
+                            id: 'Key-on-screen.jpg', label: 'Key-on-screen.jpg',
+                            leaf: true
+                          }]
+                        },
+                        {
+                          id: 'Northwind marketing', label: 'Northwind marketing',
+                          children: [{
+                            id: 'New Product Overview.pptx',
+                            label: 'New Product Overview.pptx',
+                            leaf: true
+                          }, {
+                            id: 'RD Expenses Q1 to Q3.xlsx', label: 'RD Expenses Q1 to Q3.xlsx',
+                            leaf: true
+                          }, {
+                            id: 'Sat Survey.xlsx', label: 'Sat Survey.xlsx',
+                            leaf: true
+                          }]
+                        },
+                        {
+                          id: 'Project Budget Audit.docx', label: 'Project Budget Audit.docx',
+                          leaf: true
+                        }, {
+                          id: 'Engineering Costs Q1.pptx', label: 'Engineering Costs Q1.pptx',
+                          leaf: true
+                        }]
+                    },
+                    {
+                      id: 'Notebooks', label: 'Notebooks',
+                      children: [{
+                        id: 'New Project Timeline.docx', label: 'New Project Timeline.docx',
+                        leaf: true
+                      }, {
+                        id: 'Marketing Video.mp4', label: 'Marketing Video.mp4',
+                        leaf: true
+                      }, {
+                        id: 'Meeting Audio Record.mp3', label: 'Meeting Audio Record.mp3',
+                        leaf: true
+                      }]
+                    }
+                  ],
+                  selectedNodesIDs: this.properties.dropDownTreeView,
+                  allowMultipleSelections: true,
+                  allowFoldersSelections: false,
+                  nodesPaddingLeft: 15,
+                  checkboxEnabled: true,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'dropDownTreeViewFieldId'
                 }),
                 PropertyFieldTreeView('treeView', {
                   label: strings.TreeViewFieldLabel,

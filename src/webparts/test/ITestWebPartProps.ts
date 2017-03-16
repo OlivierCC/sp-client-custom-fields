@@ -30,4 +30,5 @@ export interface ITestWebPartProps {
   dimension: IPropertyFieldDimension;
   sortableList: string[];
   treeView: string[];
+  dropDownTreeView: string[];
 }
