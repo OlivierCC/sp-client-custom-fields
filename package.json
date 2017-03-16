@@ -31,7 +31,8 @@
     "@microsoft/sp-webpart-workbench": "~1.0.0",
     "@types/chai": ">=3.4.34 <3.6.0",
     "@types/mocha": ">=2.2.33 <2.6.0",
-    "gulp": "~3.9.1"
+    "gulp": "~3.9.1",
+    "typedoc": "^0.5.7"
   },
   "scripts": {
     "build": "gulp bundle",
