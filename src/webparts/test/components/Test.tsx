@@ -145,6 +145,21 @@ export default class Test extends React.Component<ITestProps, {}> {
                 }
                 </ul>
               </div>
+              <div>
+                <i className="ms-Icon ms-Icon--Tag" aria-hidden="true"></i>&nbsp;
+                <b>Tags</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldTagPicker" target="_doc">(Doc)</a> :&nbsp;
+                <ul>
+                { this.props.tags != null ?
+                  this.props.tags.map((element: any, i:number) => {
+                    return (
+                      <li key={i}>{element.name}</li>
+                    );
+                  })
+                  : ''
+                }
+                </ul>
+              </div>
               <p >
                 <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
                 <b>Custom List</b>

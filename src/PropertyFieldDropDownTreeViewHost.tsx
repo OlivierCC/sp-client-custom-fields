@@ -234,7 +234,7 @@ export default class PropertyFieldDropDownTreeViewHost extends React.Component<I
     for (var i = 0; i < this.state.activeNodes.length; i++) {
       res.push(this.state.activeNodes[i].id);
     }
-    this.validate(res);
+    this.delayedValidate(res);
   }
 
   /**

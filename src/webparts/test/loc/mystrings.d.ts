@@ -30,6 +30,7 @@ declare interface ITestStrings {
   SortableListFieldLabel: string;
   TreeViewFieldLabel: string;
   DropDownTreeViewFieldLabel: string;
+  TagPickerFieldLabel: string;
 }
 
 declare module 'testStrings' {

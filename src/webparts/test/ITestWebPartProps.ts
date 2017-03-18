@@ -1,5 +1,6 @@
 import { IPropertyFieldPeople } from '../../PropertyFieldPeoplePicker';
 import { IPropertyFieldDimension } from '../../PropertyFieldDimensionPicker';
+import { IPropertyFieldTag } from '../../PropertyFieldTagPicker';
 
 export interface ITestWebPartProps {
   description: string;
@@ -31,4 +32,5 @@ export interface ITestWebPartProps {
   sortableList: string[];
   treeView: string[];
   dropDownTreeView: string[];
+  tags: IPropertyFieldTag[];
 }

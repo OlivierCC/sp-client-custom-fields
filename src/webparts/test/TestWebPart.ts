@@ -72,6 +72,8 @@ import { PropertyFieldSortableList, ISortableListOrder } from '../../PropertyFie
 import { PropertyFieldTreeView } from '../../PropertyFieldTreeView';
 //Include the PropertyFieldDropDownTreeView component
 import { PropertyFieldDropDownTreeView } from '../../PropertyFieldDropDownTreeView';
+//Include the PropertyFieldTagPicker component
+import { PropertyFieldTagPicker } from '../../PropertyFieldTagPicker';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -115,7 +117,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       dimension: this.properties.dimension,
       sortableList: this.properties.sortableList,
       treeView: this.properties.treeView,
-      dropDownTreeView: this.properties.dropDownTreeView
+      dropDownTreeView: this.properties.dropDownTreeView,
+      tags: this.properties.tags
     });
 
     ReactDom.render(element, this.domElement);
@@ -618,6 +621,36 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'treeViewFieldId'
+                }),
+                 PropertyFieldTagPicker('tags', {
+                  label: strings.TagPickerFieldLabel,
+                  selectedTags: this.properties.tags,
+                  tags: [
+                    {key: 'black', name: 'black'},
+                    {key: 'blue', name: 'blue'},
+                    {key: 'brown', name: 'brown'},
+                    {key: 'cyan', name: 'cyan'},
+                    {key: 'green', name: 'green'},
+                    {key: 'magenta', name: 'magenta'},
+                    {key: 'mauve', name: 'mauve'},
+                    {key: 'orange', name: 'orange'},
+                    {key: 'pink', name: 'pink'},
+                    {key: 'purple', name: 'purple'},
+                    {key: 'red', name: 'red'},
+                    {key: 'rose', name: 'rose'},
+                    {key: 'violet', name: 'violet'},
+                    {key: 'white', name: 'white'},
+                    {key: 'yellow', name: 'yellow'}
+                  ],
+                  loadingText: 'Loading...',
+                  noResultsFoundText: 'No tags found',
+                  suggestionsHeaderText: 'Suggested Tags',
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'tagsPickerFieldId'
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,

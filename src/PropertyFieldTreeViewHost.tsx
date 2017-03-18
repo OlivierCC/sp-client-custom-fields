@@ -226,7 +226,7 @@ export default class PropertyFieldTreeViewHost extends React.Component<IProperty
     for (var i = 0; i < this.state.activeNodes.length; i++) {
       res.push(this.state.activeNodes[i].id);
     }
-    this.validate(res);
+    this.delayedValidate(res);
   }
 
   /**
