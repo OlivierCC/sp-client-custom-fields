@@ -622,7 +622,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   deferredValidationTime: 0,
                   key: 'treeViewFieldId'
                 }),
-                 PropertyFieldTagPicker('tags', {
+                PropertyFieldTagPicker('tags', {
                   label: strings.TagPickerFieldLabel,
                   selectedTags: this.properties.tags,
                   tags: [
