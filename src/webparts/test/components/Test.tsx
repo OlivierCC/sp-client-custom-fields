@@ -169,7 +169,7 @@ export default class Test extends React.Component<ITestProps, {}> {
               <p >
                 <i className="ms-Icon ms-Icon--FavoriteStarFill" aria-hidden="true"></i>&nbsp;
                 <b>Star Rating</b>
-                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword" target="_doc">(Doc)</a> : &nbsp;
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldStarRating" target="_doc">(Doc)</a> : &nbsp;
                 {this.props.starRating}
               </p>
               <p >
