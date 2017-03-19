@@ -167,6 +167,12 @@ export default class Test extends React.Component<ITestProps, {}> {
                 {JSON.stringify(this.props.customList)}
               </p>
               <p >
+                <i className="ms-Icon ms-Icon--FavoriteStarFill" aria-hidden="true"></i>&nbsp;
+                <b>Star Rating</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword" target="_doc">(Doc)</a> : &nbsp;
+                {this.props.starRating}
+              </p>
+              <p >
                 <i className="ms-Icon ms-Icon--Lock" aria-hidden="true"></i>&nbsp;
                 <b>Password</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword" target="_doc">(Doc)</a> : &nbsp;

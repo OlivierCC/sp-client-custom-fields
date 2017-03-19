@@ -29,6 +29,7 @@ define([], function() {
     "SortableListFieldLabel": "Sortable List Field",
     "TreeViewFieldLabel": "TreeView Field",
     "DropDownTreeViewFieldLabel": "DropDown TreeView Field",
-    "TagPickerFieldLabel": "Tag Picker Field"
+    "TagPickerFieldLabel": "Tag Picker Field",
+    "StarRatingFieldLabel": "Star Rating Field"
   }
 });

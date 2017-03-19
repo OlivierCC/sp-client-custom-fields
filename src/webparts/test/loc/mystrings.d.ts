@@ -31,6 +31,7 @@ declare interface ITestStrings {
   TreeViewFieldLabel: string;
   DropDownTreeViewFieldLabel: string;
   TagPickerFieldLabel: string;
+  StarRatingFieldLabel: string;
 }
 
 declare module 'testStrings' {

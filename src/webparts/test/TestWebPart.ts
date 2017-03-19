@@ -74,6 +74,8 @@ import { PropertyFieldTreeView } from '../../PropertyFieldTreeView';
 import { PropertyFieldDropDownTreeView } from '../../PropertyFieldDropDownTreeView';
 //Include the PropertyFieldTagPicker component
 import { PropertyFieldTagPicker } from '../../PropertyFieldTagPicker';
+//Include the PropertyFieldStarRating component
+import { PropertyFieldStarRating } from '../../PropertyFieldStarRating';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -118,7 +120,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       sortableList: this.properties.sortableList,
       treeView: this.properties.treeView,
       dropDownTreeView: this.properties.dropDownTreeView,
-      tags: this.properties.tags
+      tags: this.properties.tags,
+      starRating: this.properties.starRating
     });
 
     ReactDom.render(element, this.domElement);
@@ -651,6 +654,20 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'tagsPickerFieldId'
+                }),
+                PropertyFieldStarRating('starRating', {
+                  label: strings.StarRatingFieldLabel,
+                  initialValue: this.properties.starRating,
+                  starCount: 5,
+                  starSize: 24,
+                  starColor: '#ffb400',
+                  emptyStarColor: '#333',
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'starRatingFieldId'
                 }),
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,
