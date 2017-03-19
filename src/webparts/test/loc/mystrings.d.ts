@@ -9,6 +9,7 @@ declare interface ITestStrings {
   PeopleFieldLabel: string;
   SPListFieldLabel: string;
   ColorFieldLabel: string;
+  ColorMiniFieldLabel: string;
   SPFolderFieldLabel: string;
   PasswordFieldLabel: string;
   FontFieldLabel: string;

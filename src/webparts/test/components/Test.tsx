@@ -56,6 +56,12 @@ export default class Test extends React.Component<ITestProps, {}> {
               </p>
               <p >
                 <i className="ms-Icon ms-Icon--Color" aria-hidden="true"></i>&nbsp;
+                <b>Color (Mini)</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldColorPickerMini" target="_doc">(Doc)</a> : &nbsp;
+                {this.props.miniColor}
+              </p>
+              <p >
+                <i className="ms-Icon ms-Icon--Color" aria-hidden="true"></i>&nbsp;
                 <b>Color</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldColorPicker" target="_doc">(Doc)</a> : &nbsp;
                 {this.props.color}

@@ -8,6 +8,7 @@ define([], function() {
     "PeopleFieldLabel": "People Picker Field",
     "SPListFieldLabel": "SharePoint List Field",
     "ColorFieldLabel": "Color Field",
+    "ColorMiniFieldLabel": "Mini Color Field",
     "SPFolderFieldLabel": "SharePoint Folder Field",
     "PasswordFieldLabel": "Password Field",
     "FontFieldLabel": "Font Field",

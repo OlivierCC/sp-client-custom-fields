@@ -24,6 +24,8 @@ import { PropertyFieldDatePicker } from '../../PropertyFieldDatePicker';
 import { PropertyFieldDateTimePicker, ITimeConvention } from '../../PropertyFieldDateTimePicker';
 //Include the PropertyFieldColorPicker component
 import { PropertyFieldColorPicker } from '../../PropertyFieldColorPicker';
+//Include the PropertyFieldColorPickerMini component
+import { PropertyFieldColorPickerMini } from '../../PropertyFieldColorPickerMini';
 //Include the PropertyFieldPeoplePicker component
 import { PropertyFieldPeoplePicker } from '../../PropertyFieldPeoplePicker';
 //Include the PropertyFieldSPListPicker component
@@ -93,6 +95,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
     const element: React.ReactElement<ITestProps> = React.createElement(Test, {
       description: this.properties.description,
       color: this.properties.color,
+      miniColor: this.properties.miniColor,
       date: this.properties.date,
       date2: this.properties.date2,
       datetime: this.properties.datetime,
@@ -374,6 +377,16 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'iconFieldId'
+                }),
+                PropertyFieldColorPickerMini('miniColor', {
+                  label: strings.ColorMiniFieldLabel,
+                  initialColor: this.properties.miniColor,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'colorMiniFieldId'
                 }),
                 PropertyFieldColorPicker('color', {
                   label: strings.ColorFieldLabel,

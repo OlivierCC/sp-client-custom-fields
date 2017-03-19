@@ -5,6 +5,7 @@ import { IPropertyFieldTag } from '../../PropertyFieldTagPicker';
 export interface ITestWebPartProps {
   description: string;
   color: string;
+  miniColor: string;
   date: string;
   date2: string;
   datetime: string;

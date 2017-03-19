@@ -1,19 +1,19 @@
 
 # SPFx Custom Fields Library
 
-![release](https://img.shields.io/badge/release-v1.2.2-blue.svg)
+![release](https://img.shields.io/badge/release-v1.2.3-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-This library is a kit of **29+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
+This library is a kit of **30+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
 
-This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,  **PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**, **PropertyFieldMapPicker**, **PropertyFieldDimensionPicker**,
+This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**, **PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldColorPickerMini**, **PropertyFieldFontPicker**, **PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,  **PropertyFieldRichTextBox**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**, **PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**, **PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**, **PropertyFieldMapPicker**, **PropertyFieldDimensionPicker**,
 **PropertyFieldSortableList**, **PropertyFieldTreeView**, **PropertyFieldDropDownTreeView**, **PropertyFieldTagPicker**, , **PropertyFieldStarRating**. These controls are based on the Office UI Fabric framework and React. You can use these custom fields to your own client side Web Parts.
 
 Now available in more than **20 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian, Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish, Thai, Hungarian, Greek, Turkish.
 
-**Current stable version: 1.2.2** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+**Current stable version: 1.2.3** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
 
 **Current SPFx Release support** - ![GA](https://img.shields.io/badge/SPFx-General%20Availability-red.svg) - [Release Note](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-GA)
 
@@ -50,6 +50,7 @@ all these custom fields and you can click on the custom field name to consult th
 
 Custom Field | Description |  Overview
 ------------ | ----------- | -----------
+[PropertyFieldColorPickerMini](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldColorPickerMini)| Custom field to select a Color with a callout window and a visual RGB editor based on the Office UI Fabric ColorPicker control  | ![PropertyFieldColorPickerMini](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewColorPickerMini.png)
 [PropertyFieldColorPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldColorPicker)| Custom field to select a Color with a visual RGB editor based on the Office UI Fabric ColorPicker control  | ![PropertyFieldPeoplePicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewColorPicker.png)
 [PropertyFieldFontPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldFontPicker)| Custom field to select a Font with a visual dropdown box and fonts preview  | ![PropertyFieldFontPicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewFontPicker.png)
 [PropertyFieldFontSizePicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldFontSizePicker)| Custom field to select a Font size with size preview as drop down  | ![PropertyFieldFontSizePicker](https://github.com/OlivierCC/sp-client-custom-fields/raw/master/assets/OverviewFontSizePicker.png)
