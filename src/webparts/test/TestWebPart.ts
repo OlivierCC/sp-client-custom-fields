@@ -843,7 +843,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   properties: this.properties,
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
-                  key: 'peopleFieldId'
+                  key: 'groupsFieldId'
                 }),
                PropertyFieldSPListPicker('list', {
                   label: strings.SPListFieldLabel,
