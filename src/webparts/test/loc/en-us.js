@@ -6,6 +6,7 @@ define([], function() {
     "DateFieldLabel": "Date Field",
     "DateTimeFieldLabel": "Date Time Field",
     "PeopleFieldLabel": "People Picker Field",
+    "GroupFieldLabel": "Group Picker Field",
     "SPListFieldLabel": "SharePoint List Field",
     "ColorFieldLabel": "Color Field",
     "ColorMiniFieldLabel": "Mini Color Field",

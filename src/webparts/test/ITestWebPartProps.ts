@@ -1,4 +1,5 @@
 import { IPropertyFieldPeople } from '../../PropertyFieldPeoplePicker';
+import { IPropertyFieldGroup } from '../../PropertyFieldGroupPicker';
 import { IPropertyFieldDimension } from '../../PropertyFieldDimensionPicker';
 import { IPropertyFieldTag } from '../../PropertyFieldTagPicker';
 
@@ -10,6 +11,7 @@ export interface ITestWebPartProps {
   date2: string;
   datetime: string;
   people: IPropertyFieldPeople[];
+  groups: IPropertyFieldGroup[];
   list: string;
   listsCollection: string[];
   folder: string;

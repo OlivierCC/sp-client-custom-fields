@@ -78,6 +78,8 @@ import { PropertyFieldDropDownTreeView } from '../../PropertyFieldDropDownTreeVi
 import { PropertyFieldTagPicker } from '../../PropertyFieldTagPicker';
 //Include the PropertyFieldStarRating component
 import { PropertyFieldStarRating } from '../../PropertyFieldStarRating';
+//Include the PropertyFieldGroupPicker component
+import { PropertyFieldGroupPicker, IGroupType } from '../../PropertyFieldGroupPicker';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -101,6 +103,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       datetime: this.properties.datetime,
       folder: this.properties.folder,
       people: this.properties.people,
+      groups: this.properties.groups,
       list: this.properties.list,
       listsCollection: this.properties.listsCollection,
       password: this.properties.password,
@@ -823,6 +826,18 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   label: strings.PeopleFieldLabel,
                   initialData: this.properties.people,
                   allowDuplicate: true,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  context: this.context,
+                  properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'peopleFieldId'
+                }),
+                PropertyFieldGroupPicker('groups', {
+                  label: strings.GroupFieldLabel,
+                  initialData: this.properties.groups,
+                  allowDuplicate: false,
+                  groupType: IGroupType.Security,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,

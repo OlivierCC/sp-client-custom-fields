@@ -1,4 +1,4 @@
-![release](https://img.shields.io/badge/release-v1.2.4-blue.svg)
+![release](https://img.shields.io/badge/release-v1.2.5-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)

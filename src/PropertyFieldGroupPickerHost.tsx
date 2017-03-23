@@ -1,17 +1,17 @@
 /**
- * @file PropertyFieldPeoplePickerHost.tsx
- * Renders the controls for PropertyFieldPeoplePicker component
+ * @file PropertyFieldGroupPickerHost.tsx
+ * Renders the controls for PropertyFieldGroupPicker component
  *
- * @copyright 2016 Olivier Carpentier
+ * @copyright 2017 Olivier Carpentier
  * Released under MIT licence
  *
  */
 import * as React from 'react';
-import { IPropertyFieldPeoplePickerPropsInternal } from './PropertyFieldPeoplePicker';
+import { IPropertyFieldGroupPickerPropsInternal } from './PropertyFieldGroupPicker';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from "@microsoft/sp-http";
 import { EnvironmentType, Environment } from '@microsoft/sp-core-library';
-import { IPropertyFieldPeople } from './PropertyFieldPeoplePicker';
+import { IPropertyFieldGroup, IGroupType } from './PropertyFieldGroupPicker';
 import { NormalPeoplePicker, IBasePickerSuggestionsProps } from 'office-ui-fabric-react/lib/Pickers';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IPersonaProps, PersonaPresence, PersonaInitialsColor } from 'office-ui-fabric-react/lib/Persona';
@@ -22,10 +22,10 @@ import * as strings from 'sp-client-custom-fields/strings';
 
 /**
  * @interface
- * PropertyFieldPeoplePickerHost properties interface
+ * PropertyFieldGroupPickerHost properties interface
  *
  */
-export interface IPropertyFieldPeoplePickerHostProps extends IPropertyFieldPeoplePickerPropsInternal {
+export interface IPropertyFieldGroupPickerHostProps extends IPropertyFieldGroupPickerPropsInternal {
 }
 
 /**
@@ -34,31 +34,31 @@ export interface IPropertyFieldPeoplePickerHostProps extends IPropertyFieldPeopl
  *
  */
 export interface IPeoplePickerState {
-  resultsPeople?: Array<IPropertyFieldPeople>;
+  resultsPeople?: Array<IPropertyFieldGroup>;
   resultsPersonas?: Array<IPersonaProps>;
   errorMessage?: string;
 }
 
 /**
  * @class
- * Renders the controls for PropertyFieldPeoplePicker component
+ * Renders the controls for PropertyFieldGroupPicker component
  */
-export default class PropertyFieldPeoplePickerHost extends React.Component<IPropertyFieldPeoplePickerHostProps, IPeoplePickerState> {
+export default class PropertyFieldGroupPickerHost extends React.Component<IPropertyFieldGroupPickerHostProps, IPeoplePickerState> {
 
   private searchService: PropertyFieldSearchService;
   private intialPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
-  private resultsPeople: Array<IPropertyFieldPeople> = new Array<IPropertyFieldPeople>();
+  private resultsPeople: Array<IPropertyFieldGroup> = new Array<IPropertyFieldGroup>();
   private resultsPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
-  private selectedPeople: Array<IPropertyFieldPeople> = new Array<IPropertyFieldPeople>();
+  private selectedPeople: Array<IPropertyFieldGroup> = new Array<IPropertyFieldGroup>();
   private selectedPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
   private async: Async;
-  private delayedValidate: (value: IPropertyFieldPeople[]) => void;
+  private delayedValidate: (value: IPropertyFieldGroup[]) => void;
 
   /**
    * @function
    * Constructor
    */
-  constructor(props: IPropertyFieldPeoplePickerHostProps) {
+  constructor(props: IPropertyFieldGroupPickerHostProps) {
     super(props);
 
     this.searchService = new PropertyFieldSearchService(props.context);
@@ -121,17 +121,17 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
       //Clear the suggestions list
       this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas });
       //Request the search service
-      var result = this.searchService.searchPeople(searchText).then((response: IPropertyFieldPeople[]) => {
+      var result = this.searchService.searchGroups(searchText, this.props.groupType).then((response: IPropertyFieldGroup[]) => {
         this.resultsPeople = [];
         this.resultsPersonas = [];
         //If allowDuplicate == false, so remove duplicates from results
         if (this.props.allowDuplicate === false)
           response = this.removeDuplicates(response);
-        response.map((element: IPropertyFieldPeople, index: number) => {
+        response.map((element: IPropertyFieldGroup, index: number) => {
           //Fill the results Array
           this.resultsPeople.push(element);
           //Transform the response in IPersonaProps object
-          this.resultsPersonas.push(this.getPersonaFromPeople(element, index));
+          this.resultsPersonas.push(this.getPersonaFromGroup(element, index));
         });
         //Refresh the component's state
         this.setState({ resultsPeople: this.resultsPeople, resultsPersonas: this.resultsPersonas });
@@ -148,15 +148,15 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * @function
    * Remove the duplicates if property allowDuplicate equals false
    */
-  private removeDuplicates(responsePeople: IPropertyFieldPeople[]): IPropertyFieldPeople[] {
+  private removeDuplicates(responsePeople: IPropertyFieldGroup[]): IPropertyFieldGroup[] {
     if (this.selectedPeople == null || this.selectedPeople.length == 0)
       return responsePeople;
-    var res: IPropertyFieldPeople[] = [];
-    responsePeople.map((element: IPropertyFieldPeople) => {
+    var res: IPropertyFieldGroup[] = [];
+    responsePeople.map((element: IPropertyFieldGroup) => {
       var found: boolean = false;
       for (var i: number = 0; i < this.selectedPeople.length; i++) {
-        var responseItem: IPropertyFieldPeople = this.selectedPeople[i];
-        if (responseItem.login == element.login) {
+        var responseItem: IPropertyFieldGroup = this.selectedPeople[i];
+        if (responseItem.id == element.id) {
           found = true;
           break;
         }
@@ -169,13 +169,13 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
 
   /**
    * @function
-   * Creates the collection of initial personas from initial IPropertyFieldPeople collection
+   * Creates the collection of initial personas from initial IPropertyFieldGroup collection
    */
   private createInitialPersonas(): void {
-    if (this.props.initialData == null || typeof (this.props.initialData) != typeof Array<IPropertyFieldPeople>())
+    if (this.props.initialData == null || typeof (this.props.initialData) != typeof Array<IPropertyFieldGroup>())
       return;
-    this.props.initialData.map((element: IPropertyFieldPeople, index: number) => {
-      var persona: IPersonaProps = this.getPersonaFromPeople(element, index);
+    this.props.initialData.map((element: IPropertyFieldGroup, index: number) => {
+      var persona: IPersonaProps = this.getPersonaFromGroup(element, index);
       this.intialPersonas.push(persona);
       this.selectedPersonas.push(persona);
       this.selectedPeople.push(element);
@@ -184,12 +184,11 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
 
   /**
    * @function
-   * Generates a IPersonaProps object from a IPropertyFieldPeople object
+   * Generates a IPersonaProps object from a IPropertyFieldGroup object
    */
-  private getPersonaFromPeople(element: IPropertyFieldPeople, index: number): IPersonaProps {
+  private getPersonaFromGroup(element: IPropertyFieldGroup, index: number): IPersonaProps {
     return {
-      primaryText: element.fullName, secondaryText: element.jobTitle, imageUrl: element.imageUrl,
-      imageInitials: element.initials, presence: PersonaPresence.none, initialsColor: this.getRandomInitialsColor(index)
+      primaryText: element.fullName, secondaryText: element.description
     };
   }
 
@@ -206,7 +205,7 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * @function
    * Validates the new custom field value
    */
-  private validate(value: IPropertyFieldPeople[]): void {
+  private validate(value: IPropertyFieldGroup[]): void {
     if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
       this.notifyAfterValidate(this.props.initialData, value);
       return;
@@ -238,7 +237,7 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * @function
    * Notifies the parent Web Part of a property value change
    */
-  private notifyAfterValidate(oldValue: IPropertyFieldPeople[], newValue: IPropertyFieldPeople[]) {
+  private notifyAfterValidate(oldValue: IPropertyFieldGroup[], newValue: IPropertyFieldGroup[]) {
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
@@ -263,7 +262,7 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
       if (selectedItems.length > this.selectedPersonas.length) {
         var index: number = this.resultsPersonas.indexOf(selectedItems[selectedItems.length - 1]);
         if (index > -1) {
-          var people: IPropertyFieldPeople = this.resultsPeople[index];
+          var people: IPropertyFieldGroup = this.resultsPeople[index];
           this.selectedPeople.push(people);
           this.selectedPersonas.push(this.resultsPersonas[index]);
           this.refreshWebPartProperties();
@@ -286,31 +285,6 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
     this.refreshWebPartProperties();
   }
 
-  /**
-   * @function
-   * Generate a PersonaInitialsColor from the item position in the collection
-   */
-  private getRandomInitialsColor(index: number): PersonaInitialsColor {
-    var num: number = index % 13;
-    switch (num) {
-      case 0: return PersonaInitialsColor.blue;
-      case 1: return PersonaInitialsColor.darkBlue;
-      case 2: return PersonaInitialsColor.teal;
-      case 3: return PersonaInitialsColor.lightGreen;
-      case 4: return PersonaInitialsColor.green;
-      case 5: return PersonaInitialsColor.darkGreen;
-      case 6: return PersonaInitialsColor.lightPink;
-      case 7: return PersonaInitialsColor.pink;
-      case 8: return PersonaInitialsColor.magenta;
-      case 9: return PersonaInitialsColor.purple;
-      case 10: return PersonaInitialsColor.black;
-      case 11: return PersonaInitialsColor.orange;
-      case 12: return PersonaInitialsColor.red;
-      case 13: return PersonaInitialsColor.darkRed;
-      default: return PersonaInitialsColor.blue;
-    }
-  }
-
 }
 
 /**
@@ -320,9 +294,9 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
 interface IPropertyFieldSearchService {
   /**
    * @function
-   * Search People from a query
+   * Search Groups from a query
    */
-  searchPeople(query: string): Promise<Array<IPropertyFieldPeople>>;
+  searchGroups(query: string, type: IGroupType): Promise<Array<IPropertyFieldGroup>>;
 }
 
 /**
@@ -343,12 +317,12 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
 
   /**
    * @function
-   * Search people from the SharePoint People database
+   * Search groups from the SharePoint database
    */
-  public searchPeople(query: string): Promise<Array<IPropertyFieldPeople>> {
+  public searchGroups(query: string, type: IGroupType): Promise<Array<IPropertyFieldGroup>> {
     if (Environment.type === EnvironmentType.Local) {
       //If the running environment is local, load the data from the mock
-      return this.searchPeopleFromMock(query);
+      return this.searchGroupsFromMock(query);
     }
     else {
       //If the running env is SharePoint, loads from the peoplepicker web service
@@ -376,7 +350,7 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
               //PrincipalType controls the type of entities that are returned in the results.
               //Choices are All - 15, Distribution List - 2 , Security Groups - 4,
               //SharePoint Groups &ndash; 8, User &ndash; 1. These values can be combined
-              'PrincipalType': 1,
+              'PrincipalType': type === IGroupType.SharePoint ? 8 : 4,
               'QueryString': query
               //'Required':false,
               //'SharePointGroupID':null,
@@ -394,14 +368,15 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
           };
           return this.context.spHttpClient.post(userRequestUrl, SPHttpClient.configurations.v1, httpPostOptions).then((searchResponse: SPHttpClientResponse) => {
             return searchResponse.json().then((usersResponse: any) => {
-              var res: IPropertyFieldPeople[] = [];
+              var res: IPropertyFieldGroup[] = [];
               var values: any = JSON.parse(usersResponse.value);
               values.map(element => {
-                var persona: IPropertyFieldPeople = { fullName: element.DisplayText, login: element.Description };
-                persona.email = element.EntityData.Email;
-                persona.jobTitle = element.EntityData.Title;
-                persona.initials = this.getFullNameInitials(persona.fullName);
-                persona.imageUrl = this.getUserPhotoUrl(persona.email, this.context.pageContext.web.absoluteUrl);
+                var persona: IPropertyFieldGroup = {
+                  fullName: element.DisplayText,
+                  login: type === IGroupType.SharePoint ? element.EntityData.AccountName : element.ProviderName,
+                  id : type === IGroupType.SharePoint ? element.EntityData.SPGroupID : element.Key,
+                  description: element.Description
+                };
                 res.push(persona);
               });
               return res;
@@ -412,49 +387,20 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
     }
   }
 
-  /**
-   * @function
-   * Generates Initials from a full name
-   */
-  private getFullNameInitials(fullName: string): string {
-    if (fullName == null)
-      return fullName;
-    var words: string[] = fullName.split(" ");
-    if (words.length == 0) {
-      return "";
-    }
-    else if (words.length == 1) {
-      return words[0].charAt(0);
-    }
-    else {
-      return (words[0].charAt(0) + words[1].charAt(0));
-    }
-  }
-
-  /**
-   * @function
-   * Gets the user photo url
-   */
-  private getUserPhotoUrl(userEmail: string, siteUrl: string): string {
-    return `${siteUrl}/_layouts/15/userphoto.aspx?size=S&accountname=${userEmail}`;
-  }
-
 
   /**
    * @function
    * Returns fake people results for the Mock mode
    */
-  private searchPeopleFromMock(query: string): Promise<Array<IPropertyFieldPeople>> {
-    return PeoplePickerMockHttpClient.searchPeople(this.context.pageContext.web.absoluteUrl).then(() => {
-      const results: IPropertyFieldPeople[] = [
-        { fullName: "Olivier Carpentier", initials: "OC", jobTitle: "Architect", email: "olivierc@contoso.com", login: "olivierc@contoso.com" },
-        { fullName: "Katie Jordan", initials: "KJ", jobTitle: "VIP Marketing", email: "katiej@contoso.com", login: "katiej@contoso.com" },
-        { fullName: "Gareth Fort", initials: "GF", jobTitle: "Sales Lead", email: "garethf@contoso.com", login: "garethf@contoso.com" },
-        { fullName: "Sara Davis", initials: "SD", jobTitle: "Assistant", email: "sarad@contoso.com", login: "sarad@contoso.com" },
-        { fullName: "John Doe", initials: "JD", jobTitle: "Developer", email: "johnd@contoso.com", login: "johnd@contoso.com" }
+  private searchGroupsFromMock(query: string): Promise<Array<IPropertyFieldGroup>> {
+    return PeoplePickerMockHttpClient.searchGroups(this.context.pageContext.web.absoluteUrl).then(() => {
+      const results: IPropertyFieldGroup[] = [
+        { id: '1', fullName: "Members", login: "Members", description: 'Members' },
+        { id: '2', fullName: "Viewers", login: "Viewers", description: 'Viewers' },
+        { id: '3', fullName: "Excel Services Viewers", login: "Excel Services Viewers", description: 'Excel Services Viewers' }
       ];
       return results;
-    }) as Promise<Array<IPropertyFieldPeople>>;
+    }) as Promise<Array<IPropertyFieldGroup>>;
   }
 }
 
@@ -468,14 +414,14 @@ class PeoplePickerMockHttpClient {
    * @var
    * Mock SharePoint result sample
    */
-  private static _results: IPropertyFieldPeople[] = [];
+  private static _results: IPropertyFieldGroup[] = [];
 
   /**
    * @function
    * Mock search People method
    */
-  public static searchPeople(restUrl: string, options?: any): Promise<IPropertyFieldPeople[]> {
-    return new Promise<IPropertyFieldPeople[]>((resolve) => {
+  public static searchGroups(restUrl: string, options?: any): Promise<IPropertyFieldGroup[]> {
+    return new Promise<IPropertyFieldGroup[]>((resolve) => {
       resolve(PeoplePickerMockHttpClient._results);
     });
   }

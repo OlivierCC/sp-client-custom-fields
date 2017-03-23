@@ -7,6 +7,7 @@ declare interface ITestStrings {
   DateFieldLabel: string;
   DateTimeFieldLabel: string;
   PeopleFieldLabel: string;
+  GroupFieldLabel: string;
   SPListFieldLabel: string;
   ColorFieldLabel: string;
   ColorMiniFieldLabel: string;
