@@ -48,6 +48,7 @@ gulp serve
 
 Date | Description |  Contributors
 ------------ | ----------- | -----------
+03/23/2017  | 1.2.5 release - Group Picker custom field added | @OlivierC
 03/21/2017  | 1.2.4 release - Web Site Documentation update | @OlivierC
 03/19/2017  | 1.2.3 release - Mini Color Picker custom field added | @OlivierC
 03/19/2017  | 1.2.2 release - StarRating custom field added | @OlivierC
