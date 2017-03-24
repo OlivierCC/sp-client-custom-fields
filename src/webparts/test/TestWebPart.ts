@@ -837,7 +837,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   label: strings.GroupFieldLabel,
                   initialData: this.properties.groups,
                   allowDuplicate: false,
-                  groupType: IGroupType.Security,
+                  groupType: IGroupType.SharePoint,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
                   properties: this.properties,
