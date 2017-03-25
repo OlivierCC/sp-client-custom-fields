@@ -80,6 +80,8 @@ import { PropertyFieldTagPicker } from '../../PropertyFieldTagPicker';
 import { PropertyFieldStarRating } from '../../PropertyFieldStarRating';
 //Include the PropertyFieldGroupPicker component
 import { PropertyFieldGroupPicker, IGroupType } from '../../PropertyFieldGroupPicker';
+//Include the PropertyFieldNumericInput component
+import { PropertyFieldNumericInput } from '../../PropertyFieldNumericInput';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -107,6 +109,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       list: this.properties.list,
       listsCollection: this.properties.listsCollection,
       password: this.properties.password,
+      numeric: this.properties.numeric,
       font: this.properties.font,
       fontSize: this.properties.fontSize,
       phone: this.properties.phone,
@@ -688,6 +691,21 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                 PropertyFieldPassword('password', {
                   label: strings.PasswordFieldLabel,
                   initialValue: this.properties.password,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'passwordFieldId'
+                }),
+                PropertyFieldNumericInput('numeric', {
+                  label: strings.NumericInputFieldLabel,
+                  initialValue: this.properties.numeric,
+                  min: 0,
+                  max: 100,
+                  step: 1,
+                  precision: 0,
+                  size: 10,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,

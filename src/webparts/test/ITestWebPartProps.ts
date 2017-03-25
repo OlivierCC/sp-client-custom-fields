@@ -16,6 +16,7 @@ export interface ITestWebPartProps {
   listsCollection: string[];
   folder: string;
   password: string;
+  numeric: number;
   font: string;
   fontSize: string;
   phone: string;

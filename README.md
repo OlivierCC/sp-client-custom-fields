@@ -1,4 +1,4 @@
-![release](https://img.shields.io/badge/release-v1.2.6-blue.svg)
+![release](https://img.shields.io/badge/release-v1.2.7-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
@@ -48,6 +48,7 @@ gulp serve
 
 Date | Description |  Contributors
 ------------ | ----------- | -----------
+03/25/2017  | 1.2.7 release - NumericInput custom field added | @OlivierC
 03/25/2017  | 1.2.6 release - Bundle package optimization added | @OlivierC
 03/23/2017  | 1.2.5 release - Group Picker custom field added | @OlivierC
 03/21/2017  | 1.2.4 release - Web Site Documentation update | @OlivierC

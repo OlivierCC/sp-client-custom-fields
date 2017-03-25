@@ -1,6 +1,5 @@
 declare interface ITestStrings {
   //Web Parts property labels
-  //You don't need to copy this fields
   PropertyPaneDescription: string;
   BasicGroupName: string;
   DescriptionFieldLabel: string;
@@ -34,6 +33,7 @@ declare interface ITestStrings {
   DropDownTreeViewFieldLabel: string;
   TagPickerFieldLabel: string;
   StarRatingFieldLabel: string;
+  NumericInputFieldLabel: string;
 }
 
 declare module 'testStrings' {

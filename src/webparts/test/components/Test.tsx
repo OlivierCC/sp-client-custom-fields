@@ -185,6 +185,12 @@ export default class Test extends React.Component<ITestProps, {}> {
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfieldpassword" target="_doc">(Doc)</a> : &nbsp;
                 {this.props.password}
               </p>
+              <p >
+                <i className="ms-Icon ms-Icon--NumberField" aria-hidden="true"></i>&nbsp;
+                <b>Number</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfieldnumericinput" target="_doc">(Doc)</a> : &nbsp;
+                {this.props.numeric}
+              </p>
                <p >
                 <i className="ms-Icon ms-Icon--Font" aria-hidden="true"></i>&nbsp;
                 <b>Rich Text Box</b>
