@@ -14,6 +14,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import GuidHelper from './GuidHelper';
 import { IPropertyFieldSPListMultiplePickerPropsInternal, PropertyFieldSPListMultiplePickerOrderBy } from './PropertyFieldSPListMultiplePicker';
 
@@ -44,7 +45,6 @@ export interface IPropertyFieldSPListMultiplePickerHostState {
 export default class PropertyFieldSPListMultiplePickerHost extends React.Component<IPropertyFieldSPListMultiplePickerHostProps, IPropertyFieldSPListMultiplePickerHostState> {
 
   private options: IChoiceGroupOption[] = [];
-  private selectedKeys: string[] = [];
   private loaded: boolean = false;
   private async: Async;
   private delayedValidate: (value: string[]) => void;
@@ -61,7 +61,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
     this.onChanged = this.onChanged.bind(this);
     this.state = {
 			results: this.options,
-      selectedKeys: this.selectedKeys,
+      selectedKeys: [],
       loaded: this.loaded,
       errorMessage: ''
     };
@@ -91,7 +91,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
           indexInExisting = this.props.selectedLists.indexOf(list.Id);
         if (indexInExisting > -1) {
           isSelected = true;
-          this.selectedKeys.push(list.Id);
+          this.state.selectedKeys.push(list.Id);
         }
         //Add the option to the list
         this.options.push({
@@ -101,7 +101,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
         });
       });
       this.loaded = true;
-      this.setState({results: this.options, selectedKeys: this.selectedKeys, loaded: true});
+      this.setState({results: this.options, selectedKeys: this.state.selectedKeys, loaded: true});
     });
   }
 
@@ -111,29 +111,29 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
    */
   private removeSelected(element: string): void {
     var res = [];
-    for (var i = 0; i < this.selectedKeys.length; i++) {
-      if (this.selectedKeys[i] !== element)
-        res.push(this.selectedKeys[i]);
+    for (var i = 0; i < this.state.selectedKeys.length; i++) {
+      if (this.state.selectedKeys[i] !== element)
+        res.push(this.state.selectedKeys[i]);
     }
-    this.selectedKeys = res;
+    this.state.selectedKeys = res;
   }
 
   /**
    * @function
    * Raises when a list has been selected
    */
-  private onChanged(element: any): void {
+  private onChanged(element: React.FormEvent<HTMLElement>, isChecked: boolean): void {
     if (element) {
-      var isChecked: boolean = element.currentTarget.checked;
-      var value: string = element.currentTarget.value;
+      var value: string = (element.currentTarget as any).value;
 
       if (isChecked === false) {
         this.removeSelected(value);
       }
       else {
-        this.selectedKeys.push(value);
+        this.state.selectedKeys.push(value);
       }
-      this.delayedValidate(this.selectedKeys);
+      this.setState(this.state);
+      this.delayedValidate(this.state.selectedKeys);
     }
   }
 
@@ -215,8 +215,13 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
               var uniqueKey = this.props.targetProperty + '-' + item.key;
               return (
                 <div className="ms-ChoiceField" key={this._key + '-multiplelistpicker-' + index}>
-                  <input disabled={this.props.disabled} id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
-                  <label htmlFor={uniqueKey}><span className="ms-Label" style={styleOfLabel}>{item.text}</span></label>
+                  <Checkbox
+                    defaultChecked={item.isChecked}
+                    disabled={this.props.disabled}
+                    label={item.text}
+                    onChange={this.onChanged}
+                    inputProps={{value: item.key}}
+                  />
                 </div>
               );
             })

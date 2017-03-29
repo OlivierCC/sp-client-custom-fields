@@ -11,6 +11,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import GuidHelper from './GuidHelper';
 import { IPropertyFieldSortableListPropsInternal, ISortableListOrder } from './PropertyFieldSortableList';
@@ -116,10 +117,9 @@ export default class PropertyFieldSortableListHost extends React.Component<IProp
    * @function
    * Raises when a list has been selected
    */
-  private onChanged(element: any): void {
+  private onChanged(element: React.FormEvent<HTMLElement>, isChecked: boolean): void {
     if (element) {
-      var isChecked: boolean = element.currentTarget.checked;
-      var value: string = element.currentTarget.value;
+      var value: string = (element.currentTarget as any).value;
 
       if (isChecked === false) {
         this.removeSelected(value);
@@ -234,8 +234,13 @@ export default class PropertyFieldSortableListHost extends React.Component<IProp
               var checked = item.isChecked != null && item.isChecked !== undefined ? item.isChecked : false;
               return (
                 <div className="ms-ChoiceField" key={this._key + '-sortablelistpicker-' + index}>
-                  <input disabled={this.props.disabled} id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onChange={this.onChanged} checked={checked} aria-checked={checked} type="checkbox" role="checkbox" />
-                  <label htmlFor={uniqueKey}><span className="ms-Label" style={styleOfLabel}>{item.text}</span></label>
+                  <Checkbox
+                    checked={checked}
+                    disabled={this.props.disabled}
+                    label={item.text}
+                    onChange={this.onChanged}
+                    inputProps={{value: item.key}}
+                  />
                 </div>
               );
             })

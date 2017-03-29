@@ -261,12 +261,17 @@ export default class PropertyFieldDropDownTreeViewHost extends React.Component<I
       picUrl = node.expandedPictureUrl;
     else if (node.pictureUrl !== undefined)
       picUrl = node.pictureUrl;
+    var nodeStyle = 'ms-Checkbox-label';
+    if (selected === true)
+      nodeStyle += ' is-checked';
     return (
         <span style={style} onClick={this.onClickNode.bind(null, node)} role="menuitem">
           { checkBoxAvailable ?
-              <input disabled={this.props.disabled} style={{width: '18px', height: '18px'}}
-                checked={selected} aria-checked={selected} readOnly={true}
-                type="checkbox" role="checkbox" />
+              <label className={nodeStyle} style={{padding: 0, margin: 0}} htmlFor={node.id}>
+                <input disabled={this.props.disabled} style={{width: '18px', height: '18px', opacity: 0}}
+                  checked={selected} aria-checked={selected} readOnly={true}
+                  type="checkbox" role="checkbox" />
+              </label>
             : ''
           }
           {

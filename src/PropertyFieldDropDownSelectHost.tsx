@@ -10,6 +10,7 @@ import { IPropertyFieldDropDownSelectPropsInternal } from './PropertyFieldDropDo
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import GuidHelper from './GuidHelper';
 
 /**
@@ -201,18 +202,18 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
    * @function
    * User clicked on a font
    */
-  private onClickFont(element?: any) {
-    var clickedFont: string = element.currentTarget.textContent;
-    var option: IDropdownOption = this.getOption(clickedFont);
-    option.isSelected = !option.isSelected;
+  private onClickFont(element: React.FormEvent<HTMLElement>, isChecked: boolean) {
+    var value: string = (element.currentTarget as any).value;
+    var option: IDropdownOption = this.getOption(value);
+    option.isSelected = isChecked;
     this.setState(this.state);
     this.saveOptions();
   }
 
-  private getOption(text: string): IDropdownOption {
+  private getOption(key: string): IDropdownOption {
     for (var i = 0; i < this.props.options.length; i++) {
       var font = this.props.options[i];
-      if (font.text === text)
+      if (font.key === key)
         return font;
     }
     return null;
@@ -348,15 +349,19 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
                     margin: '0',
                     listStyle: 'none',
                     fontSize: '16px',
-                    backgroundColor: backgroundColor,
-                    cursor: 'pointer'
+                    backgroundColor: backgroundColor
                   };
                   return (
                     <li value={font.text}
                       key={this._key + '-dropdownselect-' + index}
-                      onMouseEnter={this.toggleHover} role="menuitem" onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
-                      <input style={{width: '18px', height: '18px'}} defaultChecked={font.isSelected} aria-checked={font.isSelected} type="checkbox" role="checkbox" />
-                      {font.text}
+                      onMouseEnter={this.toggleHover} role="menuitem" onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
+                      <Checkbox
+                        defaultChecked={font.isSelected}
+                        disabled={this.props.disabled}
+                        label={font.text}
+                        onChange={this.onClickFont}
+                        inputProps={{value: font.key}}
+                      />
                     </li>
                   );
                 })

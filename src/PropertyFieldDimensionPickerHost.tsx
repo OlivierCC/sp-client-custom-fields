@@ -10,6 +10,7 @@ import { IPropertyFieldDimensionPickerPropsInternal, IPropertyFieldDimension } f
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import GuidHelper from './GuidHelper';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -170,9 +171,8 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
    * @function
    * Function called when the ratio changed
    */
-  private onRatioChanged(element: any): void {
+  private onRatioChanged(element: any, isChecked: boolean): void {
      if (element) {
-      var isChecked: boolean = element.currentTarget.checked;
       this.state.conserveRatio = isChecked;
       this.setState(this.state);
      }
@@ -302,15 +302,12 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
               <td></td>
               <td colSpan={2}>
                 <div className="ms-ChoiceField" style={{paddingLeft: '0px'}}>
-                  <input disabled={this.props.disabled} style={{width: '18px', height: '18px'}}
-                    id={this._key} name={this._key}
-                    onClick={this.onRatioChanged} defaultChecked={this.state.conserveRatio} aria-checked={this.state.conserveRatio}
-                    type="checkbox" role="checkbox" />
-                  <label htmlFor={this._key}>
-                    <span className="ms-Label" style={{paddingLeft: '0px', color: this.props.disabled === true ? '#a6a6a6': 'auto'}}>
-                      {strings.DimensionRatio}
-                    </span>
-                  </label>
+                  <Checkbox
+                    checked={this.state.conserveRatio}
+                    disabled={this.props.disabled}
+                    label={strings.DimensionRatio}
+                    onChange={this.onRatioChanged}
+                  />
                 </div>
               </td>
             </tr>

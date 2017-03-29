@@ -254,7 +254,7 @@ export default class Test extends React.Component<ITestProps, {}> {
                 {
                   peopleList.map((element: IPropertyFieldPeople, i:number) => {
                     return (
-                      <li>
+                      <li key={'people' + i}>
                         Username : {element.fullName}<br/>
                         Login: {element.login}<br/>
                         Email: {element.email}<br/>
@@ -273,7 +273,7 @@ export default class Test extends React.Component<ITestProps, {}> {
                 {
                   this.props.groups !== undefined ? this.props.groups.map((element: IPropertyFieldGroup, i:number) => {
                     return (
-                      <li>
+                      <li key={'groups' + i}>
                         FullName : {element.fullName}<br/>
                         Description: {element.description}<br/>
                         Login: {element.login}<br/>
@@ -328,7 +328,7 @@ export default class Test extends React.Component<ITestProps, {}> {
                 {
                   lists.map((element: string, i:number) => {
                     return (
-                      <li>{element}</li>
+                      <li key={'list' + i}>{element}</li>
                     );
                 })}
                 </ul>

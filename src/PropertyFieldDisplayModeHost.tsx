@@ -181,6 +181,16 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
     if (this.state.mode == 'tiles')
       backgroundTiles = '#EEEEEE';
 
+    var styleList = 'ms-ChoiceField-field';
+    var styleTiles = 'ms-ChoiceField-field';
+    if (this.state.mode === 'list')
+      styleList += ' is-checked';
+    else if (this.state.mode === 'tiles')
+      styleTiles += ' is-checked';
+    if (this.props.disabled === true) {
+      styleList += ' is-disabled';
+      styleTiles += ' is-disabled';
+    }
     //Renders content
     return (
       <div style={{ marginBottom: '8px'}}>
@@ -190,13 +200,13 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundLists}}
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
             <div style={{float: 'left'}}>
-
+              <label className={styleList}></label>
               <input id={"bulletRadio-" + this._key } className=""
                 onChange={this.onClickBullets} type="radio" name={"display-mode-" + this._key} role="radio"
                 disabled={this.props.disabled}
                 defaultChecked={this.state.mode == "list" ? true : false}
                 aria-checked={this.state.mode == "list" ? true : false}
-                value="list"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
+                value="list"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
               <label htmlFor={"bulletRadio-" + this._key } className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--List' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'60px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
@@ -207,12 +217,13 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
+              <label className={styleTiles}></label>
               <input id={"tilesRadio-" + this._key} className=""
                onChange={this.onClickTiles} type="radio" name={"display-mode-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "tiles" ? true : false}
                aria-checked={this.state.mode == "tiles" ? true : false}
-               value="tiles"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px'}}/>
+               value="tiles"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
               <label htmlFor={"tilesRadio-" + this._key} className="">
                 <span className="ms-Label">
                   <i className='ms-Icon ms-Icon--Tiles' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'48px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
