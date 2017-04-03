@@ -1,9 +1,9 @@
 /**
- * @file PropertyFieldPassword.ts
- * Define a custom field of type PropertyFieldPassword for
+ * @file PropertyFieldAutoComplete.ts
+ * Define a custom field of type PropertyFieldAutoComplete for
  * the SharePoint Framework (SPfx)
  *
- * @copyright 2016 Olivier Carpentier
+ * @copyright 2017 Olivier Carpentier
  * Released under MIT licence
  */
 import * as React from 'react';
@@ -13,14 +13,14 @@ import {
   PropertyPaneFieldType,
   IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-webpart-base';
-import PropertyFieldPasswordHost, { IPropertyFieldPasswordHostProps } from './PropertyFieldPasswordHost';
+import PropertyFieldAutoCompleteHost, { IPropertyFieldAutoCompleteHostProps } from './PropertyFieldAutoCompleteHost';
 
 /**
  * @interface
- * Public properties of the PropertyFieldPassword custom field
+ * Public properties of the PropertyFieldAutoComplete custom field
  *
  */
-export interface IPropertyFieldPasswordProps {
+export interface IPropertyFieldAutoCompleteProps {
   /**
    * @var
    * Property field label displayed on top
@@ -33,7 +33,12 @@ export interface IPropertyFieldPasswordProps {
   initialValue?: string;
   /**
    * @var
-   * Default placeholder text
+   * List of suggestions
+   */
+  suggestions: string[];
+  /**
+   * @var
+   * TextBox default place holder text
    */
   placeHolder?: string;
   /**
@@ -80,17 +85,18 @@ export interface IPropertyFieldPasswordProps {
 
 /**
  * @interface
- * Private properties of the PropertyFieldPassword custom field.
+ * Private properties of the PropertyFieldAutoComplete custom field.
  * We separate public & private properties to include onRender & onDispose method waited
  * by the PropertyFieldCustom, witout asking to the developer to add it when he's using
- * the PropertyFieldPassword.
+ * the PropertyFieldAutoComplete.
  *
  */
-export interface IPropertyFieldPasswordPropsInternal extends IPropertyPaneCustomFieldProps {
+export interface IPropertyFieldAutoCompletePropsInternal extends IPropertyPaneCustomFieldProps {
   label: string;
   initialValue?: string;
-  placeHolder?: string;
   targetProperty: string;
+  suggestions: string[];
+  placeHolder?: string;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
@@ -102,19 +108,20 @@ export interface IPropertyFieldPasswordPropsInternal extends IPropertyPaneCustom
 
 /**
  * @interface
- * Represents a PropertyFieldPassword object
+ * Represents a PropertyFieldAutoComplete object
  *
  */
-class PropertyFieldPasswordBuilder implements IPropertyPaneField<IPropertyFieldPasswordPropsInternal> {
+class PropertyFieldAutoCompleteBuilder implements IPropertyPaneField<IPropertyFieldAutoCompletePropsInternal> {
 
   //Properties defined by IPropertyPaneField
   public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public targetProperty: string;
-  public properties: IPropertyFieldPasswordPropsInternal;
+  public properties: IPropertyFieldAutoCompletePropsInternal;
 
   //Custom properties
   private label: string;
   private initialValue: string;
+  private suggestions: string[];
   private placeHolder: string;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
@@ -127,7 +134,7 @@ class PropertyFieldPasswordBuilder implements IPropertyPaneField<IPropertyFieldP
    * @function
    * Ctor
    */
-  public constructor(_targetProperty: string, _properties: IPropertyFieldPasswordPropsInternal) {
+  public constructor(_targetProperty: string, _properties: IPropertyFieldAutoCompletePropsInternal) {
     this.render = this.render.bind(this);
     this.targetProperty = _properties.targetProperty;
     this.properties = _properties;
@@ -143,6 +150,7 @@ class PropertyFieldPasswordBuilder implements IPropertyPaneField<IPropertyFieldP
     this.onGetErrorMessage = _properties.onGetErrorMessage;
     if (_properties.deferredValidationTime !== undefined)
       this.deferredValidationTime = _properties.deferredValidationTime;
+    this.suggestions = _properties.suggestions;
     this.placeHolder = _properties.placeHolder;
   }
 
@@ -152,11 +160,12 @@ class PropertyFieldPasswordBuilder implements IPropertyPaneField<IPropertyFieldP
    */
   private render(elem: HTMLElement): void {
     //Construct the JSX properties
-    const element: React.ReactElement<IPropertyFieldPasswordHostProps> = React.createElement(PropertyFieldPasswordHost, {
+    const element: React.ReactElement<IPropertyFieldAutoCompleteHostProps> = React.createElement(PropertyFieldAutoCompleteHost, {
       label: this.label,
       initialValue: this.initialValue,
-      placeHolder: this.placeHolder,
       targetProperty: this.targetProperty,
+      suggestions: this.suggestions,
+      placeHolder: this.placeHolder,
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
@@ -186,14 +195,15 @@ class PropertyFieldPasswordBuilder implements IPropertyPaneField<IPropertyFieldP
  * @param targetProperty - Target property the custom field is associated to.
  * @param properties - Strongly typed custom field properties.
  */
-export function PropertyFieldPassword(targetProperty: string, properties: IPropertyFieldPasswordProps): IPropertyPaneField<IPropertyFieldPasswordPropsInternal> {
+export function PropertyFieldAutoComplete(targetProperty: string, properties: IPropertyFieldAutoCompleteProps): IPropertyPaneField<IPropertyFieldAutoCompletePropsInternal> {
 
     //Create an internal properties object from the given properties
-    var newProperties: IPropertyFieldPasswordPropsInternal = {
+    var newProperties: IPropertyFieldAutoCompletePropsInternal = {
       label: properties.label,
       targetProperty: targetProperty,
-      placeHolder: properties.placeHolder,
       initialValue: properties.initialValue,
+      suggestions: properties.suggestions,
+      placeHolder: properties.placeHolder,
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
@@ -203,9 +213,9 @@ export function PropertyFieldPassword(targetProperty: string, properties: IPrope
       onGetErrorMessage: properties.onGetErrorMessage,
       deferredValidationTime: properties.deferredValidationTime
     };
-    //Calls the PropertyFieldPassword builder object
+    //Calls the PropertyFieldAutoComplete builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
-    return new PropertyFieldPasswordBuilder(targetProperty, newProperties);
+    return new PropertyFieldAutoCompleteBuilder(targetProperty, newProperties);
 }
 
 

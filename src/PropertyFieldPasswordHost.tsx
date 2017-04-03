@@ -126,6 +126,7 @@ export default class PropertyFieldPasswordHost extends React.Component<IProperty
         <Label>{this.props.label}</Label>
         <input disabled={this.props.disabled}
           label={this.props.label}
+          placeholder={this.props.placeHolder !== undefined ? this.props.placeHolder: ''}
           type="password"
           value={this.state.currentValue}
           className="ms-TextField-field"

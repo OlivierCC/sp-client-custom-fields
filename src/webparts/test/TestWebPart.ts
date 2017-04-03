@@ -82,6 +82,8 @@ import { PropertyFieldStarRating } from '../../PropertyFieldStarRating';
 import { PropertyFieldGroupPicker, IGroupType } from '../../PropertyFieldGroupPicker';
 //Include the PropertyFieldNumericInput component
 import { PropertyFieldNumericInput } from '../../PropertyFieldNumericInput';
+//Include the PropertyFieldAutoComplete component
+import { PropertyFieldAutoComplete } from '../../PropertyFieldAutoComplete';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -130,7 +132,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       treeView: this.properties.treeView,
       dropDownTreeView: this.properties.dropDownTreeView,
       tags: this.properties.tags,
-      starRating: this.properties.starRating
+      starRating: this.properties.starRating,
+      autoSuggest: this.properties.autoSuggest
     });
 
     ReactDom.render(element, this.domElement);
@@ -697,6 +700,69 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'passwordFieldId'
+                }),
+                PropertyFieldAutoComplete('autoSuggest', {
+                  label: strings.AutoSuggestFieldLabel,
+                  placeHolder: 'Select a state',
+                  initialValue: this.properties.autoSuggest,
+                  suggestions: [
+                    "Alabama",
+                    "Alaska",
+                    "Arizona",
+                    "Arkansas",
+                    "California",
+                    "Colorado",
+                    "Connecticut",
+                    "Delaware",
+                    "Florida",
+                    "Georgia",
+                    "Hawaii",
+                    "Idaho",
+                    "Illinois",
+                    "Indiana",
+                    "Iowa",
+                    "Kansas",
+                    "Kentucky",
+                    "Louisiana",
+                    "Maine",
+                    "Maryland",
+                    "Massachusetts",
+                    "Michigan",
+                    "Minnesota",
+                    "Mississippi",
+                    "Missouri",
+                    "Montana",
+                    "Nebraska",
+                    "Nevada",
+                    "New Hampshire",
+                    "New Jersey",
+                    "New Mexico",
+                    "New York",
+                    "North Carolina",
+                    "North Dakota",
+                    "Ohio",
+                    "Oklahoma",
+                    "Oregon",
+                    "Pennsylvania",
+                    "Rhode Island",
+                    "South Carolina",
+                    "South Dakota",
+                    "Tennessee",
+                    "Texas",
+                    "Utah",
+                    "Vermont",
+                    "Virginia",
+                    "Washington",
+                    "West Virginia",
+                    "Wisconsin",
+                    "Wyoming"
+                  ],
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'autoSuggestFieldId'
                 }),
                 PropertyFieldNumericInput('numeric', {
                   label: strings.NumericInputFieldLabel,

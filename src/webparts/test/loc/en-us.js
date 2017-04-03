@@ -33,6 +33,7 @@ define([], function() {
     "DropDownTreeViewFieldLabel": "DropDown TreeView Field",
     "TagPickerFieldLabel": "Tag Picker Field",
     "StarRatingFieldLabel": "Star Rating Field",
-    "NumericInputFieldLabel": "Numeric Input Field"
+    "NumericInputFieldLabel": "Numeric Input Field",
+    "AutoSuggestFieldLabel": "Auto Complete Input Field"
   }
 });

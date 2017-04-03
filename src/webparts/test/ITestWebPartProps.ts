@@ -38,4 +38,5 @@ export interface ITestWebPartProps {
   dropDownTreeView: string[];
   tags: IPropertyFieldTag[];
   starRating: number;
+  autoSuggest: string;
 }
