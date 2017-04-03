@@ -84,6 +84,8 @@ import { PropertyFieldGroupPicker, IGroupType } from '../../PropertyFieldGroupPi
 import { PropertyFieldNumericInput } from '../../PropertyFieldNumericInput';
 //Include the PropertyFieldAutoComplete component
 import { PropertyFieldAutoComplete } from '../../PropertyFieldAutoComplete';
+//Include the PropertyFieldSearchPropertiesPicker component
+import { PropertyFieldSearchPropertiesPicker } from '../../PropertyFieldSearchPropertiesPicker';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -133,7 +135,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       dropDownTreeView: this.properties.dropDownTreeView,
       tags: this.properties.tags,
       starRating: this.properties.starRating,
-      autoSuggest: this.properties.autoSuggest
+      autoSuggest: this.properties.autoSuggest,
+      searchProperties: this.properties.searchProperties
     });
 
     ReactDom.render(element, this.domElement);
@@ -928,6 +931,19 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'groupsFieldId'
+                }),
+                PropertyFieldSearchPropertiesPicker('searchProperties', {
+                  label: strings.SearchPropertiesFieldLabel,
+                  selectedProperties: this.properties.searchProperties,
+                  loadingText: 'Loading...',
+                  noResultsFoundText: 'No properties found',
+                  suggestionsHeaderText: 'Suggested Properties',
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'searchPropertiesPickerFieldId'
                 }),
                PropertyFieldSPListPicker('list', {
                   label: strings.SPListFieldLabel,

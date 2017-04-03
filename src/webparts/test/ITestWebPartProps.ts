@@ -39,4 +39,5 @@ export interface ITestWebPartProps {
   tags: IPropertyFieldTag[];
   starRating: number;
   autoSuggest: string;
+  searchProperties: string[];
 }

@@ -302,6 +302,21 @@ export default class Test extends React.Component<ITestProps, {}> {
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfielddocumentepicker" target="_doc">(Doc)</a> :&nbsp;
                 {this.props.document}
               </p>
+              <div>
+                <i className="ms-Icon ms-Icon--Search" aria-hidden="true"></i>&nbsp;
+                <b>Search Properties</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfieldsearchpropertiespicker" target="_doc">(Doc)</a> :&nbsp;
+
+                <ul>
+                {
+                  this.props.searchProperties !== undefined ? this.props.searchProperties.map((element: string, i:number) => {
+                    return (
+                      <li key={'groups' + i}>{element}<br/>
+                      </li>
+                    );
+                }) : ''}
+                </ul>
+              </div>
               <p>
                 <i className="ms-Icon ms-Icon--List" aria-hidden="true"></i>&nbsp;
                 <b>List</b>

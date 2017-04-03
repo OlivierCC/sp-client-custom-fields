@@ -1,4 +1,4 @@
-![release](https://img.shields.io/badge/release-v1.2.9-blue.svg)
+![release](https://img.shields.io/badge/release-v1.3.0-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
@@ -48,6 +48,7 @@ gulp serve
 
 Date | Description |  Contributors
 ------------ | ----------- | -----------
+04/03/2017  | 1.3.0 SearchPropertiesPicker custom field added | @OlivierC
 04/03/2017  | 1.2.9 AutoComplete custom field added | @OlivierC
 03/29/2017  | 1.2.8 release - CheckBoxes & RadioButtons styles changed | @OlivierC
 03/25/2017  | 1.2.7 release - NumericInput custom field added | @OlivierC

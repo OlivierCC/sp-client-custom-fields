@@ -35,6 +35,7 @@ declare interface ITestStrings {
   StarRatingFieldLabel: string;
   NumericInputFieldLabel: string;
   AutoSuggestFieldLabel: string;
+  SearchPropertiesFieldLabel: string;
 }
 
 declare module 'testStrings' {

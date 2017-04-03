@@ -34,6 +34,7 @@ define([], function() {
     "TagPickerFieldLabel": "Tag Picker Field",
     "StarRatingFieldLabel": "Star Rating Field",
     "NumericInputFieldLabel": "Numeric Input Field",
-    "AutoSuggestFieldLabel": "Auto Complete Input Field"
+    "AutoSuggestFieldLabel": "Auto Complete Input Field",
+    "SearchPropertiesFieldLabel": "Search Properties Picker"
   }
 });
