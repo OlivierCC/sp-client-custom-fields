@@ -35,6 +35,7 @@ define([], function() {
     "StarRatingFieldLabel": "Star Rating Field",
     "NumericInputFieldLabel": "Numeric Input Field",
     "AutoSuggestFieldLabel": "Auto Complete Input Field",
-    "SearchPropertiesFieldLabel": "Search Properties Picker"
+    "SearchPropertiesFieldLabel": "Search Properties Picker",
+    "OfficeVideoFieldLabel": "Office Video Field"
   }
 });

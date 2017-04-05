@@ -86,6 +86,8 @@ import { PropertyFieldNumericInput } from '../../PropertyFieldNumericInput';
 import { PropertyFieldAutoComplete } from '../../PropertyFieldAutoComplete';
 //Include the PropertyFieldSearchPropertiesPicker component
 import { PropertyFieldSearchPropertiesPicker } from '../../PropertyFieldSearchPropertiesPicker';
+//Include the PropertyFieldSearchPropertiesPicker component
+import { PropertyFieldOfficeVideoPicker } from '../../PropertyFieldOfficeVideoPicker';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -136,7 +138,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       tags: this.properties.tags,
       starRating: this.properties.starRating,
       autoSuggest: this.properties.autoSuggest,
-      searchProperties: this.properties.searchProperties
+      searchProperties: this.properties.searchProperties,
+      officeVideo: this.properties.officeVideo
     });
 
     ReactDom.render(element, this.domElement);
@@ -908,6 +911,19 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'documentFieldId'
+                }),
+                PropertyFieldOfficeVideoPicker('officeVideo', {
+                  label: strings.OfficeVideoFieldLabel,
+                  panelTitle: 'Select a video',
+                  initialValue: this.properties.officeVideo,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  disabled: false,
+                  readOnly: true,
+                  context: this.context,
+                  properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'officeVideoFieldId'
                 }),
                 PropertyFieldPeoplePicker('people', {
                   label: strings.PeopleFieldLabel,

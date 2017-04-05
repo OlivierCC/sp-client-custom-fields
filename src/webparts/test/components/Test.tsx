@@ -299,8 +299,14 @@ export default class Test extends React.Component<ITestProps, {}> {
               <p>
                 <i className="ms-Icon ms-Icon--Document" aria-hidden="true"></i>&nbsp;
                 <b>Document</b>
-                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfielddocumentepicker" target="_doc">(Doc)</a> :&nbsp;
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfielddocumentpicker" target="_doc">(Doc)</a> :&nbsp;
                 {this.props.document}
+              </p>
+              <p>
+                <i className="ms-Icon ms-Icon--VideoSolid" aria-hidden="true"></i>&nbsp;
+                <b>Office Video</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfieldofficevideopicker" target="_doc">(Doc)</a> :&nbsp;
+                {this.props.officeVideo}
               </p>
               <div>
                 <i className="ms-Icon ms-Icon--Search" aria-hidden="true"></i>&nbsp;

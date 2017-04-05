@@ -40,4 +40,5 @@ export interface ITestWebPartProps {
   starRating: number;
   autoSuggest: string;
   searchProperties: string[];
+  officeVideo: string;
 }

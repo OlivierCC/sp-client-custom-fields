@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldAutoCompletePropsInternal } from './PropertyFieldAutoComplete';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -20,12 +21,16 @@ export interface IPropertyFieldAutoCompleteHostProps extends IPropertyFieldAutoC
 
 export interface IPropertyFieldAutoCompleteState {
   currentValue?: string;
+  shortCurrentValue?: string;
   suggestions: string[];
   isOpen: boolean;
   hover: string;
   keyPosition: number;
   isHoverDropdown: boolean;
   errorMessage: string;
+  guid: string;
+  shouldAutoComplete: boolean;
+  scrollPosition: number;
 }
 
 /**
@@ -46,12 +51,16 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
 
     this.async = new Async(this);
     this.state = {
+       scrollPosition: -1,
+       shouldAutoComplete: false,
        keyPosition: -1,
        errorMessage: '',
        isOpen: false,
        isHoverDropdown: false,
        hover: '',
+       guid: GuidHelper.getGuid(),
        currentValue: this.props.initialValue !== undefined ? this.props.initialValue : '',
+       shortCurrentValue: this.props.initialValue !== undefined ? this.props.initialValue : '',
        suggestions: this.props.suggestions
     };
 
@@ -65,10 +74,10 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
     this.onInputKeyDown = this.onInputKeyDown.bind(this);
     this.onInputBlur = this.onInputBlur.bind(this);
     this.onInputKeyPress = this.onInputKeyPress.bind(this);
-    this.onInputKeyUp = this.onInputKeyUp.bind(this);
     this.onClickInput = this.onClickInput.bind(this);
     this.mouseEnterDropDown = this.mouseEnterDropDown.bind(this);
     this.mouseLeaveDropDown = this.mouseLeaveDropDown.bind(this);
+    this.automaticScroll = this.automaticScroll.bind(this);
     this.validate = this.validate.bind(this);
     this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
     this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
@@ -82,12 +91,35 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
     //Checks if there is a method to called
     if (this.props.onPropertyChange && element != null) {
       var newValue: string = element.currentTarget.value;
+      this.state.shortCurrentValue = newValue;
       this.state.currentValue = newValue;
       this.state.keyPosition = -1;
       this.state.isOpen = true;
       this.state.suggestions = this.getSuggestions(newValue);
+      if (this.state.shouldAutoComplete === true) {
+        if (this.state.suggestions !== undefined && this.state.suggestions.length > 0) {
+          this.state.currentValue = this.state.suggestions[0];
+          this.state.keyPosition = 0;
+          this.state.shouldAutoComplete = false;
+        }
+      }
       this.setState(this.state);
-      this.delayedValidate(newValue);
+      this.delayedValidate(this.state.currentValue);
+    }
+  }
+
+  public componentDidUpdate(prevProps: IPropertyFieldAutoCompleteHostProps, prevState: IPropertyFieldAutoCompleteState, prevContext: any): void {
+    if (this.state.currentValue != this.state.shortCurrentValue && this.state.isOpen === true) {
+      //Set cursor position
+      var input: any = document.getElementById(this.state.guid);
+      input.focus();
+      input.setSelectionRange(this.state.shortCurrentValue.length, this.state.currentValue.length);
+
+      if (this.state.scrollPosition !== -1) {
+        var divDrop: any = document.getElementById("drop-" + this.state.guid);
+        divDrop.scrollTop = this.state.scrollPosition;
+        this.state.scrollPosition = -1;
+      }
     }
   }
 
@@ -117,13 +149,16 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
     if (elm.keyCode != 40 && elm.keyCode != 38) {
       this.state.keyPosition = -1;
       this.state.hover = '';
+      this.state.shouldAutoComplete = true;
       this.setState(this.state);
     }
-    if (elm.keyCode == 0) {
+    if (elm.charCode === 13) {
       this.state.isOpen = false;
       this.state.hover = '';
       this.state.keyPosition = -1;
       this.setState(this.state);
+      var input: any = document.getElementById(this.state.guid);
+      input.setSelectionRange(this.state.currentValue.length, this.state.currentValue.length);
     }
   }
 
@@ -134,18 +169,38 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
         this.state.keyPosition = this.state.suggestions.length - 1;
       this.state.currentValue = this.state.suggestions[this.state.keyPosition];
       this.setState(this.state);
+      this.automaticScroll(true);
       this.delayedValidate(this.state.currentValue);
     }
-  }
-
-  private onInputKeyUp(elm?: any) {
-    if (elm.keyCode === 38) {
+    else if (elm.keyCode === 38) {
       this.state.keyPosition = this.state.keyPosition - 1;
       if (this.state.keyPosition < 0)
         this.state.keyPosition = 0;
       this.state.currentValue = this.state.suggestions[this.state.keyPosition];
       this.setState(this.state);
+      this.automaticScroll(false);
       this.delayedValidate(this.state.currentValue);
+    }
+  }
+
+  private automaticScroll(down: boolean): void {
+    var lineHeight = 28;
+    var maxHeight = 7 * lineHeight;
+    var divDrop: any = document.getElementById("drop-" + this.state.guid);
+    var currentScrollTop = divDrop.scrollTop;
+    var currentTopInPixel = this.state.keyPosition * lineHeight;
+
+    if (currentTopInPixel < currentScrollTop  || (currentTopInPixel + lineHeight) > (currentScrollTop + maxHeight)) {
+      //The current element is not displayed
+      if (down === true) {
+        if ((currentScrollTop + lineHeight) <= currentTopInPixel)
+          this.state.scrollPosition = currentScrollTop + lineHeight;
+        else
+          this.state.scrollPosition = currentTopInPixel;
+      }
+      else {
+        this.state.scrollPosition = currentTopInPixel;
+      }
     }
   }
 
@@ -358,20 +413,20 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
           <Label>{this.props.label}</Label>
           <div style={fontSelect}>
             <input disabled={this.props.disabled}
+              id={this.state.guid}
               placeholder={this.props.placeHolder !== undefined ? this.props.placeHolder : ''}
               label={this.props.label}
               value={this.state.currentValue}
               className="ms-TextField-field"
               onClick={this.onClickInput}
               onBlur={this.onInputBlur}
-              onKeyUp={this.onInputKeyUp}
-              onKeyDown={this.onInputKeyDown}
+              onKeyUp={this.onInputKeyDown}
               onKeyPress={this.onInputKeyPress}
               onChange={this.onValueChanged}
               aria-invalid={ !!this.state.errorMessage }
               />
             <div style={fsDrop}>
-              <ul style={fsResults}>
+              <ul style={fsResults} id={"drop-" + this.state.guid}>
                 {this.state.suggestions.map((sug: string, index: number) => {
                   var backgroundColor: string = 'transparent';
                   if (this.state.currentValue === sug)
@@ -379,8 +434,9 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
                   else if (this.state.hover === sug)
                     backgroundColor = '#eaeaea';
                   var innerStyle = {
-                    lineHeight: '80%',
-                    padding: '7px 7px 8px',
+                    //lineHeight: '80%',
+                    height: '20px',
+                    padding: '4px 7px 4px',
                     margin: '0',
                     listStyle: 'none',
                     backgroundColor: backgroundColor,
