@@ -11,18 +11,33 @@ import { IPropertyFieldCustomListPropsInternal, ICustomListField, CustomListFiel
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { Dialog, DialogType } from 'office-ui-fabric-react/lib/Dialog';
+import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
+import {
+  CheckboxVisibility,
+  ConstrainMode,
+  DetailsList,
+  DetailsListLayoutMode as LayoutMode,
+  SelectionMode,
+  Selection,
+  buildColumns
+} from 'office-ui-fabric-react/lib/DetailsList';
 import PropertyFieldDatePickerHost from './PropertyFieldDatePickerHost';
 import PropertyFieldDateTimePickerHost from './PropertyFieldDateTimePickerHost';
 import PropertyFieldFontPickerHost from './PropertyFieldFontPickerHost';
 import PropertyFieldFontSizePickerHost from './PropertyFieldFontSizePickerHost';
 import PropertyFieldIconPickerHost from './PropertyFieldIconPickerHost';
 import PropertyFieldColorPickerHost from './PropertyFieldColorPickerHost';
+import PropertyFieldColorPickerMiniHost from './PropertyFieldColorPickerMiniHost';
 import PropertyFieldPasswordHost from './PropertyFieldPasswordHost';
 import PropertyFieldPicturePickerHost from './PropertyFieldPicturePickerHost';
 import PropertyFieldDocumentPickerHost from './PropertyFieldDocumentPickerHost';
 import PropertyFieldSPListPickerHost from './PropertyFieldSPListPickerHost';
 import PropertyFieldSPFolderPickerHost from './PropertyFieldSPFolderPickerHost';
 import PropertyFieldPeoplePickerHost from './PropertyFieldPeoplePickerHost';
+import PropertyFieldStarRatingHost from './PropertyFieldStarRatingHost';
+import PropertyFieldGroupPickerHost from './PropertyFieldGroupPickerHost';
+import { IGroupType } from './PropertyFieldGroupPicker';
+import PropertyFieldOfficeVideoPickerHost from './PropertyFieldOfficeVideoPickerHost';
 import GuidHelper from './GuidHelper';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -47,6 +62,10 @@ export interface IPropertyFieldCustomListHostState {
   editOpen?: boolean;
   mandatoryOpen?: boolean;
   missingField?: string;
+  items: any[];
+  columns: any[];
+  listKey: string;
+  selection: Selection;
 }
 
 /**
@@ -69,9 +88,6 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     this.onClickAddItem = this.onClickAddItem.bind(this);
     this.onClickCancel = this.onClickCancel.bind(this);
     this.onClickAdd = this.onClickAdd.bind(this);
-    this.onEnterHoverItem = this.onEnterHoverItem.bind(this);
-    this.onLeaveHoverItem = this.onLeaveHoverItem.bind(this);
-    this.onChangeSelectedItem = this.onChangeSelectedItem.bind(this);
     this.onClickDeleteItem = this.onClickDeleteItem.bind(this);
     this.onDismissDelete = this.onDismissDelete.bind(this);
     this.clickDelete = this.clickDelete.bind(this);
@@ -79,10 +95,10 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     this.onClickUpdate = this.onClickUpdate.bind(this);
     this.onPropertyChange = this.onPropertyChange.bind(this);
     this.onPropertyChangeJson = this.onPropertyChangeJson.bind(this);
-    this.onChangedCheckbox = this.onChangedCheckbox.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onClickMoveUp = this.onClickMoveUp.bind(this);
     this.onClickMoveDown = this.onClickMoveDown.bind(this);
+    this.onActiveItemChanged = this.onActiveItemChanged.bind(this);
     this._key = GuidHelper.getGuid();
 
     this.state = {
@@ -94,8 +110,35 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
       deleteOpen: false,
       editOpen: false,
       mandatoryOpen: false,
-      missingField: ''
+      missingField: '',
+      items: [],
+      columns: [],
+      listKey: GuidHelper.getGuid(),
+      selection: new Selection()
     };
+
+    this.initItems();
+    this.initColumns();
+  }
+
+  private initItems() {
+    var items = [];
+    if (this.state.data != null) {
+        this.state.data.map((value: any, index: number) => {
+           var item = {};
+           this.props.fields.map((field: ICustomListField, indexI: number) => {
+            if (value != null && field != null && (field.hidden == null || field.hidden === false)) {
+              item[field.title] = value[field.id];
+            }
+           });
+           items.push(item);
+        });
+    }
+    this.state.items = items;
+  }
+
+  private initColumns() {
+     this.state.columns = buildColumns(this.state.items, true, null, '', false, '', true);
   }
 
   /**
@@ -156,7 +199,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     for (var i = 0; i < this.props.fields.length; i++) {
       if (this.props.fields[i] == null)
         continue;
-      var ctrl = document.getElementById('input-' + this.props.fields[i].title);
+      var ctrl = document.getElementById('input-' + this.props.fields[i].id);
       if (ctrl == null)
         continue;
       var str = ctrl['value'];
@@ -165,35 +208,25 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
 
       if (this.props.fields[i].required === true && (str == null || str == '')) {
         this.state.mandatoryOpen = true;
-        this.state.missingField = this.props.fields[i].title;
+        this.state.missingField = this.props.fields[i].id;
         this.setState(this.state);
-        document.getElementById('input-' + this.props.fields[i].title).focus();
+        document.getElementById('input-' + this.props.fields[i].id).focus();
         return;
       }
 
-      result[this.props.fields[i].title] = str;
+      result[this.props.fields[i].id] = str;
     }
     this.state.data.push(result);
+    this.initItems();
+    if (this.state.selectedIndex != null && this.state.selectedIndex > 0)
+      this.state.selection.setIndexSelected(this.state.selectedIndex, false, false);
+    this.state.selectedIndex = null;
     this.setState(this.state);
-
     this.saveWebPart(this.state.data);
 
     this.onClickCancel();
   }
 
-  private onChangeSelectedItem(element?: any): void {
-    var index = element.currentTarget.value;
-    this.state.selectedIndex = index;
-    this.setState(this.state);
-  }
-
-  private onEnterHoverItem(element?: any): void {
-    this.state.hoverColor = 'white';
-    element.currentTarget.style.backgroundColor = '#F8F8F8';
-  }
-  private onLeaveHoverItem(element?: any): void {
-    element.currentTarget.style.backgroundColor = this.state.hoverColor;
-  }
 
   private onDismissDelete(element?: any): void {
     this.state.deleteOpen = false;
@@ -206,7 +239,10 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
        var obj = this.state.data[indexToMove - 1];
        this.state.data[indexToMove - 1] = this.state.data[indexToMove];
        this.state.data[indexToMove] = obj;
+       this.state.selection.setIndexSelected(this.state.selectedIndex, false, false);
        this.state.selectedIndex = indexToMove - 1;
+       this.state.selection.setIndexSelected(this.state.selectedIndex, true, true);
+       this.initItems();
        this.setState(this.state);
        this.saveWebPart(this.state.data);
      }
@@ -218,7 +254,10 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
        var dataRestore = this.state.data[indexToMove + 1];
        this.state.data[indexToMove + 1] = this.state.data[indexToMove];
        this.state.data[indexToMove] = dataRestore;
+       this.state.selection.setIndexSelected(this.state.selectedIndex, false, false);
        this.state.selectedIndex = indexToMove + 1;
+       this.state.selection.setIndexSelected(this.state.selectedIndex, true, true);
+       this.initItems();
        this.setState(this.state);
        this.saveWebPart(this.state.data);
      }
@@ -231,9 +270,10 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
       if (i != indexToDelete)
         newData.push(this.state.data[i]);
     }
-    this.state.selectedIndex = -1;
+    this.state.selection.setIndexSelected(this.state.selectedIndex, false, false);
     this.state.data = newData;
     this.state.selectedIndex = null;
+    this.initItems();
     this.setState(this.state);
     this.onDismissDelete();
     this.saveWebPart(this.state.data);
@@ -251,7 +291,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     for (var i = 0; i < this.props.fields.length; i++) {
       if (this.props.fields[i] == null)
         continue;
-      var ctrl = document.getElementById('input-' + this.props.fields[i].title);
+      var ctrl = document.getElementById('input-' + this.props.fields[i].id);
       if (ctrl == null)
         continue;
       var str = ctrl['value'];
@@ -262,12 +302,13 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
         this.state.mandatoryOpen = true;
         this.state.missingField = this.props.fields[i].title;
         this.setState(this.state);
-        document.getElementById('input-' + this.props.fields[i].title).focus();
+        document.getElementById('input-' + this.props.fields[i].id).focus();
         return;
       }
 
-      result[this.props.fields[i].title] = str;
+      result[this.props.fields[i].id] = str;
     }
+    this.initItems();
     this.setState(this.state);
     this.saveWebPart(this.state.data);
     this.onClickCancel();
@@ -283,8 +324,15 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     input['value'] = JSON.stringify(newValue);
   }
 
-  private onChangedCheckbox(isChecked: boolean): void {
-
+  private onActiveItemChanged(item?: any, index?: number, ev?: React.FocusEvent<HTMLElement>): void {
+    if (index !== undefined && index >= 0) {
+      this.state.selectedIndex = index;
+      this.setState(this.state);
+    }
+    else {
+      this.state.selectedIndex = null;
+      this.setState(this.state);
+    }
   }
 
   /**
@@ -292,6 +340,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
    * Renders the datepicker controls with Office UI  Fabric
    */
   public render(): JSX.Element {
+
     //Renders content
     return (
       <div style={{ marginBottom: '8px'}}>
@@ -307,10 +356,13 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
           <div>
                {this.props.fields != null ?
               <div>
-              <div style={{marginBottom: '20px', backgroundColor: '#F4F4F4', width: '100%', paddingTop: '5px', paddingBottom: '5px'}}>
-                <Button buttonType={ButtonType.hero} disabled={true} icon='Add'> &nbsp;{strings.CustomListAddItem}</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickCancel} icon='Back'> &nbsp;{strings.CustomListBack}</Button>
-              </div>
+                <CommandBar
+                      isSearchBoxVisible={ false }
+                      items={ [
+                        { key: 'Add', icon: 'Add', title: strings.CustomListAddItem, name: 'Add', disabled: true, onClick: this.onClickAdd},
+                        { key: 'Back', icon: 'Back', title: strings.CustomListBack, name: 'Back', onClick: this.onClickCancel}
+                      ] }
+                    />
               { this.state.mandatoryOpen === true ?
                     <div className="ms-MessageBar">
                       <a name="anchorMessageBar"></a>
@@ -335,17 +387,17 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                               </Label></td>
                               <td>
                                 { value.type == CustomListFieldType.string ?
-                                  <input id={'input-' + value.title} className='ms-TextField-field' style={{marginBottom: '8px'}}/>
+                                  <input id={'input-' + value.id} className='ms-TextField-field' style={{marginBottom: '8px'}}/>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.number ?
-                                  <input type="number" role="spinbutton" id={'input-' + value.title} aria-valuemax="99999" aria-valuemin="-999999" aria-valuenow="0" className='ms-TextField-field' style={{width: '100px', marginBottom: '8px'}} />
+                                  <input type="number" role="spinbutton" id={'input-' + value.id} aria-valuemax="99999" aria-valuemin="-999999" aria-valuenow="0" className='ms-TextField-field' style={{width: '100px', marginBottom: '8px'}} />
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.boolean ?
                                   <div  style={{marginBottom: '8px'}}>
-                                    <input id={'input-' + value.title}  type="hidden" style={{visibility: 'hidden'}}/>
-                                    <input type="radio" role="radio" aria-checked="false" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input id={'input-' + value.id}  type="hidden" style={{visibility: 'hidden'}}/>
+                                    <input type="radio" role="radio" aria-checked="false" name={'input-' + value.id} style={{width: '18px', height: '18px'}} value={'input-' + value.id} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -354,7 +406,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                         }
                                       }
                                     } /> <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
-                                    <input type="radio" role="radio"  aria-checked="false" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input type="radio" role="radio"  aria-checked="false" name={'input-' + value.id} style={{width: '18px', height: '18px'}} value={'input-' + value.id} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -368,85 +420,120 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                 }
                                 { value.type == CustomListFieldType.date ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDatePickerHost key={'input-' + value.title} label="" properties={this.props.properties} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldDatePickerHost key={'input-' + value.id} label="" properties={this.props.properties} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.dateTime ?
                                   <div>
-                                    <input id={'input-' + value.title}  type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDateTimePickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id}  type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldDateTimePickerHost key={'input-' + value.id} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.font ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontPickerHost key={'input-' + value.title} label=""  properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldFontPickerHost key={'input-' + value.id} label=""  properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.fontSize ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontSizePickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldFontSizePickerHost key={'input-' + value.id} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.color ?
                                   <div>
-                                    <input id={'input-' + value.title} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldColorPickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldColorPickerHost key={'input-' + value.id} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.colorMini ?
+                                  <div>
+                                    <input id={'input-' + value.id} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldColorPickerMiniHost key={'input-' + value.id} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.icon ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldIconPickerHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldIconPickerHost key={'input-' + value.id} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.password ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPasswordHost key={'input-' + value.title} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldPasswordHost key={'input-' + value.id} label="" properties={this.props.properties}  onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.users ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPeoplePickerHost key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldPeoplePickerHost key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.sharePointGroups ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldGroupPickerHost groupType={IGroupType.SharePoint} key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.securityGroups ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldGroupPickerHost groupType={IGroupType.Security} key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.list ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPListPickerHost key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldSPListPickerHost key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.folder ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPFolderPickerHost key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldSPFolderPickerHost key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.picture ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPicturePickerHost  key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldPicturePickerHost  key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.document ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDocumentPickerHost  key={'input-' + value.title} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldDocumentPickerHost  key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.officeVideo ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldOfficeVideoPickerHost panelTitle='Select a video'  key={'input-' + value.id} label="" properties={this.props.properties}   context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.stars ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldStarRatingHost  key={'input-' + value.id} label="" properties={this.props.properties} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
@@ -461,7 +548,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                 : ''
                }
                <div style={{marginTop: '30px', marginBottom: '30px'}}>
-                <Button buttonType={ButtonType.primary} onClick={this.onClickAdd}>{strings.CustomListOK}</Button>
+                <Button style={{marginRight: '10px'}} buttonType={ButtonType.primary} onClick={this.onClickAdd}>{strings.CustomListOK}</Button>
                 <Button buttonType={ButtonType.normal} onClick={this.onClickCancel}>{strings.CustomListCancel}</Button>
               </div>
           </div>
@@ -471,10 +558,13 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
           <div>
                {this.props.fields != null ?
                   <div>
-                  <div style={{marginBottom: '20px', backgroundColor: '#F4F4F4', width: '100%', paddingTop: '5px', paddingBottom: '5px'}}>
-                    <Button buttonType={ButtonType.hero} disabled={true} icon='Edit'> &nbsp;{strings.CustomListEdit}</Button>
-                    <Button buttonType={ButtonType.hero} onClick={this.onClickCancel} icon='Back'> &nbsp;{strings.CustomListBack}</Button>
-                  </div>
+                    <CommandBar
+                      isSearchBoxVisible={ false }
+                      items={ [
+                        { key: 'Edit', icon: 'Edit', title: strings.CustomListEdit, name: 'Edit', disabled: true, onClick: this.onClickEdit},
+                        { key: 'Back', icon: 'Back', title: strings.CustomListBack, name: 'Back', onClick: this.onClickCancel}
+                      ] }
+                    />
                   { this.state.mandatoryOpen === true ?
                     <div className="ms-MessageBar">
                       <a name="anchorMessageBar"></a>
@@ -499,17 +589,17 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                               </Label></td>
                               <td>
                                 { value.type == CustomListFieldType.string ?
-                                  <input id={'input-' + value.title} className='ms-TextField-field' style={{marginBottom: '8px'}} defaultValue={this.state.data[this.state.selectedIndex][value.title]} />
+                                  <input id={'input-' + value.id} className='ms-TextField-field' style={{marginBottom: '8px'}} defaultValue={this.state.data[this.state.selectedIndex][value.id]} />
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.number ?
-                                  <input type="number" role="spinbutton" id={'input-' + value.title} className='ms-TextField-field' defaultValue={this.state.data[this.state.selectedIndex][value.title]} aria-valuemax="99999" aria-valuemin="-999999" aria-valuenow={this.state.data[this.state.selectedIndex][value.title]} style={{width: '100px', marginBottom: '8px'}} />
+                                  <input type="number" role="spinbutton" id={'input-' + value.id} className='ms-TextField-field' defaultValue={this.state.data[this.state.selectedIndex][value.id]} aria-valuemax="99999" aria-valuemin="-999999" aria-valuenow={this.state.data[this.state.selectedIndex][value.id]} style={{width: '100px', marginBottom: '8px'}} />
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.boolean ?
                                   <div  style={{marginBottom: '8px'}}>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <input type="radio" role="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <input type="radio" role="radio" name={'input-' + value.id} style={{width: '18px', height: '18px'}} value={'input-' + value.id} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -518,10 +608,11 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                         }
                                       }
                                     }
-                                    defaultChecked={this.state.data[this.state.selectedIndex][value.title] == "true"}
-                                    aria-checked={this.state.data[this.state.selectedIndex][value.title] == "true"}
-                                    /> <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
-                                    <input type="radio" role="radio" name={'input-' + value.title} style={{width: '18px', height: '18px'}} value={'input-' + value.title} onChange={
+                                    defaultChecked={this.state.data[this.state.selectedIndex][value.id] == "true"}
+                                    aria-checked={this.state.data[this.state.selectedIndex][value.id] == "true"}
+                                    />
+                                     <span style={{fontSize: '14px'}}>{strings.CustomListTrue}</span>
+                                    <input type="radio" role="radio" name={'input-' + value.id} style={{width: '18px', height: '18px'}} value={'input-' + value.id} onChange={
                                       (elm:any) => {
                                         if (elm.currentTarget.checked == true) {
                                             var name = elm.currentTarget.value;
@@ -530,93 +621,128 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                         }
                                       }
                                     }
-                                    defaultChecked={this.state.data[this.state.selectedIndex][value.title] == "false"}
-                                    aria-checked={this.state.data[this.state.selectedIndex][value.title] == "false"}
+                                    defaultChecked={this.state.data[this.state.selectedIndex][value.id] == "false"}
+                                    aria-checked={this.state.data[this.state.selectedIndex][value.id] == "false"}
                                     /> <span style={{fontSize: '14px'}}>{strings.CustomListFalse}</span>
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.date ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDatePickerHost key={'input-' + value.title} properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.title]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldDatePickerHost key={'input-' + value.id} properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.id]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.dateTime ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDateTimePickerHost key={'input-' + value.title} properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.title]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldDateTimePickerHost key={'input-' + value.id} properties={this.props.properties}  initialDate={this.state.data[this.state.selectedIndex][value.id]} label="" onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.font ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontPickerHost key={'input-' + value.title} label="" properties={this.props.properties}  initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldFontPickerHost key={'input-' + value.id} label="" properties={this.props.properties}  initialValue={this.state.data[this.state.selectedIndex][value.id]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.fontSize ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldFontSizePickerHost  key={'input-' + value.title} properties={this.props.properties} label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldFontSizePickerHost  key={'input-' + value.id} properties={this.props.properties} label="" initialValue={this.state.data[this.state.selectedIndex][value.id]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.color ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldColorPickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialColor={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldColorPickerHost key={'input-' + value.id} properties={this.props.properties}  label="" initialColor={this.state.data[this.state.selectedIndex][value.id]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.colorMini ?
+                                  <div style={{marginBottom: '5px'}}>
+                                    <input id={'input-' + value.id} type="hidden" style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldColorPickerMiniHost key={'input-' + value.id} properties={this.props.properties}  label="" initialColor={this.state.data[this.state.selectedIndex][value.id]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.icon ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldIconPickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldIconPickerHost key={'input-' + value.id} properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.id]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.password ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPasswordHost key={'input-' + value.title} properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.title]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldPasswordHost key={'input-' + value.id} properties={this.props.properties}  label="" initialValue={this.state.data[this.state.selectedIndex][value.id]} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.users ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={JSON.stringify(this.state.data[this.state.selectedIndex][value.title])}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPeoplePickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialData={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={JSON.stringify(this.state.data[this.state.selectedIndex][value.id])}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldPeoplePickerHost key={'input-' + value.id} properties={this.props.properties}  label="" initialData={this.state.data[this.state.selectedIndex][value.id]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.securityGroups ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={JSON.stringify(this.state.data[this.state.selectedIndex][value.id])}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldGroupPickerHost groupType={IGroupType.Security} key={'input-' + value.id} properties={this.props.properties}  label="" initialData={this.state.data[this.state.selectedIndex][value.id]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.sharePointGroups ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={JSON.stringify(this.state.data[this.state.selectedIndex][value.id])}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldGroupPickerHost groupType={IGroupType.SharePoint} key={'input-' + value.id} properties={this.props.properties}  label="" initialData={this.state.data[this.state.selectedIndex][value.id]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChangeJson} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.list ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPListPickerHost properties={this.props.properties}  label="" selectedList={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title} key={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldSPListPickerHost properties={this.props.properties}  label="" selectedList={this.state.data[this.state.selectedIndex][value.id]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id} key={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.folder ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]}  style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldSPFolderPickerHost key={'input-' + value.title} properties={this.props.properties}  label="" initialFolder={this.state.data[this.state.selectedIndex][value.title]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]}  style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldSPFolderPickerHost key={'input-' + value.id} properties={this.props.properties}  label="" initialFolder={this.state.data[this.state.selectedIndex][value.id]}  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.picture ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPicturePickerHost key={'input-' + value.title} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldPicturePickerHost key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.document ?
                                   <div>
-                                    <input id={'input-' + value.title} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.title]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDocumentPickerHost key={'input-' + value.title} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.title}  />
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldDocumentPickerHost key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.stars ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldStarRatingHost initialValue={Number(this.state.data[this.state.selectedIndex][value.id])}  key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                  </div>
+                                : ''
+                                }
+                                { value.type == CustomListFieldType.officeVideo ?
+                                  <div>
+                                    <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
+                                    <PropertyFieldOfficeVideoPickerHost initialValue={this.state.data[this.state.selectedIndex][value.id]}  panelTitle='Select a video' key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
@@ -631,7 +757,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                 : ''
                }
                <div style={{marginTop: '30px', marginBottom: '30px'}}>
-                <Button buttonType={ButtonType.primary} onClick={this.onClickUpdate}>{strings.CustomListOK}</Button>
+                <Button style={{marginRight: '10px'}} buttonType={ButtonType.primary} onClick={this.onClickUpdate}>{strings.CustomListOK}</Button>
                 <Button buttonType={ButtonType.normal} onClick={this.onClickCancel}>{strings.CustomListCancel}</Button>
               </div>
 
@@ -642,13 +768,17 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
 
           { this.state.openListView === true ?
           <div>
-              <div style={{marginBottom: '20px', backgroundColor: '#F4F4F4', width: '100%', paddingTop: '5px', paddingBottom: '5px'}}>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickAddItem} icon='Add'> &nbsp;{strings.CustomListAddItem}</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickEdit} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='Edit'> &nbsp;{strings.CustomListEdit}</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickDeleteItem} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='Delete'> &nbsp;{strings.CustomListDel}</Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickMoveUp} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='ChevronUp'> </Button>
-                <Button buttonType={ButtonType.hero} onClick={this.onClickMoveDown} disabled={this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false} icon='ChevronDown'> </Button>
-              </div>
+              <CommandBar
+                isSearchBoxVisible={ false }
+                items={ [
+                  { key: 'Add', icon: 'Add', title: strings.CustomListAddItem, name: 'Add', onClick: this.onClickAddItem},
+                  { key: 'Edit', icon: 'Edit', title: strings.CustomListEdit, name: 'Edit', onClick: this.onClickEdit, disabled: this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false},
+                  { key: 'Delete', icon: 'Delete', title: strings.CustomListDel, name: 'Delete', onClick: this.onClickDeleteItem, disabled: this.state.selectedIndex == null || this.state.selectedIndex < 0 ? true:false},
+                  { key: 'Up', icon: 'ChevronUp', title: '', name: '', onClick: this.onClickMoveUp, disabled: this.state.selectedIndex == null || this.state.selectedIndex <= 0 ? true:false},
+                  { key: 'Down', icon: 'ChevronDown', title: '', name: '', onClick: this.onClickMoveDown, disabled: this.state.selectedIndex == null || this.state.selectedIndex < 0 || this.state.selectedIndex >= (this.state.data.length - 1) ? true:false}
+                 ] }
+              />
+
                  <Dialog type={DialogType.close} isOpen={this.state.deleteOpen} title={strings.CustomListConfirmDel}
                   onDismiss={this.onDismissDelete}  isDarkOverlay={false} isBlocking={true}>
                     <div>
@@ -663,63 +793,24 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                  </Dialog>
 
                 {this.props.fields != null ?
-                  <table className="ms-Table" cellPadding="4" cellSpacing="0" style={{width:'100%'}}>
-                  <thead>
-                    <tr>
-                      <th style={{width: '35px', backgroundColor: '#F4F4F4', borderBottom: '1px', borderBottomColor: '#999999', borderBottomStyle: 'solid'}}></th>
-                      {
-                        this.props.fields.map((value: ICustomListField, indexJ: number) => {
-                          if (value.hidden != true) {
-                            return (
-                              <th
-                                key={this._key + '-customListTr3-' + indexJ}
-                                style={{textAlign: 'left', backgroundColor: '#F4F4F4', borderBottom: '1px', borderBottomColor: '#999999', borderBottomStyle: 'solid'}}>
-                                <Label style={{color: '#999999'}}>{value.title}</Label></th>
-                            );
-                          }
-                        })
-                      }
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      this.state.data != null ?
-                        this.state.data.map((value: any, index: number) => {
-                          return (
-                            <tr style={{backgroundColor: index == this.state.selectedIndex ? '#E8E8E8': ''}}
-                              onMouseEnter={index != this.state.selectedIndex ? this.onEnterHoverItem : null}
-                              onMouseLeave={index != this.state.selectedIndex ? this.onLeaveHoverItem : null}
-                              key={this._key + '-customListTr4-' + index}
-                              >
-                              <td style={{paddingLeft: '6px', height:'40px'}}>
-                                <div style={{float: 'left'}}>
-                                <input id={"bulletRadio" + index} style={{width: '18px', height: '18px'}}
-                                  type="radio" role="radio" name="radio1" onChange={this.onChangeSelectedItem}
-                                  value={index.toString()} checked={index == this.state.selectedIndex ? true : false}
-                                  aria-checked={index == this.state.selectedIndex ? true : false} />
-                                <label htmlFor={"bulletRadio" + index}>
-                                  <span className="ms-Label">
-                                  </span>
-                                </label>
-                              </div>
-                              </td>
-                            {
-                              this.props.fields.map((field: ICustomListField, indexI: number) => {
-                                if (value != null && field != null && field.hidden != true) {
-                                  return (
-                                    <td key={this._key + '-customListTr5-' + indexI}><Label htmlFor={"bulletRadio" + index} >{value[field.title]}</Label></td>
-                                  );
-                                }
-                              })
-                            }
-                            </tr>
-                          );
-                        })
-                      : ''
-                    }
-                  </tbody>
-                  </table>
+
+                  <div style={{marginTop: '20px'}}>
+
+                    <DetailsList
+                      setKey={ this.state.listKey }
+                      items={ this.state.items }
+                      columns={ this.state.columns }
+                      checkboxVisibility={ CheckboxVisibility.onHover }
+                      layoutMode={ LayoutMode.justified }
+                      isHeaderVisible={ true }
+                      selection={ this.state.selection }
+                      selectionMode={ SelectionMode.single }
+                      constrainMode={ ConstrainMode.unconstrained }
+                      onActiveItemChanged= { this.onActiveItemChanged }
+                      initialFocusedIndex={ this.state.selectedIndex }
+                    />
+
+                  </div>
                 : '' }
 
           </div>

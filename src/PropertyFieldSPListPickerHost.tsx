@@ -152,7 +152,8 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
    * Called when the component will unmount
    */
   public componentWillUnmount() {
-    this.async.dispose();
+    if (this.async !== undefined)
+      this.async.dispose();
   }
 
   /**

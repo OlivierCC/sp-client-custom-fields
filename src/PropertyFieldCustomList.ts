@@ -31,10 +31,16 @@ export enum CustomListFieldType {
   document = 11,
   list = 12,
   users = 13,
-  folder = 14
+  folder = 14,
+  sharePointGroups = 15,
+  securityGroups = 16,
+  officeVideo = 17,
+  stars = 18,
+  colorMini = 19
 }
 
 export interface ICustomListField {
+  id: string;
   title: string;
   type: CustomListFieldType;
   required?: boolean;

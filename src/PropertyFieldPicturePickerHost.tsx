@@ -6,9 +6,6 @@
  * Released under MIT licence
  */
 import * as React from 'react';
-import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
-import { IWebPartContext } from '@microsoft/sp-webpart-base';
-import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IPropertyFieldPicturePickerPropsInternal } from './PropertyFieldPicturePicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
@@ -55,12 +52,9 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     this.onTextFieldChanged = this.onTextFieldChanged.bind(this);
     this.onOpenPanel = this.onOpenPanel.bind(this);
     this.onClosePanel = this.onClosePanel.bind(this);
-    this.onImageRender = this.onImageRender.bind(this);
     this.onClickRecent = this.onClickRecent.bind(this);
     this.onClickSite = this.onClickSite.bind(this);
     this.onClickUpload = this.onClickUpload.bind(this);
-    this.mouseEnterImage = this.mouseEnterImage.bind(this);
-    this.mouseLeaveImage = this.mouseLeaveImage.bind(this);
     this.handleIframeData = this.handleIframeData.bind(this);
     this.onEraseButton = this.onEraseButton.bind(this);
 
@@ -80,8 +74,6 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
     this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
 
-    //Load recent images
-    this.LoadRecentImages();
   }
 
 
@@ -259,15 +251,6 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     this.setState(this.state);
   }
 
-  private LoadRecentImages(): void {
-    //var folderService: SPFolderPickerService = new SPFolderPickerService(this.props.context);
-    //folderService.getFolders(this.state.currentSPFolder, this.currentPage, this.pageItemCount).then((response: ISPFolders) => {
-      //Binds the results
-      //this.state.childrenFolders = response;
-      //this.setState({ openRecent: this.state.openRecent,openSite: this.state.openSite, openUpload: this.state.openUpload, loading: false, selectedFolder: this.state.selectedFolder, currentSPFolder: this.state.currentSPFolder, childrenFolders: this.state.childrenFolders });
-    //});
-  }
-
   /**
    * @function
    * Renders the controls
@@ -354,10 +337,6 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
             <div style={{paddingLeft: '30px'}}>
               <h1 className="ms-font-xl">Recent images</h1>
 
-                {["1", "2", "1", "2", "1", "2", "1", "2", "1", "2"].map((element?: any, index?: any) => {
-                  return this.onImageRender(element, index);
-                })}
-
              </div>
           </div>
           : '' }
@@ -392,149 +371,5 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
       </div>
     );
   }
-
-
-  private mouseEnterImage(element?: any): void {
-    element.currentTarget.style.backgroundColor = 'grey';
-    element.currentTarget.children[0].children[0].style.visibility = 'visible';
-  }
-
-  private mouseLeaveImage(element?: any): void {
-    element.currentTarget.style.backgroundColor = 'white';
-    element.currentTarget.children[0].children[0].style.visibility = 'hidden';
-  }
-
-    private onImageRender(item?: any, index?: number): React.ReactNode {
-    return (
-      <div style={{padding: '2px', width: '191px', height: '191px', display:'inline-block'}} onMouseEnter={this.mouseEnterImage} onMouseLeave={this.mouseLeaveImage}>
-        <div style={{cursor: 'pointer',width: '187px', height: '187px',
-          backgroundImage: "url('https://ocarpenmsdn.sharepoint.com/sites/devcenter/Pictures/09.jpg')",
-          backgroundSize: 'cover',
-          marginRight: '0px', marginBottom: '0px', paddingTop: '0px', paddingLeft: '0'
-          }}>
-
-          <div className="ms-ItemTile-checkCircle" style={{
-                position: 'absolute', top: '0', right: '0', marginTop: '5px', marginRight: '5px', visibility: 'hidden'
-          }}>
-
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-}
-
-
-/**
- * @interface
- * Defines a collection of SharePoint folders
- */
-export interface ISPFolders {
-  value: ISPFolder[];
-}
-
-/**
- * @interface
- * Defines a SharePoint folder
- */
-export interface ISPFolder {
-  Name: string;
-  ServerRelativeUrl: string;
-}
-
-/**
- * @class
- * Service implementation to get folders from current SharePoint site
- */
-class SPFolderPickerService {
-
-  private context: IWebPartContext;
-
-  /**
-   * @function
-   * Service constructor
-   */
-  constructor(pageContext: IWebPartContext){
-      this.context = pageContext;
-  }
-
-  /**
-   * @function
-   * Gets the collection of sub folders of the given folder
-   */
-  public getFolders(parentFolderServerRelativeUrl?: string, currentPage?: number, pageItemCount?: number): Promise<ISPFolders> {
-    if (Environment.type === EnvironmentType.Local) {
-      //If the running environment is local, load the data from the mock
-      return this.getFoldersMock(parentFolderServerRelativeUrl);
-    }
-    else {
-      //If the running environment is SharePoint, request the folders REST service
-      var queryUrl: string = this.context.pageContext.web.absoluteUrl;
-      var skipNumber = currentPage * pageItemCount;
-      if (parentFolderServerRelativeUrl == null || parentFolderServerRelativeUrl == '' || parentFolderServerRelativeUrl == '/') {
-        //The folder is the web root site
-        queryUrl += "/_api/web/folders?$select=Name,ServerRelativeUrl&$orderBy=Name&$top=";
-        queryUrl += pageItemCount;
-        queryUrl += "&$skip=";
-        queryUrl += skipNumber;
-      }
-      else {
-        //Loads sub folders
-        queryUrl += "/_api/web/GetFolderByServerRelativeUrl('";
-        queryUrl += parentFolderServerRelativeUrl;
-        queryUrl += "')/folders?$select=Name,ServerRelativeUrl&$orderBy=Name&$top=";
-        queryUrl += pageItemCount;
-        queryUrl += "&$skip=";
-        queryUrl += skipNumber;
-      }
-      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
-          return response.json();
-      });
-    }
-  }
-
-  /**
-   * @function
-   * Returns 3 fake SharePoint folders for the Mock mode
-   */
-  private getFoldersMock(parentFolderServerRelativeUrl?: string): Promise<ISPFolders> {
-    return SPFolderPickerMockHttpClient.getFolders(this.context.pageContext.web.absoluteUrl).then(() => {
-          const listData: ISPFolders = {
-              value:
-              [
-                  { Name: 'Mock Folder One', ServerRelativeUrl: '/mockfolderone' },
-                  { Name: 'Mock Folder Two', ServerRelativeUrl: '/mockfoldertwo' },
-                  { Name: 'Mock Folder Three', ServerRelativeUrl: '/mockfolderthree' }
-              ]
-          };
-          return listData;
-      }) as Promise<ISPFolders>;
-  }
-
-}
-
-
-/**
- * @class
- * Defines a http client to request mock data to use the web part with the local workbench
- */
-class SPFolderPickerMockHttpClient {
-
-    /**
-     * @var
-     * Mock SharePoint result sample
-     */
-    private static _results: ISPFolders = { value: []};
-
-    /**
-     * @function
-     * Mock get folders method
-     */
-    public static getFolders(restUrl: string, options?: any): Promise<ISPFolders> {
-      return new Promise<ISPFolders>((resolve) => {
-            resolve(SPFolderPickerMockHttpClient._results);
-        });
-    }
 
 }

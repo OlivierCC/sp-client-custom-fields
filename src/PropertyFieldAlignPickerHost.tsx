@@ -235,7 +235,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundLists}}
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <label className={styleLeft} style={{marginLeft: '5px'}}></label>
+              <label className={styleLeft} style={{marginLeft: '5px'}} htmlFor={"leftRadio-" + this._key}></label>
               <input id={"leftRadio-" + this._key} className=""
                 disabled={this.props.disabled}
                 onChange={this.onClickBullets} type="radio" role="radio" name={"align-picker-" + this._key}
@@ -252,7 +252,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <label className={styleCenter} style={{marginLeft: '5px'}}></label>
+              <label className={styleCenter} style={{marginLeft: '5px'}} htmlFor={"centerRadio-" + this._key }></label>
               <input id={"centerRadio-" + this._key } className=""
                onChange={this.onClickTiles} type="radio" name={"align-picker-" + this._key} role="radio"
                disabled={this.props.disabled}
@@ -269,7 +269,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundRight}}
             onMouseEnter={this.mouseRightEnterDropDown} onMouseLeave={this.mouseRightLeaveDropDown}>
             <div style={{float: 'left'}}>
-              <label className={styleRight} style={{marginLeft: '5px'}}></label>
+              <label className={styleRight} style={{marginLeft: '5px'}} htmlFor={"rightRadio-" + this._key }></label>
               <input id={"rightRadio-" + this._key } className=""
                onChange={this.onClickRight} type="radio" name={"align-picker-" + this._key} role="radio"
                disabled={this.props.disabled}
