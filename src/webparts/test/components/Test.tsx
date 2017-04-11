@@ -1,9 +1,12 @@
 import * as React from 'react';
 
 import styles from '../Test.module.scss';
+import { MessageBar } from 'office-ui-fabric-react/lib/MessageBar';
+
 import { ITestWebPartProps } from '../ITestWebPartProps';
 import { IPropertyFieldPeople } from '../../../PropertyFieldPeoplePicker';
 import { IPropertyFieldGroup } from '../../../PropertyFieldGroupPicker';
+import { ISPTermSet } from '../../../PropertyFieldTermSetPicker';
 
 export interface ITestProps extends ITestWebPartProps {
 }
@@ -25,16 +28,9 @@ export default class Test extends React.Component<ITestProps, {}> {
           <div>
             <div style={{ backgroundColor: this.props.color, fontFamily: this.props.font, fontSize: this.props.fontSize ? this.props.fontSize : '12px', padding: '20px' }}>
 
-              <div className="ms-MessageBar">
-                <div className="ms-MessageBar-content">
-                  <div className="ms-MessageBar-icon">
-                    <i className="ms-Icon ms-Icon--Info"></i>
-                  </div>
-                  <div className="ms-MessageBar-text">
-                    Edit this WebPart to test the custom fields.
-                  </div>
-                </div>
-              </div>
+            <MessageBar>
+               Edit this WebPart to test the custom fields.
+            </MessageBar>
 
               <p className="ms-fontSize-xxl">
                 <i className="ms-Icon ms-Icon--ClearFormatting" aria-hidden="true"></i>
@@ -299,7 +295,7 @@ export default class Test extends React.Component<ITestProps, {}> {
               <p>
                 <i className="ms-Icon ms-Icon--Document" aria-hidden="true"></i>&nbsp;
                 <b>Document</b>
-                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfielddocumentpicker" target="_doc">(Doc)</a> :&nbsp;
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfielddocumentepicker" target="_doc">(Doc)</a> :&nbsp;
                 {this.props.document}
               </p>
               <p>
@@ -312,12 +308,25 @@ export default class Test extends React.Component<ITestProps, {}> {
                 <i className="ms-Icon ms-Icon--Search" aria-hidden="true"></i>&nbsp;
                 <b>Search Properties</b>
                 &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfieldsearchpropertiespicker" target="_doc">(Doc)</a> :&nbsp;
-
                 <ul>
                 {
                   this.props.searchProperties !== undefined ? this.props.searchProperties.map((element: string, i:number) => {
                     return (
                       <li key={'groups' + i}>{element}<br/>
+                      </li>
+                    );
+                }) : ''}
+                </ul>
+              </div>
+              <div>
+                <i className="ms-Icon ms-Icon--Tag" aria-hidden="true"></i>&nbsp;
+                <b>Term Sets</b>
+                &nbsp;<a className="ms-fontSize-sPlus" href="https://oliviercc.github.io/sp-client-custom-fields/propertyfieldtermsetpicker" target="_doc">(Doc)</a> :&nbsp;
+                <ul>
+                {
+                  this.props.termSets !== undefined ? this.props.termSets.map((element: ISPTermSet, i:number) => {
+                    return (
+                      <li key={'groups' + i}>Name: {element.Name}, Guid: {element.Guid}, TermStore Guid: {element.TermStoreGuid}<br/>
                       </li>
                     );
                 }) : ''}

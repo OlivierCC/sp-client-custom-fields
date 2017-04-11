@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldAutoCompletePropsInternal } from './PropertyFieldAutoComplete';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import GuidHelper from './GuidHelper';
 
 /**
@@ -41,6 +42,7 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
 
   private async: Async;
   private delayedValidate: (value: string) => void;
+  private input: TextField;
 
   /**
    * @function
@@ -87,33 +89,30 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
    * @function
    * Function called when the component value changed
    */
-  private onValueChanged(element: any): void {
+  private onValueChanged(newValue: string): void {
     //Checks if there is a method to called
-    if (this.props.onPropertyChange && element != null) {
-      var newValue: string = element.currentTarget.value;
-      this.state.shortCurrentValue = newValue;
-      this.state.currentValue = newValue;
-      this.state.keyPosition = -1;
-      this.state.isOpen = true;
-      this.state.suggestions = this.getSuggestions(newValue);
-      if (this.state.shouldAutoComplete === true) {
-        if (this.state.suggestions !== undefined && this.state.suggestions.length > 0) {
-          this.state.currentValue = this.state.suggestions[0];
-          this.state.keyPosition = 0;
-          this.state.shouldAutoComplete = false;
-        }
+    this.state.shortCurrentValue = newValue;
+    this.state.currentValue = newValue;
+    this.state.keyPosition = -1;
+    this.state.isOpen = true;
+    this.state.suggestions = this.getSuggestions(newValue);
+    if (this.state.shouldAutoComplete === true) {
+      if (this.state.suggestions !== undefined && this.state.suggestions.length > 0) {
+        this.state.currentValue = this.state.suggestions[0];
+        this.state.keyPosition = 0;
+        this.state.shouldAutoComplete = false;
       }
-      this.setState(this.state);
-      this.delayedValidate(this.state.currentValue);
     }
+    this.setState(this.state);
+    this.delayedValidate(this.state.currentValue);
   }
 
   public componentDidUpdate(prevProps: IPropertyFieldAutoCompleteHostProps, prevState: IPropertyFieldAutoCompleteState, prevContext: any): void {
     if (this.state.currentValue != this.state.shortCurrentValue && this.state.isOpen === true) {
       //Set cursor position
-      var input: any = document.getElementById(this.state.guid);
-      input.focus();
-      input.setSelectionRange(this.state.shortCurrentValue.length, this.state.currentValue.length);
+      this.input.focus();
+      this.input.setSelectionStart(this.state.shortCurrentValue.length);
+      this.input.setSelectionEnd(this.state.currentValue.length);
 
       if (this.state.scrollPosition !== -1) {
         var divDrop: any = document.getElementById("drop-" + this.state.guid);
@@ -157,8 +156,8 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
       this.state.hover = '';
       this.state.keyPosition = -1;
       this.setState(this.state);
-      var input: any = document.getElementById(this.state.guid);
-      input.setSelectionRange(this.state.currentValue.length, this.state.currentValue.length);
+      this.input.setSelectionStart(this.state.currentValue.length);
+      this.input.setSelectionEnd(this.state.currentValue.length);
     }
   }
 
@@ -318,7 +317,6 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
     this.setState(this.state);
   }
 
-
   /**
    * @function
    * Renders the controls
@@ -412,17 +410,16 @@ export default class PropertyFieldAutoCompleteHost extends React.Component<IProp
         <div style={{ marginBottom: '8px'}}>
           <Label>{this.props.label}</Label>
           <div style={fontSelect}>
-            <input disabled={this.props.disabled}
-              id={this.state.guid}
+            <TextField
+              disabled={this.props.disabled}
+              ref={(input) => this.input = input }
               placeholder={this.props.placeHolder !== undefined ? this.props.placeHolder : ''}
-              label={this.props.label}
               value={this.state.currentValue}
-              className="ms-TextField-field"
               onClick={this.onClickInput}
               onBlur={this.onInputBlur}
               onKeyUp={this.onInputKeyDown}
               onKeyPress={this.onInputKeyPress}
-              onChange={this.onValueChanged}
+              onChanged={this.onValueChanged}
               aria-invalid={ !!this.state.errorMessage }
               />
             <div style={fsDrop}>

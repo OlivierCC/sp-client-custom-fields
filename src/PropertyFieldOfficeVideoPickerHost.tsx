@@ -13,6 +13,7 @@ import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import GuidHelper from './GuidHelper';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 /**
  * @interface
@@ -161,13 +162,10 @@ export default class PropertyFieldOfficeVideoPickerHost extends React.Component<
   * The text field value changed
   *
   */
-  private onTextFieldChanged(e?: any): void {
-    if (e != null) {
-      var newValue: string = e.currentTarget.value;
-      this.state.selectedVideo = newValue;
-      this.setState(this.state);
-      this.saveVideoProperty(newValue);
-    }
+  private onTextFieldChanged(newValue: string): void {
+    this.state.selectedVideo = newValue;
+    this.setState(this.state);
+    this.saveVideoProperty(newValue);
   }
 
   /**
@@ -250,19 +248,25 @@ export default class PropertyFieldOfficeVideoPickerHost extends React.Component<
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <div style={{display:'flex'}}>
-          <input
-            disabled={this.props.disabled}
-            value={this.state.selectedVideo}
-            style={{width:'220px'}}
-            className="ms-TextField-field"
-            onChange={this.onTextFieldChanged}
-            readOnly={this.props.readOnly}
-          />
-          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
-          <Button disabled={this.props.disabled === false && (this.state.selectedVideo != null && this.state.selectedVideo != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
-        </div>
-
+        <table style={{width: '100%', borderSpacing: 0}}>
+          <tbody>
+            <tr>
+              <td width="*">
+                <TextField
+                  disabled={this.props.disabled}
+                  value={this.state.selectedVideo}
+                  style={{width:'100%'}}
+                  onChanged={this.onTextFieldChanged}
+                  readOnly={this.props.readOnly}
+                />
+              </td>
+              <td width="64">
+                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
+                <Button disabled={this.props.disabled === false && (this.state.selectedVideo != null && this.state.selectedVideo != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
               <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
               <span>
@@ -275,7 +279,7 @@ export default class PropertyFieldOfficeVideoPickerHost extends React.Component<
 
         <Panel
           isOpen={this.state.openPanel} hasCloseButton={true} onDismiss={this.onClosePanel}
-          isLightDismiss={true} type={PanelType.medium}
+          isLightDismiss={true} type={PanelType.large}
           headerText={this.props.panelTitle}>
 
           <div style={{visibility: this.state.iframeLoaded === false ? 'visible': 'hidden',

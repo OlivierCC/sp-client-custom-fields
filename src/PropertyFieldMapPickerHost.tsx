@@ -11,6 +11,8 @@ import { IPropertyFieldMapPickerPropsInternal } from './PropertyFieldMapPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
 
 var MapComponent: any = require('react-cartographer/lib/components/Map');
 
@@ -55,7 +57,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     this.state = {
       longitude: this.props.longitude,
       latitude: this.props.latitude,
-      isOpen: true,
+      isOpen: this.props.collapsed !== undefined ? !this.props.collapsed : true,
       errorMessage: ''
     };
 
@@ -85,8 +87,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     this.delayedValidate(newValue);
   }
 
-  private onLongitudeChange(element: any): void {
-    var value = element.currentTarget.value;
+  private onLongitudeChange(value: string): void {
     this.state.longitude = value;
     this.setState(this.state);
 
@@ -94,8 +95,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     this.delayedValidate(newValue);
   }
 
-  private onLatitudeChange(element: any): void {
-    var value = element.currentTarget.value;
+  private onLatitudeChange(value: string): void {
     this.state.latitude = value;
     this.setState(this.state);
 
@@ -164,58 +164,42 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
    */
   public render(): JSX.Element {
 
-    if (this.state.isOpen == true) {
-
     //Renders content
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
 
-        <div style={{paddingTop: '10px'}}>
+        <table style={{width: '100%', borderSpacing: 0}}>
+          <tbody>
+            <tr>
+              <td width="100" style={{marginRight: '10px'}}>
+                 <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
+                  Longitude
+                  </span>
+                  <TextField
+                    style={{width:'90px'}}
+                    value={this.state.longitude}
+                    disabled={this.props.disabled}
+                    onChanged={this.onLongitudeChange} />
+              </td>
+              <td width="100" style={{marginRight: '10px'}}>
+                <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
+                Latitude
+                </span>
+                <TextField
+                  style={{width:'90px'}}
+                  value={this.state.latitude}
+                  onChanged={this.onLatitudeChange}
+                  disabled={this.props.disabled}/>
+              </td>
+              <td style={{verticalAlign: 'bottom', paddingBottom: '10px'}}>
+                <Button buttonType={ButtonType.icon} icon="MapPin" disabled={this.props.disabled} onClick={this.onGetCurrentLocation}  />
+                <Button buttonType={ButtonType.icon} disabled={this.props.disabled} icon={this.state.isOpen ? 'ChevronUpSmall': 'ChevronDownSmall'}  onClick={this.onClickChevron}  />
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-        <div style={{width:'90px', float: 'left', paddingRight: '10px'}}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
-          Longitude
-          </span>
-          <input id="longitude" style={{width:'80px', borderRadius: '0px',
-    border: '1px solid rgb(200, 200, 200)',
-    display: 'block',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    position: 'relative',
-    height: '26px',
-    lineHeight: '26px',
-    padding: '0px 0px 0px 8px',
-    color: 'rgb(68, 68, 68)',
-    textDecoration: 'none',
-    backgroundColor: 'rgb(255, 255, 255)',
-    backgroundClip: 'padding-box'}} value={this.state.longitude} disabled={this.props.disabled}  onChange={this.onLongitudeChange} />
-        </div>
-
-        <div style={{width:'90px', display: 'inline' }}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
-          Latitude
-          </span>
-          <input id="latitude" style={{width:'80px', borderRadius: '0px',
-    border: '1px solid rgb(200, 200, 200)',
-    display: 'block',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    position: 'relative',
-    height: '26px',
-    lineHeight: '26px',
-    padding: '0px 0px 0px 8px',
-    color: 'rgb(68, 68, 68)',
-    textDecoration: 'none',
-    backgroundColor: 'rgb(255, 255, 255)',
-    backgroundClip: 'padding-box'}} value={this.state.latitude} onChange={this.onLatitudeChange} disabled={this.props.disabled}/>
-        </div>
-        <div style={{width:'80px', float: 'right',top: '-30px', position: 'relative' }}>
-          <div style={{float: 'left' }}><Button buttonType={ButtonType.icon} icon="MapPin" disabled={this.props.disabled} onClick={this.onGetCurrentLocation}  /></div>
-          <div style={{display:'inline'}}>
-          <Button buttonType={ButtonType.icon} disabled={this.props.disabled} icon="ChevronUpSmall"  onClick={this.onClickChevron}  /></div>
-        </div>
-        </div>
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
               <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
               <span>
@@ -223,79 +207,22 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
               </span>
               </div>
             : ''}
-        <div style={{position: 'relative', top: '0px', paddingBottom: '30px'}}>
-          <MapComponent
-              provider='bing'
-              providerKey='Ag3-9ixwWbFk4BdNzkj6MCnFN2_pQiL2hedXxiiuaF_DSuzDqAVp2mW9wPE0coeL'
-              mapId='map'
-              latitude={+this.state.latitude}
-              longitude={+this.state.longitude}
-              zoom={15}
-              height={250}
-              width={283}
-              />
-        </div>
+        { this.state.isOpen === true ?
+          <div>
+            <MapComponent
+                provider='bing'
+                providerKey='Ag3-9ixwWbFk4BdNzkj6MCnFN2_pQiL2hedXxiiuaF_DSuzDqAVp2mW9wPE0coeL'
+                mapId='map'
+                latitude={+this.state.latitude}
+                longitude={+this.state.longitude}
+                zoom={15}
+                height={250}
+                width={283}
+                />
+          </div>
+          : ''}
       </div>
     );
 
-    }
-    else {
-return (
-      <div style={{ marginBottom: '8px'}}>
-        <Label>{this.props.label}</Label>
-
-        <div style={{paddingTop: '10px'}}>
-        <div style={{width:'90px', float: 'left', paddingRight: '10px'}}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px', fontWeight: 400}}>
-          Longitude
-          </span>
-          <input id="longitude" style={{width:'80px', borderRadius: '0px',
-    border: '1px solid rgb(200, 200, 200)',
-    display: 'block',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    position: 'relative',
-    height: '26px',
-    lineHeight: '26px',
-    padding: '0px 0px 0px 8px',
-    color: 'rgb(68, 68, 68)',
-    textDecoration: 'none',
-    backgroundColor: 'rgb(255, 255, 255)',
-    backgroundClip: 'padding-box'}} value={this.state.longitude} onChange={this.onLongitudeChange} disabled={this.props.disabled} />
-        </div>
-          <div style={{width:'90px', display: 'inline' }}>
-          <span style={{paddingBottom:'6px', display:'block', fontFamily: '"Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif',fontSize: '12px'}}>
-          Latitude
-          </span>
-          <input id="latitude" style={{width:'80px', borderRadius: '0px',
-    border: '1px solid rgb(200, 200, 200)',
-    display: 'block',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    position: 'relative',
-    height: '26px',
-    lineHeight: '26px',
-    padding: '0px 0px 0px 8px',
-    color: 'rgb(68, 68, 68)',
-    textDecoration: 'none',
-    backgroundColor: 'rgb(255, 255, 255)',
-    backgroundClip: 'padding-box'}} value={this.state.latitude}  onChange={this.onLatitudeChange} disabled={this.props.disabled} />
-        </div>
-        <div style={{width:'80px', float: 'right',top: '-30px', position: 'relative' }}>
-          <div style={{float: 'left' }}><Button buttonType={ButtonType.icon} icon="MapPin" onClick={this.onGetCurrentLocation} /></div>
-          <div style={{display:'inline'}}>
-          <Button buttonType={ButtonType.icon} icon="ChevronDownSmall"  onClick={this.onClickChevron}  /></div>
-        </div>
-        </div>
-        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
-              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
-              <span>
-                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
-              </span>
-              </div>
-            : ''}
-      </div>
-    );
-    }
   }
 }

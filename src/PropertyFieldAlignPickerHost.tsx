@@ -9,6 +9,8 @@ import * as React from 'react';
 import { IPropertyFieldAlignPickerPropsInternal } from './PropertyFieldAlignPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import 'office-ui-fabric-react/lib/components/ChoiceGroup/ChoiceGroup.scss';
+import { ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import GuidHelper from './GuidHelper';
 
 /**
@@ -230,6 +232,7 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
+
 
         <div style={{display: 'inline-flex'}}>
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundLists}}

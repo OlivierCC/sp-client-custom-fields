@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldTreeViewPropsInternal, ITreeViewNode } from './PropertyFieldTreeView';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 
 require('react-ui-tree-draggable/dist/react-ui-tree.css');
 var Tree: any = require('react-ui-tree-draggable/dist/react-ui-tree');
@@ -161,7 +162,7 @@ export default class PropertyFieldTreeViewHost extends React.Component<IProperty
    * @param node
    */
   private renderNode(node: ITreeViewNode): JSX.Element {
-    var style: any = { padding: '4px 5px', width: '100%', display: 'block'};
+    var style: any = { padding: '4px 5px', width: '100%', display: 'flex'};
     var selected: boolean = this.getSelectedNodePosition(node) != -1;
     if (selected === true) {
       style.backgroundColor = '#EAEAEA';
@@ -179,26 +180,27 @@ export default class PropertyFieldTreeViewHost extends React.Component<IProperty
       picUrl = node.expandedPictureUrl;
     else if (node.pictureUrl !== undefined)
       picUrl = node.pictureUrl;
-    var nodeStyle = 'ms-Checkbox-label';
-    if (selected === true)
-      nodeStyle += ' is-checked';
     return (
-        <span style={style} onClick={this.onClickNode.bind(null, node)} name={node.id} id={node.id} role="menuitem">
+        <div style={style} onClick={this.onClickNode.bind(null, node)} name={node.id} id={node.id} role="menuitem">
           { checkBoxAvailable ?
-              <label className={nodeStyle} style={{padding: 0, margin: 0}} htmlFor={node.id}>
-                <input disabled={this.props.disabled} style={{width: '18px', height: '18px', opacity: 0}}
-                  checked={selected} aria-checked={selected} readOnly={true}
-                  type="checkbox" role="checkbox" />
-              </label>
+               <div style={{marginRight: '5px'}}> <Checkbox
+                    checked={selected}
+                    disabled={this.props.disabled}
+                    label=''
+                    onChange={this.onClickNode.bind(null, node)}
+                  />
+                </div>
             : ''
           }
+          <div style={{paddingTop: '7px'}}>
           {
             picUrl !== undefined && picUrl != '' ?
               <img src={picUrl} width="18" height="18" style={{paddingRight: '5px'}} alt={node.label}/>
             : ''
           }
           {node.label}
-        </span>
+          </div>
+        </div>
     );
   }
 

@@ -304,11 +304,24 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <div style={{display:'flex'}}>
-          <TextField disabled={this.props.disabled} style={{width:'220px'}} readOnly={true} value={this.state.confirmFolder} />
-          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
-          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
-        </div>
+         <table style={{width: '100%', borderSpacing: 0}}>
+          <tbody>
+            <tr>
+              <td width="*">
+                <TextField
+                  disabled={this.props.disabled}
+                  style={{width:'100%'}}
+                  readOnly={true}
+                  value={this.state.confirmFolder} />
+              </td>
+              <td width="64">
+                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
+                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
               <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
               <span>

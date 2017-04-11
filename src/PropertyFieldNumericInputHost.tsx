@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldNumericInputPropsInternal } from './PropertyFieldNumericInput';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
 var NumericInput: any = require('react-numeric-input');
 
 /**

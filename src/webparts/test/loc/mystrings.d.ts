@@ -37,6 +37,7 @@ declare interface ITestStrings {
   AutoSuggestFieldLabel: string;
   SearchPropertiesFieldLabel: string;
   OfficeVideoFieldLabel: string;
+  TermSetsFieldLabel: string;
 }
 
 declare module 'testStrings' {

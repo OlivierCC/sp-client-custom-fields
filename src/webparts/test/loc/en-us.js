@@ -36,6 +36,7 @@ define([], function() {
     "NumericInputFieldLabel": "Numeric Input Field",
     "AutoSuggestFieldLabel": "Auto Complete Input Field",
     "SearchPropertiesFieldLabel": "Search Properties Picker",
-    "OfficeVideoFieldLabel": "Office Video Field"
+    "OfficeVideoFieldLabel": "Office Video Field",
+    "TermSetsFieldLabel": "Term Sets Field"
   }
 });

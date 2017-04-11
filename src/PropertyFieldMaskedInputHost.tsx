@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldMaskedInputPropsInternal } from './PropertyFieldMaskedInput';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
 
 /**
  * @interface
@@ -311,7 +312,19 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
             fontFamily: 'monospace',
             paddingRight: '10px',
             backgroundColor: 'transparent',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            boxSizing: 'border-box',
+            margin: '0',
+            boxShadow: 'none',
+            border: '1px solid #c8c8c8',
+            borderRadius: '0',
+            fontWeight: 400,
+            color: '#333333',
+            height: '32px',
+            padding: '0 12px 0 12px',
+            width: '100%',
+            outline: '0',
+            textOverflow: 'ellipsis'
         };
 
       var placeHolderContent = props.placeholder.substr(this.state.value.length);

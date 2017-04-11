@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldDisplayModePropsInternal } from './PropertyFieldDisplayMode';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import 'office-ui-fabric-react/lib/components/ChoiceGroup/ChoiceGroup.scss';
 import GuidHelper from './GuidHelper';
 
 /**

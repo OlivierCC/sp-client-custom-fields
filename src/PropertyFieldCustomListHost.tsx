@@ -221,6 +221,8 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
     if (this.state.selectedIndex != null && this.state.selectedIndex > 0)
       this.state.selection.setIndexSelected(this.state.selectedIndex, false, false);
     this.state.selectedIndex = null;
+    if (this.state.columns == null || this.state.columns.length === 0)
+      this.initColumns();
     this.setState(this.state);
     this.saveWebPart(this.state.data);
 
@@ -721,14 +723,14 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                                 { value.type == CustomListFieldType.picture ?
                                   <div>
                                     <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldPicturePickerHost key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                    <PropertyFieldPicturePickerHost initialValue={this.state.data[this.state.selectedIndex][value.id]} key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
                                 { value.type == CustomListFieldType.document ?
                                   <div>
                                     <input id={'input-' + value.id} type="hidden" defaultValue={this.state.data[this.state.selectedIndex][value.id]} style={{visibility: 'hidden'}}/>
-                                    <PropertyFieldDocumentPickerHost key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
+                                    <PropertyFieldDocumentPickerHost initialValue={this.state.data[this.state.selectedIndex][value.id]} key={'input-' + value.id} properties={this.props.properties}  label=""  context={this.props.context} onDispose={null} onRender={null} onPropertyChange={this.onPropertyChange} targetProperty={'input-' + value.id}  />
                                   </div>
                                 : ''
                                 }
@@ -800,6 +802,7 @@ export default class PropertyFieldCustomListHost extends React.Component<IProper
                       setKey={ this.state.listKey }
                       items={ this.state.items }
                       columns={ this.state.columns }
+                      selectionPreservedOnEmptyClick={true}
                       checkboxVisibility={ CheckboxVisibility.onHover }
                       layoutMode={ LayoutMode.justified }
                       isHeaderVisible={ true }

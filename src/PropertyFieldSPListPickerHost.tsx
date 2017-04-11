@@ -13,6 +13,7 @@ import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IPropertyFieldSPListPickerPropsInternal, PropertyFieldSPListPickerOrderBy } from './PropertyFieldSPListPicker';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { Label } from 'office-ui-fabric-react/lib/Label';
 
 /**
  * @interface
@@ -164,9 +165,10 @@ export default class PropertyFieldSPListPickerHost extends React.Component<IProp
     //Renders content
     return (
       <div>
+        <Label>{this.props.label}</Label>
         <Dropdown
           disabled={this.props.disabled}
-          label={this.props.label}
+          label=''
           onChanged={this.onChanged}
           options={this.options}
           selectedKey={this.selectedKey}

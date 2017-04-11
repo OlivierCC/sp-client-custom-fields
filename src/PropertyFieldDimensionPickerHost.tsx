@@ -11,6 +11,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import GuidHelper from './GuidHelper';
 
 import * as strings from 'sp-client-custom-fields/strings';
@@ -111,34 +112,28 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
    * @function
    * Function called when the width changed
    */
-  private onWidthChanged(element: any): void {
-    if (element != null) {
-      var newValue: string = element.currentTarget.value;
-      if (this.state.widthUnit === this.state.heightUnit && this.state.conserveRatio === true && this.props.preserveRatioEnabled === true) {
-        if (this.state.width != 0)
-          this.state.height = Math.round((this.state.height / this.state.width) * +newValue);
-      }
-      this.state.width = Math.round(+newValue);
-      this.setState(this.state);
-      this.saveDimension();
+  private onWidthChanged(newValue: any): void {
+    if (this.state.widthUnit === this.state.heightUnit && this.state.conserveRatio === true && this.props.preserveRatioEnabled === true) {
+      if (this.state.width != 0)
+        this.state.height = Math.round((this.state.height / this.state.width) * +newValue);
     }
+    this.state.width = Math.round(+newValue);
+    this.setState(this.state);
+    this.saveDimension();
   }
 
   /**
    * @function
    * Function called when the height changed
    */
-  private onHeightChanged(element: any): void {
-    if (element != null) {
-      var newValue: string = element.currentTarget.value;
-      if (this.state.widthUnit === this.state.heightUnit && this.state.conserveRatio === true && this.props.preserveRatioEnabled === true) {
-        if (this.state.height != 0)
-          this.state.width = Math.round((this.state.width / this.state.height) * +newValue);
-      }
-      this.state.height = Math.round(+newValue);
-      this.setState(this.state);
-      this.saveDimension();
+  private onHeightChanged(newValue: any): void {
+    if (this.state.widthUnit === this.state.heightUnit && this.state.conserveRatio === true && this.props.preserveRatioEnabled === true) {
+      if (this.state.height != 0)
+        this.state.width = Math.round((this.state.width / this.state.height) * +newValue);
     }
+    this.state.height = Math.round(+newValue);
+    this.setState(this.state);
+    this.saveDimension();
   }
 
   /**
@@ -256,15 +251,15 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
                 <Label disabled={this.props.disabled}>{strings.DimensionWidth}</Label>
               </td>
               <td style={{verticalAlign: 'top', width: '80px'}}>
-                <input disabled={this.props.disabled}
-                  label={this.props.label}
+                <TextField
+                  disabled={this.props.disabled}
                   role="textbox"
                   aria-multiline="false"
                   type="number"
-                  className="ms-TextField-field"
-                  value={this.state.width}
-                  onChange={this.onWidthChanged}
-                  />
+                  min='0'
+                  value={this.state.width !== undefined ? this.state.width.toString():''}
+                  onChanged={this.onWidthChanged}
+                />
               </td>
               <td style={{verticalAlign: 'top'}}>
                 <Dropdown
@@ -279,15 +274,15 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
                 <Label disabled={this.props.disabled}>{strings.DimensionHeight}</Label>
               </td>
               <td style={{verticalAlign: 'top', width: '80px'}}>
-                <input disabled={this.props.disabled}
-                  label={this.props.label}
+                <TextField
+                  disabled={this.props.disabled}
                   role="textbox"
                   aria-multiline="false"
                   type="number"
-                  className="ms-TextField-field"
-                  value={this.state.height}
-                  onChange={this.onHeightChanged}
-                  />
+                  min='0'
+                  value={this.state.height !== undefined ? this.state.height.toString():''}
+                  onChanged={this.onHeightChanged}
+                />
               </td>
               <td style={{verticalAlign: 'top'}}>
                 <Dropdown

@@ -11,6 +11,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -159,13 +160,10 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
   * The text field value changed
   *
   */
-  private onTextFieldChanged(e?: any): void {
-    if (e != null) {
-      var newValue: string = e.currentTarget.value;
-      this.state.selectedImage = newValue;
-      this.setState(this.state);
-      this.saveImageProperty(newValue);
-    }
+  private onTextFieldChanged(newValue: string): void {
+    this.state.selectedImage = newValue;
+    this.setState(this.state);
+    this.saveImageProperty(newValue);
   }
 
   /**
@@ -179,10 +177,6 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
   }
 
   private onClickRecent(element?: any): void {
-    //this.state.openRecent = true;
-    //this.state.openSite = false;
-    //this.state.openUpload = false;
-    //this.setState(this.state);
   }
 
   /**
@@ -271,18 +265,25 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <div style={{display:'flex'}}>
-          <input
-            disabled={this.props.disabled}
-            value={this.state.selectedImage}
-            style={{width:'220px'}}
-            className="ms-TextField-field"
-            onChange={this.onTextFieldChanged}
-            readOnly={this.props.readOnly}
-          />
-          <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
-          <Button disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
-        </div>
+         <table style={{width: '100%', borderSpacing: 0}}>
+          <tbody>
+            <tr>
+              <td width="*">
+                <TextField
+                  disabled={this.props.disabled}
+                  value={this.state.selectedImage}
+                  style={{width:'100%'}}
+                  onChanged={this.onTextFieldChanged}
+                  readOnly={this.props.readOnly}
+                />
+              </td>
+              <td width="64">
+                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
+                <Button disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
               <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>

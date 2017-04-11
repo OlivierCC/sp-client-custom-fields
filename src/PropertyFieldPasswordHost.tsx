@@ -9,6 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldPasswordPropsInternal } from './PropertyFieldPassword';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 /**
  * @interface
@@ -54,14 +55,10 @@ export default class PropertyFieldPasswordHost extends React.Component<IProperty
    * @function
    * Function called when the component value changed
    */
-  private onValueChanged(element: any): void {
-    //Checks if there is a method to called
-    if (this.props.onPropertyChange && element != null) {
-      var newValue: string = element.currentTarget.value;
-      this.state.currentValue = newValue;
-      this.setState(this.state);
-      this.delayedValidate(newValue);
-    }
+  private onValueChanged(newValue: any): void {
+    this.state.currentValue = newValue;
+    this.setState(this.state);
+    this.delayedValidate(newValue);
   }
 
   /**
@@ -124,15 +121,15 @@ export default class PropertyFieldPasswordHost extends React.Component<IProperty
     return (
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
-        <input disabled={this.props.disabled}
-          label={this.props.label}
+        <TextField
+          disabled={this.props.disabled}
+          aria-multiline="false"
           placeholder={this.props.placeHolder !== undefined ? this.props.placeHolder: ''}
           type="password"
-          value={this.state.currentValue}
-          className="ms-TextField-field"
-          onChange={this.onValueChanged}
+          value={this.state.currentValue !== undefined ? this.state.currentValue.toString():''}
+          onChanged={this.onValueChanged}
           aria-invalid={ !!this.state.errorMessage }
-          />
+        />
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
           <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
           <span>

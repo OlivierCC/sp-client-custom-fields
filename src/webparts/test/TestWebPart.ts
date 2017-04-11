@@ -88,6 +88,8 @@ import { PropertyFieldAutoComplete } from '../../PropertyFieldAutoComplete';
 import { PropertyFieldSearchPropertiesPicker } from '../../PropertyFieldSearchPropertiesPicker';
 //Include the PropertyFieldSearchPropertiesPicker component
 import { PropertyFieldOfficeVideoPicker } from '../../PropertyFieldOfficeVideoPicker';
+//Include the PropertyFieldTermSetPicker component
+import { PropertyFieldTermSetPicker } from '../../PropertyFieldTermSetPicker';
 
 export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps> {
 
@@ -139,7 +141,8 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
       starRating: this.properties.starRating,
       autoSuggest: this.properties.autoSuggest,
       searchProperties: this.properties.searchProperties,
-      officeVideo: this.properties.officeVideo
+      officeVideo: this.properties.officeVideo,
+      termSets: this.properties.termSets
     });
 
     ReactDom.render(element, this.domElement);
@@ -453,13 +456,11 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                     { id: 'StartDate', title: 'Start Date', required: false, type: CustomListFieldType.date, hidden: true },
                     { id: 'EndDate', title: 'End Date', required: false, type: CustomListFieldType.date, hidden: true },
                     { id: 'Picture', title: 'Picture', required: false, type: CustomListFieldType.picture, hidden: true },
-                    { id: 'Users', title: 'Users', required: false, type: CustomListFieldType.users, hidden: true }
-                    ,
+                    { id: 'Users', title: 'Users', required: false, type: CustomListFieldType.users, hidden: true },
                     { id: 'Font', title: 'Font', required: false, type: CustomListFieldType.font, hidden: true },
                     { id: 'FontSize', title: 'Font size', required: false, type: CustomListFieldType.fontSize, hidden: true },
                     { id: 'Icon', title: 'Icon', required: false, type: CustomListFieldType.icon, hidden: true },
                     { id: 'Password', title: 'Password', required: false, type: CustomListFieldType.password, hidden: true },
-                    { id: 'Users', title: 'Users', required: false, type: CustomListFieldType.users, hidden: true },
                     { id: 'Color', title: 'Color', required: false, type: CustomListFieldType.color, hidden: true },
                     { id: 'ColorMini', title: 'Color 2', required: false, type: CustomListFieldType.colorMini, hidden: true },
                     { id: 'List', title: 'List', required: false, type: CustomListFieldType.list, hidden: true },
@@ -468,7 +469,6 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                     { id: 'Stars', title: 'Stars', required: false, type: CustomListFieldType.stars, hidden: true },
                     { id: 'Groups', title: 'Groups', required: false, type: CustomListFieldType.sharePointGroups, hidden: true },
                     { id: 'Video', title: 'Video', required: false, type: CustomListFieldType.officeVideo, hidden: true }
-
                   ],
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   context: this.context,
@@ -874,6 +874,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   label: strings.GeoLocationFieldLabel,
                   longitude: this.properties.geolocation != null ? this.properties.geolocation.substr(0, this.properties.geolocation.indexOf(",")) : '0',
                   latitude: this.properties.geolocation != null ? this.properties.geolocation.substr(this.properties.geolocation.indexOf(",") + 1, this.properties.geolocation.length - this.properties.geolocation.indexOf(",")) : '0',
+                  collapsed: true,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
                   disabled: false,
@@ -964,7 +965,33 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   deferredValidationTime: 0,
                   key: 'searchPropertiesPickerFieldId'
                 }),
-               PropertyFieldSPListPicker('list', {
+               PropertyFieldTermSetPicker('termSets', {
+                  label: strings.TermSetsFieldLabel,
+                  panelTitle: 'Select a Term Set',
+                  initialValues: this.properties.termSets,
+                  allowMultipleSelections: true,
+                  excludeSystemGroup: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  context: this.context,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'termSetsPickerFieldId'
+                }),
+               PropertyFieldSPFolderPicker('folder', {
+                  label: strings.SPFolderFieldLabel,
+                  initialFolder: this.properties.folder,
+                  //baseFolder: '/sites/devcenter/_catalogs',
+                  context: this.context,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'folderFieldId'
+                }),
+                PropertyFieldSPListPicker('list', {
                   label: strings.SPListFieldLabel,
                   selectedList: this.properties.list,
                   includeHidden: false,
@@ -977,18 +1004,6 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'listFieldId'
-                }),
-                PropertyFieldSPFolderPicker('folder', {
-                  label: strings.SPFolderFieldLabel,
-                  initialFolder: this.properties.folder,
-                  //baseFolder: '/sites/devcenter/_catalogs',
-                  context: this.context,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  onGetErrorMessage: null,
-                  deferredValidationTime: 0,
-                  key: 'folderFieldId'
                 }),
                 PropertyFieldSPListMultiplePicker('listsCollection', {
                   label: strings.SPListFieldLabel,

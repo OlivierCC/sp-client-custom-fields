@@ -42,6 +42,11 @@ export interface IPropertyFieldMapPickerProps {
    */
   latitude?: string;
   /**
+   * @var
+   * Defines if the map must be collapsed by default. Default is false.
+   */
+  collapsed?: boolean;
+  /**
    * @function
    * Defines a onPropertyChange function to raise when the selected Color changed.
    * Normally this function must be always defined with the 'this.onPropertyChange'
@@ -94,6 +99,7 @@ export interface IPropertyFieldMapPickerProps {
 export interface IPropertyFieldMapPickerPropsInternal extends IPropertyPaneCustomFieldProps {
   label: string;
   initialValue?: string;
+  collapsed?: boolean;
   targetProperty: string;
   longitude?: string;
   latitude?: string;
@@ -123,6 +129,7 @@ class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyField
   private initialValue: string;
   private longitude: string;
   private latitude: string;
+  private collapsed: boolean = false;
 
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
@@ -153,6 +160,8 @@ class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyField
     this.onGetErrorMessage = _properties.onGetErrorMessage;
     if (_properties.deferredValidationTime !== undefined)
       this.deferredValidationTime = _properties.deferredValidationTime;
+    if (_properties.collapsed !== undefined)
+      this.collapsed = _properties.collapsed;
   }
 
   /**
@@ -166,6 +175,7 @@ class PropertyFieldMapPickerBuilder implements IPropertyPaneField<IPropertyField
       initialValue: this.initialValue,
       latitude: this.latitude,
       longitude: this.longitude,
+      collapsed: this.collapsed,
       targetProperty: this.targetProperty,
       onDispose: this.dispose,
       onRender: this.render,
@@ -205,6 +215,7 @@ export function PropertyFieldMapPicker(targetProperty: string, properties: IProp
       initialValue: properties.initialValue,
       latitude: properties.latitude,
       longitude: properties.longitude,
+      collapsed: properties.collapsed,
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       onDispose: null,
