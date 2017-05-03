@@ -88,14 +88,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       selectedField: '',
       selectedArrange: '',
       operators: [
-        {key: 'Eq', text: strings.SPListQueryOperatorEq},
-         {key: 'Ne', text: strings.SPListQueryOperatorNe},
+        {key: 'eq', text: strings.SPListQueryOperatorEq},
+         {key: 'ne', text: strings.SPListQueryOperatorNe},
           {key: 'startsWith', text: strings.SPListQueryOperatorStartsWith},
            {key: 'substringof', text: strings.SPListQueryOperatorSubstringof},
-            {key: 'Lt', text: strings.SPListQueryOperatorLt},
-             {key: 'Le', text: strings.SPListQueryOperatorLe},
-              {key: 'Gt', text: strings.SPListQueryOperatorGt},
-               {key: 'Ge', text: strings.SPListQueryOperatorGe}
+            {key: 'lt', text: strings.SPListQueryOperatorLt},
+             {key: 'le', text: strings.SPListQueryOperatorLe},
+              {key: 'gt', text: strings.SPListQueryOperatorGt},
+               {key: 'ge', text: strings.SPListQueryOperatorGe}
       ],
       filters: [],
       max: 20,
@@ -145,14 +145,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       top = top.substr(0, indexOfEndTop);
       this.state.max = Number(top);
     }
-    var indexOfFilters: number = this.props.query.indexOf("$filters=");
+    var indexOfFilters: number = this.props.query.indexOf("$filter=");
     if (indexOfFilters > -1) {
       var filter: string = this.props.query.substr(indexOfFilters);
-      filter = filter.replace("$filters=", "");
+      filter = filter.replace("$filter=", "");
       var indexOfEndFilter: number = filter.indexOf("&");
       filter = filter.substr(0, indexOfEndFilter);
       if (filter != null && filter != '') {
-        var subFilter = filter.split("%20AND%20");
+        var subFilter = filter.split("%20and%20");
         for (var i = 0; i < subFilter.length; i++) {
           var fieldId: string = subFilter[i].substr(0, subFilter[i].indexOf("%20"));
           var operator: string = subFilter[i].substr(subFilter[i].indexOf("%20"));
@@ -244,11 +244,11 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         queryUrl += '&';
       }
       if (this.state.filters != null && this.state.filters.length > 0) {
-        queryUrl += '$filters=';
+        queryUrl += '$filter=';
         for (var i = 0; i < this.state.filters.length; i++) {
           if (this.state.filters[i].field != null && this.state.filters[i].operator != null) {
             if (i > 0) {
-              queryUrl += "%20AND%20";
+              queryUrl += "%20and%20";
             }
             queryUrl += this.state.filters[i].field;
             queryUrl += "%20";
