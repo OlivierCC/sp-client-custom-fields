@@ -8,13 +8,14 @@
  */
 import * as React from 'react';
 import { IPropertyFieldPeoplePickerPropsInternal } from './PropertyFieldPeoplePicker';
-import { NormalPeoplePicker, IPeoplePickerProps, IBasePickerSuggestionsProps } from 'office-ui-fabric-react/lib/Pickers';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from "@microsoft/sp-http";
+import { EnvironmentType, Environment } from '@microsoft/sp-core-library';
+import { IPropertyFieldPeople } from './PropertyFieldPeoplePicker';
+import { NormalPeoplePicker, IBasePickerSuggestionsProps } from 'office-ui-fabric-react/lib/Pickers';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IPersonaProps, PersonaPresence, PersonaInitialsColor } from 'office-ui-fabric-react/lib/Persona';
-import { IPropertyFieldPeople } from './PropertyFieldPeoplePicker';
-import { IWebPartContext } from '@microsoft/sp-webpart-base';
-import { SPHttpClientConfigurations, ISPHttpClientOptions } from "@microsoft/sp-http";
-import { EnvironmentType, Environment } from '@microsoft/sp-core-library';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -32,16 +33,17 @@ export interface IPropertyFieldPeoplePickerHostProps extends IPropertyFieldPeopl
  * Defines the state of the component
  *
  */
-interface IPeoplePickerState {
+export interface IPeoplePickerState {
   resultsPeople?: Array<IPropertyFieldPeople>;
   resultsPersonas?: Array<IPersonaProps>;
+  errorMessage?: string;
 }
 
 /**
  * @class
  * Renders the controls for PropertyFieldPeoplePicker component
  */
-export default class PropertyFieldPeoplePickerHost extends React.Component<IPropertyFieldPeoplePickerHostProps, {}> {
+export default class PropertyFieldPeoplePickerHost extends React.Component<IPropertyFieldPeoplePickerHostProps, IPeoplePickerState> {
 
   private searchService: PropertyFieldSearchService;
   private intialPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
@@ -49,10 +51,12 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
   private resultsPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
   private selectedPeople: Array<IPropertyFieldPeople> = new Array<IPropertyFieldPeople>();
   private selectedPersonas: Array<IPersonaProps> = new Array<IPersonaProps>();
+  private async: Async;
+  private delayedValidate: (value: IPropertyFieldPeople[]) => void;
 
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldPeoplePickerHostProps) {
     super(props);
@@ -64,10 +68,15 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
     this.createInitialPersonas();
 
     this.state = {
-
       resultsPeople: this.resultsPeople,
       resultsPersonas: this.resultsPersonas,
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
@@ -76,7 +85,7 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    */
   public render(): JSX.Element {
 
-    var suggestionProps: IBasePickerSuggestionsProps = { // TODO strings in resourcen auslagen
+    var suggestionProps: IBasePickerSuggestionsProps = {
       suggestionsHeaderText: strings.PeoplePickerSuggestedContacts,
       noResultsFoundText: strings.PeoplePickerNoResults,
       loadingText: strings.PeoplePickerLoading,
@@ -92,6 +101,13 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
           onChange={this.onItemChanged}
           defaultSelectedItems={this.intialPersonas}
           />
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }
@@ -183,10 +199,58 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
    * Refreshes the web part properties
    */
   private refreshWebPartProperties(): void {
-    if (this.props.onPropertyChange) {
-      this.props.properties[this.props.targetProperty] = this.selectedPeople;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialData, this.selectedPeople);
+    this.delayedValidate(this.selectedPeople);
+  }
+
+   /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: IPropertyFieldPeople[]): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialData, value);
+      return;
     }
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || []);
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialData, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialData, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialData, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: IPropertyFieldPeople[], newValue: IPropertyFieldPeople[]) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -205,14 +269,13 @@ export default class PropertyFieldPeoplePickerHost extends React.Component<IProp
           this.refreshWebPartProperties();
         }
       } else {
-        this.selectedPersonas.map((person, index) => {
-            var selectedItemIndex: number = selectedItems.indexOf(person)
+        this.selectedPersonas.map((person, index2) => {
+            var selectedItemIndex: number = selectedItems.indexOf(person);
             if (selectedItemIndex === -1) {
-              this.selectedPersonas.splice(index, 1);
-              this.selectedPeople.splice(index, 1);
+              this.selectedPersonas.splice(index2, 1);
+              this.selectedPeople.splice(index2, 1);
             }
-          })
-
+          });
       }
 
     } else {
@@ -297,7 +360,7 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
           "content-type": "application/json"
         }
       };
-      return this.context.spHttpClient.post(contextInfoUrl, SPHttpClientConfigurations.v1, httpPostOptions).then((response: Response) => {
+      return this.context.spHttpClient.post(contextInfoUrl, SPHttpClient.configurations.v1, httpPostOptions).then((response: SPHttpClientResponse) => {
         return response.json().then((jsonResponse: any) => {
           var formDigestValue: string = jsonResponse.FormDigestValue;
           var data = {
@@ -329,7 +392,7 @@ class PropertyFieldSearchService implements IPropertyFieldSearchService {
             },
             body: JSON.stringify(data)
           };
-          return this.context.spHttpClient.post(userRequestUrl, SPHttpClientConfigurations.v1, httpPostOptions).then((searchResponse: Response) => {
+          return this.context.spHttpClient.post(userRequestUrl, SPHttpClient.configurations.v1, httpPostOptions).then((searchResponse: SPHttpClientResponse) => {
             return searchResponse.json().then((usersResponse: any) => {
               var res: IPropertyFieldPeople[] = [];
               var values: any = JSON.parse(usersResponse.value);

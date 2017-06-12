@@ -8,11 +8,14 @@
  */
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
-import { SPHttpClientConfigurations } from "@microsoft/sp-http";
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
-import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
+import GuidHelper from './GuidHelper';
 import { IPropertyFieldSPListMultiplePickerPropsInternal, PropertyFieldSPListMultiplePickerOrderBy } from './PropertyFieldSPListMultiplePicker';
 
 /**
@@ -24,28 +27,50 @@ export interface IPropertyFieldSPListMultiplePickerHostProps extends IPropertyFi
 }
 
 /**
+ * @interface
+ * PropertyFieldSPListMultiplePickerHost state interface
+ *
+ */
+export interface IPropertyFieldSPListMultiplePickerHostState {
+  results: IChoiceGroupOption[];
+  selectedKeys: string[];
+  loaded: boolean;
+  errorMessage?: string;
+}
+
+/**
  * @class
  * Renders the controls for PropertyFieldSPListMultiplePicker component
  */
-export default class PropertyFieldSPListMultiplePickerHost extends React.Component<IPropertyFieldSPListMultiplePickerHostProps, {}> {
+export default class PropertyFieldSPListMultiplePickerHost extends React.Component<IPropertyFieldSPListMultiplePickerHostProps, IPropertyFieldSPListMultiplePickerHostState> {
 
   private options: IChoiceGroupOption[] = [];
-  private selectedKeys: string[] = [];
   private loaded: boolean = false;
+  private async: Async;
+  private delayedValidate: (value: string[]) => void;
+  private _key: string;
 
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSPListMultiplePickerHostProps) {
     super(props);
 
+    this._key = GuidHelper.getGuid();
     this.onChanged = this.onChanged.bind(this);
     this.state = {
 			results: this.options,
-      selectedKeys: this.selectedKeys,
-      loaded: this.loaded
+      selectedKeys: [],
+      loaded: this.loaded,
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
+
     this.loadLists();
   }
 
@@ -66,7 +91,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
           indexInExisting = this.props.selectedLists.indexOf(list.Id);
         if (indexInExisting > -1) {
           isSelected = true;
-          this.selectedKeys.push(list.Id);
+          this.state.selectedKeys.push(list.Id);
         }
         //Add the option to the list
         this.options.push({
@@ -76,7 +101,7 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
         });
       });
       this.loaded = true;
-      this.setState({results: this.options, selectedKeys: this.selectedKeys, loaded: true});
+      this.setState({results: this.options, selectedKeys: this.state.selectedKeys, loaded: true});
     });
   }
 
@@ -86,36 +111,86 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
    */
   private removeSelected(element: string): void {
     var res = [];
-    for (var i = 0; i < this.selectedKeys.length; i++) {
-      if (this.selectedKeys[i] !== element)
-        res.push(this.selectedKeys[i]);
+    for (var i = 0; i < this.state.selectedKeys.length; i++) {
+      if (this.state.selectedKeys[i] !== element)
+        res.push(this.state.selectedKeys[i]);
     }
-    this.selectedKeys = res;
+    this.state.selectedKeys = res;
   }
 
   /**
    * @function
    * Raises when a list has been selected
    */
-  private onChanged(element: any): void {
-    if (this.props.onPropertyChange && element) {
-      var isChecked: boolean = element.currentTarget.checked;
-      var value: string = element.currentTarget.value;
+  private onChanged(element: React.FormEvent<HTMLElement>, isChecked: boolean): void {
+    if (element) {
+      var value: string = (element.currentTarget as any).value;
 
       if (isChecked === false) {
         this.removeSelected(value);
       }
       else {
-        this.selectedKeys.push(value);
+        this.state.selectedKeys.push(value);
       }
-      this.props.properties[this.props.targetProperty] = this.selectedKeys;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.selectedLists, this.selectedKeys);
+      this.setState(this.state);
+      this.delayedValidate(this.state.selectedKeys);
     }
   }
 
   /**
    * @function
-   * Renders the SPListpicker controls with Office UI  Fabric
+   * Validates the new custom field value
+   */
+  private validate(value: string[]): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.selectedLists, value);
+      return;
+    }
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || []);
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.selectedLists, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.selectedLists, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.selectedLists, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string[], newValue: string[]) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
+  }
+
+  /**
+   * @function
+   * Renders the SPListMultiplePicker controls with Office UI  Fabric
    */
   public render(): JSX.Element {
 
@@ -129,6 +204,9 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
     }
     else
     {
+        var styleOfLabel: any = {
+          color: this.props.disabled === true ? '#A6A6A6' : 'auto'
+        };
         //Renders content
         return (
           <div>
@@ -136,13 +214,25 @@ export default class PropertyFieldSPListMultiplePickerHost extends React.Compone
             {this.options.map((item: IChoiceGroupOption, index: number) => {
               var uniqueKey = this.props.targetProperty + '-' + item.key;
               return (
-                <div className="ms-ChoiceField">
-                  <input id={uniqueKey} style={{width: '18px', height: '18px'}} value={item.key} name={uniqueKey} onClick={this.onChanged} defaultChecked={item.isChecked} aria-checked={item.isChecked} type="checkbox" role="checkbox" />
-                  <label htmlFor={uniqueKey}><span className="ms-Label">{item.text}</span></label>
+                <div className="ms-ChoiceField" key={this._key + '-multiplelistpicker-' + index}>
+                  <Checkbox
+                    defaultChecked={item.isChecked}
+                    disabled={this.props.disabled}
+                    label={item.text}
+                    onChange={this.onChanged}
+                    inputProps={{value: item.key}}
+                  />
                 </div>
               );
             })
             }
+            { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
           </div>
         );
     }
@@ -217,7 +307,7 @@ class SPListPickerService {
           queryUrl += "&$filter=Hidden%20eq%20false";
         }
       }
-      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
           return response.json();
       });
     }

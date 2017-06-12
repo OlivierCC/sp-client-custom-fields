@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "Largeur",
+    "DimensionHeight": "Hauteur",
+    "DimensionRatio": "Conserver le ratio",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "Ajouter",
@@ -9,7 +14,7 @@ define([], function() {
     "CustomListOK": "OK",
     "CustomListCancel": "Annuler",
     "CustomListEdit": "Editer",
-    "CustomListDel": "Supprimer",
+    "CustomListDel": "Suppr",
     "CustomListYes": "Oui",
     "CustomListNo": "Non",
     "CustomListConfirmDel": "Confirmation",
@@ -104,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Vendredi",
     "DatePickerDayShortFriday": "Ven",
     "DatePickerDayLongSaturday": "Samedi",
-    "DatePickerDayShortSaturday": "Sam"
+    "DatePickerDayShortSaturday": "Sam",
+
+    "DateTimePickerDate": "Date",
+    "DateTimePickerTime": "Heure"
   }
 });

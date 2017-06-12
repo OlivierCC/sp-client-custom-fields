@@ -9,6 +9,8 @@ import * as React from 'react';
 import { IPropertyFieldFontSizePickerPropsInternal } from './PropertyFieldFontSizePicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -29,6 +31,7 @@ export interface IPropertyFieldFontSizePickerHostState {
   hoverFont?: string;
   selectedFont?: string;
   safeSelectedFont?: string;
+  errorMessage?: string;
 }
 
 /**
@@ -77,9 +80,14 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
     {Name: "xx-large", SafeValue: 'xx-large'}
   ];
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+  private _key: string;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldFontSizePickerHostProps) {
     super(props);
@@ -97,12 +105,19 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
     this.onFontDropdownChanged = this.onFontDropdownChanged.bind(this);
     this.mouseEnterDropDown = this.mouseEnterDropDown.bind(this);
     this.mouseLeaveDropDown = this.mouseLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     //Init the state
     this.state = {
         isOpen: false,
-        isHoverDropdown: false
+        isHoverDropdown: false,
+        errorMessage: ''
       };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
 
     //Inits the default value
     if (props.initialValue != null && props.initialValue != '') {
@@ -126,11 +141,62 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
    * Function to refresh the Web Part properties
    */
   private changeSelectedFont(newValue: string): void {
-    //Checks if there is a method to called
+    this.delayedValidate(newValue);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialValue, value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialValue, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialValue, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialValue, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, newValue);
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
     }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -138,6 +204,8 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
    * Function to open the dialog
    */
   private onOpenDialog(): void {
+    if (this.props.disabled === true)
+      return;
     this.state.isOpen = !this.state.isOpen;
     this.setState(this.state);
   }
@@ -219,7 +287,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
 
@@ -247,8 +315,17 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         );
       });
       return (
-        <Dropdown label={this.props.label} options={dropDownOptions} selectedKey={selectedKey}
-          onChanged={this.onFontDropdownChanged} />
+        <div>
+          <Dropdown label={this.props.label} options={dropDownOptions} selectedKey={selectedKey}
+            onChanged={this.onFontDropdownChanged} disabled={this.props.disabled} />
+          { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
+        </div>
       );
     }
     else {
@@ -261,12 +338,14 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         zoom: 1
       };
       var dropdownColor = '1px solid #c8c8c8';
-      if (this.state.isOpen === true)
+      if (this.props.disabled === true)
+        dropdownColor = '1px solid #f4f4f4';
+      else if (this.state.isOpen === true)
         dropdownColor = '1px solid #3091DE';
       else if (this.state.isHoverDropdown === true)
         dropdownColor = '1px solid #767676';
       var fontSelectA = {
-        backgroundColor: '#fff',
+        backgroundColor: this.props.disabled === true ? '#f4f4f4' : '#fff',
         borderRadius        : '0px',
         backgroundClip        : 'padding-box',
         border: dropdownColor,
@@ -277,9 +356,9 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         height: '26px',
         lineHeight: '26px',
         padding: '0 0 0 8px',
-        color: '#444',
+        color: this.props.disabled === true ? '#a6a6a6' : '#444',
         textDecoration: 'none',
-        cursor: 'pointer'
+        cursor: this.props.disabled === true ? 'default' : 'pointer'
       };
       var fontSelectASpan = {
         marginRight: '26px',
@@ -288,7 +367,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         whiteSpace: 'nowrap',
         lineHeight: '1.8',
         textOverflow: 'ellipsis',
-        cursor: 'pointer',
+        cursor: this.props.disabled === true ? 'default' : 'pointer',
         //fontFamily: this.state.safeSelectedFont != null && this.state.safeSelectedFont != '' ? this.state.safeSelectedFont : 'Arial',
         //fontSize: this.state.safeSelectedFont,
         fontWeight: 400
@@ -308,7 +387,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
         display: 'block',
         width: '100%',
         height: '100%',
-        cursor: 'pointer',
+        cursor: this.props.disabled === true ? 'default' : 'pointer',
         marginTop: '2px'
       };
       var fsDrop = {
@@ -347,7 +426,7 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
             </a>
             <div style={fsDrop}>
               <ul style={fsResults}>
-                {this.fonts.map((font: ISafeFont) => {
+                {this.fonts.map((font: ISafeFont, index: number) => {
                   var backgroundColor: string = 'transparent';
                   if (this.state.selectedFont === font.Name)
                     backgroundColor = '#c7e0f4';
@@ -363,13 +442,20 @@ export default class PropertyFieldFontSizePickerHost extends React.Component<IPr
                     cursor: 'pointer'
                   };
                   return (
-                    <li value={font.Name} role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>{font.Name}</li>
+                    <li value={font.Name} key={this._key + '-fontsizepicker-' + index} role="menuitem" onMouseEnter={this.toggleHover} onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>{font.Name}</li>
                   );
                 })
                 }
               </ul>
             </div>
           </div>
+          { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
         </div>
       );
     }

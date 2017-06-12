@@ -8,7 +8,7 @@
 import * as React from 'react';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
-import { SPHttpClientConfigurations } from "@microsoft/sp-http";
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IPropertyFieldSPFolderPickerPropsInternal } from './PropertyFieldSPFolderPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
@@ -16,6 +16,7 @@ import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import { Dialog, DialogType } from 'office-ui-fabric-react/lib/Dialog';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { List } from 'office-ui-fabric-react/lib/List';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -39,6 +40,7 @@ export interface IPropertyFieldSPFolderPickerHostState {
   childrenFolders?: ISPFolders;
   selectedFolder?: string;
   confirmFolder?: string;
+  errorMessage?: string;
 }
 
 /**
@@ -50,9 +52,13 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
   private currentPage: number = 0;
   private pageItemCount: number = 6;
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSPFolderPickerHostProps) {
     super(props);
@@ -84,8 +90,14 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
       currentSPFolder: currentSPFolder,
       confirmFolder: initialFolder,
       selectedFolder: initialFolder,
-      childrenFolders: { value: [] }
+      childrenFolders: { value: [] },
+      errorMessage: ''
     };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
@@ -108,10 +120,7 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
       this.state.currentSPFolder = this.props.baseFolder;
     this.currentPage = 0;
     this.setState({ isOpen: false, loading: true, selectedFolder: this.state.selectedFolder, currentSPFolder: this.state.currentSPFolder, childrenFolders: this.state.childrenFolders });
-    if (this.props.onPropertyChange) {
-      this.props.properties[this.props.targetProperty] = this.state.confirmFolder;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialFolder, this.state.confirmFolder);
-    }
+    this.delayedValidate(this.state.confirmFolder);
   }
 
   /**
@@ -210,14 +219,67 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
    */
   private onClickSelect(): void {
     this.state.confirmFolder = this.state.selectedFolder;
-    this.setState({ isOpen: false, loading: false, selectedFolder: this.state.selectedFolder,
+    this.state = { isOpen: false, loading: false, selectedFolder: this.state.selectedFolder,
       confirmFolder: this.state.selectedFolder,
       currentSPFolder: this.state.currentSPFolder,
-      childrenFolders: this.state.childrenFolders });
-    if (this.props.onPropertyChange) {
-      this.props.properties[this.props.targetProperty] = this.state.confirmFolder;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialFolder, this.state.confirmFolder);
+      childrenFolders: this.state.childrenFolders };
+    this.setState(this.state);
+    this.delayedValidate(this.state.confirmFolder);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialFolder, value);
+      return;
     }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialFolder, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialFolder, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialFolder, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -230,7 +292,7 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
 
@@ -242,11 +304,31 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <div style={{display:'flex'}}>
-          <TextField style={{width:'220px'}} readOnly={true} value={this.state.confirmFolder} />
-          <Button buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
-          <Button buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
-        </div>
+         <table style={{width: '100%', borderSpacing: 0}}>
+          <tbody>
+            <tr>
+              <td width="*">
+                <TextField
+                  disabled={this.props.disabled}
+                  style={{width:'100%'}}
+                  readOnly={true}
+                  value={this.state.confirmFolder} />
+              </td>
+              <td width="64">
+                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
+                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
 
         <Dialog type={DialogType.close} title={strings.SPFolderPickerDialogTitle} isOpen={this.state.isOpen} isDarkOverlay={true} isBlocking={false} onDismiss={this.onDismiss}>
 
@@ -375,7 +457,7 @@ class SPFolderPickerService {
         queryUrl += "&$skip=";
         queryUrl += skipNumber;
       }
-      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
           return response.json();
       });
     }

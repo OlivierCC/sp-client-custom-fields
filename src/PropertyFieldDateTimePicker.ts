@@ -16,6 +16,23 @@ import {
 import PropertyFieldDateTimePickerHost, { IPropertyFieldDateTimePickerHostProps } from './PropertyFieldDateTimePickerHost';
 
 /**
+  * @enum
+  * Time convention
+  */
+export enum ITimeConvention {
+  /**
+   * The 12-hour clock is a time convention in which the 24 hours of the day are
+   * divided into two periods: a.m. and p.m.
+   */
+  Hours12 = 0,
+  /**
+   * The 24-hour clock is the convention of time keeping in which the day runs from midnight to
+   * midnight and is divided into 24 hours, indicated by the hours passed since midnight, from 0 to 23
+   */
+  Hours24 = 1
+}
+
+/**
  * @interface
  * Public properties of the PropertyFieldDateTimePicker custom field
  *
@@ -38,6 +55,11 @@ export interface IPropertyFieldDateTimePickerProps {
    */
   formatDate?: (date: Date) => string;
   /**
+   * @var
+   * Defines the time convention to use. The default value is the 24-hour clock convention.
+   */
+  timeConvention?: ITimeConvention;
+  /**
    * @function
    * Defines a onPropertyChange function to raise when the selected date changed.
    * Normally this function must be always defined with the 'this.onPropertyChange'
@@ -51,9 +73,28 @@ export interface IPropertyFieldDateTimePickerProps {
   properties: any;
   /**
    * @var
-   * Key to help React identify which items have changed, are added, or are removed.
+   * An UNIQUE key indicates the identity of this control
    */
-  key: string;
+  key?: string;
+  /**
+   * The method is used to get the validation error message and determine whether the input value is valid or not.
+   *
+   *   When it returns string:
+   *   - If valid, it returns empty string.
+   *   - If invalid, it returns the error message string and the text field will
+   *     show a red border and show an error message below the text field.
+   *
+   *   When it returns Promise<string>:
+   *   - The resolved value is display as error message.
+   *   - The rejected, the value is thrown away.
+   *
+   */
+   onGetErrorMessage?: (value: string) => string | Promise<string>;
+   /**
+    * Custom Field will start to validate after users stop typing for `deferredValidationTime` milliseconds.
+    * Default value is 200.
+    */
+   deferredValidationTime?: number;
 }
 
 /**
@@ -69,11 +110,13 @@ export interface IPropertyFieldDateTimePickerPropsInternal extends IPropertyPane
   initialDate?: string;
   targetProperty: string;
   formatDate?: (date: Date) => string;
+  timeConvention?: ITimeConvention;
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
-  key: string;
+  onGetErrorMessage?: (value: string) => string | Promise<string>;
+  deferredValidationTime?: number;
 }
 
 /**
@@ -92,9 +135,12 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
   private label: string;
   private initialDate: string;
   private formatDate: (date: Date) => string;
+  private timeConvention: ITimeConvention;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private onGetErrorMessage: (value: string) => string | Promise<string>;
+  private deferredValidationTime: number = 200;
 
   /**
    * @function
@@ -112,6 +158,13 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
     this.formatDate = _properties.formatDate;
     this.customProperties = _properties.properties;
     this.key = _properties.key;
+    this.onGetErrorMessage = _properties.onGetErrorMessage;
+    if (_properties.deferredValidationTime !== undefined)
+      this.deferredValidationTime = _properties.deferredValidationTime;
+    if (_properties.timeConvention !== undefined)
+      this.timeConvention = _properties.timeConvention;
+    else
+      this.timeConvention = ITimeConvention.Hours24;
   }
 
   /**
@@ -125,11 +178,14 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
       initialDate: this.initialDate,
       targetProperty: this.targetProperty,
       formatDate: this.formatDate,
+      timeConvention: this.timeConvention,
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
       key: this.key,
+      onGetErrorMessage: this.onGetErrorMessage,
+      deferredValidationTime: this.deferredValidationTime
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -147,9 +203,9 @@ class PropertyFieldDateTimePickerBuilder implements IPropertyPaneField<IProperty
 
 /**
  * @function
- * Helper method to create a Date Picker on the PropertyPane.
- * @param targetProperty - Target property the date picker is associated to.
- * @param properties - Strongly typed Date Picker properties.
+ * Helper method to create the customer field on the PropertyPane.
+ * @param targetProperty - Target property the custom field is associated to.
+ * @param properties - Strongly typed custom field properties.
  */
 export function PropertyFieldDateTimePicker(targetProperty: string, properties: IPropertyFieldDateTimePickerProps): IPropertyPaneField<IPropertyFieldDateTimePickerPropsInternal> {
 
@@ -158,14 +214,17 @@ export function PropertyFieldDateTimePicker(targetProperty: string, properties: 
       label: properties.label,
       targetProperty: targetProperty,
       initialDate: properties.initialDate,
+      timeConvention: properties.timeConvention,
       onPropertyChange: properties.onPropertyChange,
       properties: properties.properties,
       formatDate: properties.formatDate,
       onDispose: null,
       onRender: null,
       key: properties.key,
+      onGetErrorMessage: properties.onGetErrorMessage,
+      deferredValidationTime: properties.deferredValidationTime
     };
-    //Calles the PropertyFieldDateTimePicker builder object
+    //Calls the PropertyFieldDateTimePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
     return new PropertyFieldDateTimePickerBuilder(targetProperty, newProperties);
 }

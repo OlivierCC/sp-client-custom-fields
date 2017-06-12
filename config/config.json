@@ -1,12 +1,15 @@
 {
-    "entries": [{
-        "entry": "./lib/webparts/test/TestWebPart.js",
-        "manifest": "./src/webparts/test/TestWebPart.manifest.json",
-        "outputPath": "./dist/sp-client-custom-fields.bundle.js"
-    }],
-    "externals": {},
-    "localizedResources": {
-        "sp-client-custom-fields/strings": "loc/{locale}.js",
-        "testStrings": "webparts/test/loc/{locale}.js"
+  "entries": [
+    {
+      "entry": "./lib/webparts/test/TestWebPart.js",
+      "manifest": "./src/webparts/test/TestWebPart.manifest.json",
+      "outputPath": "./dist/sp-client-custom-fields.bundle.js"
     }
+  ],
+  "externals": {
+  },
+  "localizedResources": {
+    "sp-client-custom-fields/strings": "loc/{locale}.js",
+    "testStrings": "webparts/test/loc/{locale}.js"
+  }
 }

@@ -1,26 +1,17 @@
-> Note: The SharePoint Framework is currently in preview and is subject to change. SharePoint Framework client-side web parts are not currently supported for use in production enviornments.
+![release](https://img.shields.io/badge/release-v1.3.4-blue.svg)
+![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
+![status](https://img.shields.io/badge/status-stable-green.svg)
+![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-# SPFx Custom Fields Library
+This library is a kit of 30+ components to customize SPFx web parts custom fields, to make the optimal experience to edit your Web Parts.
 
-This library is a kit of **23+ components** to customize SPFx web parts custom fields, to make the **optimal experience to edit your Web Parts**.
 
-This kit includes Web Part property fields as **PropertyFieldDatePicker**, **PropertyFieldDateTimePicker**, **PropertyFieldPicturePicker**,
-**PropertyFieldDocumentPicker**,**PropertyFieldPeoplePicker**, **PropertyFieldColorPicker**, **PropertyFieldFontPicker**,
-**PropertyFieldFontSizePicker**, **PropertyFieldIconPicker**, **PropertyFieldSliderRange**,
-**PropertyFieldSliderRange**, **PropertyFieldDisplayMode**, **PropertyFieldAlignPicker**,
-**PropertyFieldCustomList**, **PropertyFieldSPListPicker**, **PropertyFieldSPListMultiplePicker**, **PropertyFieldSPListQuery**,
-**PropertyFieldSPFolderPicker**, **PropertyFieldPhoneNumber**, **PropertyFieldMaskedInput**, **PropertyFieldDropDownSelect**,
-**PropertyFieldMapPicker**. These controls are based on the Office UI Fabric framework and React. You can use these custom
-fields to your own client side Web Parts.
+Official Web Site: [https://oliviercc.github.io/sp-client-custom-fields](https://oliviercc.github.io/sp-client-custom-fields)
 
-Now available in more than **16 languages** as: English, French, Arabic, German, Chinese, Danish, Spanish, Finnish, Hindi, Italian,
-Japanese, Norwegian, Dutch, Portuguese, Russian, Swedish.
+Documentation: [https://oliviercc.github.io/sp-client-custom-fields](https://oliviercc.github.io/sp-client-custom-fields)
 
-**Current stable version: 1.0.5** - [Release note](https://github.com/OlivierCC/sp-client-custom-fields/wiki/Logs-&-Updates)
+API: [https://oliviercc.github.io/sp-client-custom-fields/docs](https://oliviercc.github.io/sp-client-custom-fields/docs)
 
-**Current SPFx Drop support** - [Drop 6](https://github.com/SharePoint/sp-dev-docs/wiki/Release-Notes-Drop-6)
-
-![Overview](./assets/Logo.png)
 
 # How to install & use
 
@@ -42,51 +33,66 @@ Execute gulp in the command line
 gulp
 ```
 
-**You are now ready to use a custom property field in your web part!** It's really easy to add a custom property field in your project, you can read any property documentation bellow to view how to do that.   [More information](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-install-%3F). You can also consult our [list of samples](https://github.com/OlivierCC/sp-client-custom-fields/wiki/How-to-try-a-sample-%3F) to have more information or sample usages.
+You are now ready to use a custom property field in your web part! It's really easy to add a custom property field in your project, you can read any property documentation to view how to do that.  [More information](https://oliviercc.github.io/sp-client-custom-fields)
 
-# Documentation
+# Compilation Process
 
-You can use these custom fields to your own client side web parts. You can find bellow the list of
-all these custom fields and you can click on the custom field name to consult the documentation.
+```bash
+git clone the repo
+npm i
+tsd install
+gulp serve
+```
 
-## Layout Management
+# Updates Log
 
-Custom Field | Description |  Overview
+Date | Description |  Contributors
 ------------ | ----------- | -----------
-[PropertyFieldColorPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldColorPicker) | Custom field to select a Color with a visual RGB editor based on the Office UI Fabric ColorPicker control | ![PropertyFieldColorPicker](./assets/OverviewColorPicker.png)
-[PropertyFieldFontPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldFontPicker) | Custom field to select a Font with a visual dropdown box and fonts preview | ![PropertyFieldFontPicker](./assets/OverviewFontPicker.png)
-[PropertyFieldFontSizePicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldFontSizePicker) | Custom field to select a Font size with size preview as drop down | ![PropertyFieldFontSizePicker](./assets/OverviewFontSizePicker.png)
-[PropertyFieldIconPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldIconPicker) | Custom field to select an Icon style in the Office UI Fabric icons list | ![PropertyFieldIconPicker](./assets/OverviewIconPicker.png)
-[PropertyFieldAlignPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldAlignPicker) | Custom field to select an alignement (left, center or right) | ![PropertyFieldAlignPicker](./assets/OverviewAlignPicker.png)
-[PropertyFieldDisplayMode](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDisplayMode) | Custom field to select a list display mode (list or tiles) | ![PropertyFieldDisplayMode](./assets/OverviewDisplayMode.png)
-
-## Text & Form Inputs
-
-Custom Field | Description |  Overview
------------- | ----------- | -----------
-[PropertyFieldDatePicker](/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDatePicker) | Custom field to select a Date with a mini-calendar based on the Office UI Fabric DatePicker control | ![PropertyFieldDatePicker](./assets/OverviewDatePicker.png)
-[PropertyFieldDateTimePicker](/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDateTimePicker) | Custom field to select a Date Time with a mini-calendar based on the Office UI Fabric DatePicker control | ![PropertyFieldDateTimePicker](./assets/OverviewDateTimePicker.png)
-[PropertyFieldDropDownSelect](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDropDownSelect) | Custom field to select multiple values in a dropdown with checkbox | ![PropertyFieldDropDownSelect](./assets/OverviewDropDownSelect.png)
-[PropertyFieldSliderRange](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSliderRange) | Custom field to select a range of numbers with a 2 levels slider | ![PropertyFieldSliderRange](./assets/OverviewSliderRange.png)
-[PropertyFieldRichTextBox](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldRichTextBox) | Custom field to insert a rich text area to generate html with WYSIWYG | ![PropertyFieldRichTextBox](./assets/OverviewRichTextBoxBasicClassic.png)
-[PropertyFieldPassword](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPassword) | Custom field to select a password | ![PropertyFieldPassword](./assets/OverviewPassword.png)
-[PropertyFieldPhoneNumber](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPhoneNumber) | Custom field to select a phone number with a masked control based on phone numbers international formats. | ![PropertyFieldPhoneNumber](./assets/OverviewPhoneNumber.png)
-[PropertyFieldMaskedInput](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldMaskedInput) | Custom field to add a text input with a specified masked based on regexp. | ![PropertyFieldMaskedInput](./assets/OverviewMaskedInput.png)
-[PropertyFieldMapPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldMapPicker) | Custom field to add a gps localisation with map preview. | ![PropertyFieldMapPicker](./assets/OverviewMapPicker.png)
-
-## SharePoint
-
-Custom Field | Description |  Overview
------------- | ----------- | -----------
-[PropertyFieldPeoplePicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPeoplePicker) | Custom field to select users from the SharePoint users database with a search field. Start to enter a lastname or a firstname, and pick a user  | ![PropertyFieldPeoplePicker](./assets/OverviewPeoplePicker.png)
-[PropertyFieldPicturePicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldPicturePicker)| Custom field to select a picture thanks to a SharePoint visual browser.  | ![PropertyFieldPicturePicker](./assets/OverviewPicturePicker.png)
-[PropertyFieldDocumentPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldDocumentPicker)| Custom field to select a document (docx, pptx, pdf, etc.) thanks to a SharePoint visual browser.  | ![PropertyFieldDocumentPicker](./assets/OverviewDocumentPicker.png)
-[PropertyFieldCustomList](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldCustomList)| Custom field to select a collection of data with forms as an object property of your web part  | ![PropertyFieldCustomList](./assets/OverviewCustomList.png)
-[PropertyFieldSPListPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSPListPicker)| Custom field to select a list from the current SharePoint web site.   | ![PropertyFieldSPListPicker](./assets/OverviewSPListPicker.png)
-[PropertyFieldSPListMultiplePicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSPListMultiplePicker)| Custom field to select multiple lists from the current SharePoint web site.   | ![PropertyFieldSPListMultiplePicker](./assets/OverviewSPListMultiplePicker.png)
-[PropertyFieldSPListQuery](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSPListQuery)| Custom field to query parameters and to get a REST web url to get items.   | ![PropertyFieldSPListQuery](./assets/OverviewSPListQuery.png)
-[PropertyFieldSPFolderPicker](https://github.com/OlivierCC/sp-client-custom-fields/wiki/PropertyFieldSPFolderPicker)| Custom field to select a folder from the current SharePoint web site.   | ![PropertyFieldSPFolderPicker](./assets/OverviewSPFolderPicker.png)
-
+05/03/2017  | 1.3.4 Fix bugs with PropertyFieldSPListQuery | @TravisGilbert
+04/12/2017  | 1.3.3 Upgrade to Office UI Fabric 2.6.3 + bugs fix + new TermSetPicker custom field added | @OlivierC
+04/09/2017  | 1.3.2 Custom List layout improvements + bugs fix | @OlivierC
+04/05/2017  | 1.3.1 AutoComplete fixs + new OfficeVideoPicker custom field added | @OlivierC
+04/03/2017  | 1.3.0 SearchPropertiesPicker custom field added | @OlivierC
+04/03/2017  | 1.2.9 AutoComplete custom field added | @OlivierC
+03/29/2017  | 1.2.8 release - CheckBoxes & RadioButtons styles changed | @OlivierC
+03/25/2017  | 1.2.7 release - NumericInput custom field added | @OlivierC
+03/25/2017  | 1.2.6 release - Bundle package optimization added | @OlivierC
+03/23/2017  | 1.2.5 release - Group Picker custom field added | @OlivierC
+03/21/2017  | 1.2.4 release - Web Site Documentation update | @OlivierC
+03/19/2017  | 1.2.3 release - Mini Color Picker custom field added | @OlivierC
+03/19/2017  | 1.2.2 release - StarRating custom field added | @OlivierC
+03/18/2017  | 1.2.1 release - TagPicker custom field added | @OlivierC
+03/16/2017  | 1.2.0 release - DropDownTreeView custom field added | @OlivierC
+03/15/2017  | 1.1.9 release - TreeView custom field added | @OlivierC
+03/13/2017  | 1.1.8 release - SortableList custom field added | @OlivierC
+03/04/2017  | 1.1.7 release - bugs fix | @OlivierC
+03/03/2017  | 1.1.6 release - bugs fix | @OlivierC
+02/26/2017  | 1.1.5 release - upgrade to SPFx GA (v1.0.0.0) | @OlivierC
+02/21/2017  | 1.1.4 release - RichTextBox update with ckeditor 4.2 upgrade | @OlivierC
+02/13/2017  | 1.1.3 release - DateTimePicker improvements to support seconds + 12-hours time convention | @OlivierC
+02/05/2017  | 1.1.2 release - bugs fix | @OlivierC
+02/05/2017  | 1.1.1 release - Dimension Picker added + new languages (Thai, Hungarian, Greek, Turkish) | @OlivierC
+02/04/2017  | 1.1.0 release - Document + Image pickers improvements (manual edition + management of file extensions) + bugs fix with SPListQuery picker | @OlivierC
+02/02/2017  | 1.0.9 release - onGetErrorMessage + deferredValidationTime properties added | @OlivierC
+01/28/2017  | 1.0.8 release - disabled property added + bugs fix | @OlivierC
+01/23/2017  | 1.0.7 release - Fix PropertyFieldRichTextBox errors | @OlivierC
+01/21/2017  | 1.0.6 release - SharePoint Framework RC0 support | @OlivierC & Daniel Zeller (@Crash753)
+12/06/2016  | 1.0.5 release - SharePoint Framework Drop 6 support + improve accessibility | @OlivierC
+11/13/2016  | 1.0.4 release - SharePoint Framework Drop 5 support + upgrade to Office UI Fabric 0.52 | @OlivierC
+10/07/2016  | 1.0.3 release - Slider Range custom field added | @OlivierC
+10/07/2016  | 1.0.2 release - Bug fix | @OlivierC
+10/07/2016  | 1.0.1 release - 16 localization files included | @OlivierC
+10/06/2016  | 1.0.0 release - RichTextBox custom field added | @OlivierC
+10/04/2016  | 0.9.9 release - Drop down select custom field added | @OlivierC
+10/03/2016  | 0.9.8 npm package release - Align Picker custom field added | @OlivierC
+10/02/2016  | 0.9.7 npm package release | @OlivierC
+09/29/2016  | List Query custom field added | @OlivierC
+09/27/2016  | Update to Drop 4 | @OlivierC
+09/22/2016  | Custom List custom field added | @OlivierC
+09/19/2016  | Date Time custom field added | @OlivierC
+09/18/2016  | Display Mode custom field added | @OlivierC
+09/18/2016  | Document Picker field added | @OlivierC
+09/17/2016  | Icon Picker field added | @OlivierC
 
 # The MIT License (MIT)
 
@@ -97,3 +103,4 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+

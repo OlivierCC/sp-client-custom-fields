@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "幅",
+    "DimensionHeight": "高さ",
+    "DimensionRatio": "比を維持します。",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "追加",
@@ -104,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "金曜日",
     "DatePickerDayShortFriday": "金曜日",
     "DatePickerDayLongSaturday": "土曜日",
-    "DatePickerDayShortSaturday": "土曜日"
+    "DatePickerDayShortSaturday": "土曜日",
+
+    "DateTimePickerDate": "日付",
+    "DateTimePickerTime": "時間"
   }
 });

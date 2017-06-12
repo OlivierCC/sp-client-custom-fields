@@ -8,14 +8,16 @@
  */
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
-import { SPHttpClientConfigurations } from "@microsoft/sp-http";
+import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
-import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
-import { IPropertyFieldSPListQueryPropsInternal, PropertyFieldSPListQueryOrderBy } from './PropertyFieldSPListQuery';
+import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
 import * as strings from 'sp-client-custom-fields/strings';
 
@@ -44,6 +46,9 @@ export interface IPropertyFieldSPListQueryHostState {
   max?: number;
   operators?: IDropdownOption[];
   filters?: IFilter[];
+  errorMessage?: string;
+  loadedList: boolean;
+  loadedFields: boolean;
 }
 
 /**
@@ -52,9 +57,13 @@ export interface IPropertyFieldSPListQueryHostState {
  */
 export default class PropertyFieldSPListQueryHost extends React.Component<IPropertyFieldSPListQueryHostProps, IPropertyFieldSPListQueryHostState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldSPListQueryHostProps) {
     super(props);
@@ -70,6 +79,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
     this.onChangedFilterValue = this.onChangedFilterValue.bind(this);
 
     this.state = {
+      loadedList: false,
+      loadedFields: false,
 			lists: [],
       fields: [],
       arranged: [{key: 'asc', text: 'Asc'}, {key: 'desc', text: 'Desc'}],
@@ -77,26 +88,34 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       selectedField: '',
       selectedArrange: '',
       operators: [
-        {key: 'Eq', text: strings.SPListQueryOperatorEq},
-         {key: 'Ne', text: strings.SPListQueryOperatorNe},
+        {key: 'eq', text: strings.SPListQueryOperatorEq},
+         {key: 'ne', text: strings.SPListQueryOperatorNe},
           {key: 'startsWith', text: strings.SPListQueryOperatorStartsWith},
            {key: 'substringof', text: strings.SPListQueryOperatorSubstringof},
-            {key: 'Lt', text: strings.SPListQueryOperatorLt},
-             {key: 'Le', text: strings.SPListQueryOperatorLe},
-              {key: 'Gt', text: strings.SPListQueryOperatorGt},
-               {key: 'Ge', text: strings.SPListQueryOperatorGe}
+            {key: 'lt', text: strings.SPListQueryOperatorLt},
+             {key: 'le', text: strings.SPListQueryOperatorLe},
+              {key: 'gt', text: strings.SPListQueryOperatorGt},
+               {key: 'ge', text: strings.SPListQueryOperatorGe}
       ],
       filters: [],
-      max: 20
+      max: 20,
+      errorMessage: ''
     };
 
     this.loadDefaultData();
     this.loadLists();
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   private loadDefaultData(): void {
-    if (this.props.query == null || this.props.query == '')
+    if (this.props.query == null || this.props.query == '') {
+      this.state.loadedFields = true;
       return;
+    }
     var indexOfGuid: number = this.props.query.indexOf("lists(guid'");
     if (indexOfGuid > -1) {
       var listId: string = this.props.query.substr(indexOfGuid);
@@ -104,8 +123,6 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       var indexOfEndGuid: number = listId.indexOf("')/items");
       listId = listId.substr(0, indexOfEndGuid);
       this.state.selectedList = listId;
-      if (listId != null && listId != '')
-        this.loadFields();
     }
     var indexOfOrderBy: number = this.props.query.indexOf("$orderBy=");
     if (indexOfOrderBy > -1) {
@@ -128,14 +145,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       top = top.substr(0, indexOfEndTop);
       this.state.max = Number(top);
     }
-    var indexOfFilters: number = this.props.query.indexOf("$filters=");
+    var indexOfFilters: number = this.props.query.indexOf("$filter=");
     if (indexOfFilters > -1) {
       var filter: string = this.props.query.substr(indexOfFilters);
-      filter = filter.replace("$filters=", "");
+      filter = filter.replace("$filter=", "");
       var indexOfEndFilter: number = filter.indexOf("&");
       filter = filter.substr(0, indexOfEndFilter);
       if (filter != null && filter != '') {
-        var subFilter = filter.split("%20AND%20");
+        var subFilter = filter.split("%20and%20");
         for (var i = 0; i < subFilter.length; i++) {
           var fieldId: string = subFilter[i].substr(0, subFilter[i].indexOf("%20"));
           var operator: string = subFilter[i].substr(subFilter[i].indexOf("%20"));
@@ -154,6 +171,10 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         }
       }
     }
+    if (listId != null && listId != '')
+      this.loadFields();
+    else
+      this.state.loadedFields = true;
   }
 
   /**
@@ -166,9 +187,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
       this.state.lists = [];
       response.value.map((list: ISPList) => {
         var isSelected: boolean = false;
-        if (this.props.selectedList == list.Id) {
+        if (this.state.selectedList == list.Id) {
           isSelected = true;
-          this.state.selectedList = list.Id;
         }
         this.state.lists.push({
           key: list.Id,
@@ -176,6 +196,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
           isSelected: isSelected
         });
       });
+      this.state.loadedList = true;
       this.saveState();
     });
   }
@@ -184,34 +205,27 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
     var listService: SPListPickerService = new SPListPickerService(this.props, this.props.context);
     listService.getFields(this.state.selectedList).then((response: ISPFields) => {
       this.state.fields = [];
-      response.value.map((list: ISPField) => {
+      response.value.map((field: ISPField) => {
         var isSelected: boolean = false;
+        if (this.state.selectedField == field.StaticName) {
+          isSelected = true;
+        }
         this.state.fields.push({
-          key: list.StaticName,
-          text: list.Title,
+          key: field.StaticName,
+          text: field.Title,
           isSelected: isSelected
         });
       });
+      this.state.loadedFields = true;
       this.saveState();
     });
   }
 
   private saveState(): void {
-      this.setState({
-        selectedField: this.state.selectedField,
-        selectedArrange: this.state.selectedArrange,
-        selectedList: this.state.selectedList,
-        lists: this.state.lists,
-        fields: this.state.fields,
-        max: this.state.max,
-        arranged: this.state.arranged,
-        operators: this.state.operators,
-        filters: this.state.filters
-      });
+      this.setState(this.state);
   }
 
   private saveQuery(): void {
-    if (this.props.onPropertyChange) {
 
       var queryUrl: string = this.props.context.pageContext.web.absoluteUrl;
       queryUrl += "/_api/lists(guid'";
@@ -230,11 +244,11 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         queryUrl += '&';
       }
       if (this.state.filters != null && this.state.filters.length > 0) {
-        queryUrl += '$filters=';
+        queryUrl += '$filter=';
         for (var i = 0; i < this.state.filters.length; i++) {
           if (this.state.filters[i].field != null && this.state.filters[i].operator != null) {
             if (i > 0) {
-              queryUrl += "%20AND%20";
+              queryUrl += "%20and%20";
             }
             queryUrl += this.state.filters[i].field;
             queryUrl += "%20";
@@ -246,9 +260,64 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
         }
         queryUrl += '&';
       }
-      this.props.properties[this.props.targetProperty] = queryUrl;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.query, queryUrl);
+      if (this.delayedValidate !== null && this.delayedValidate !== undefined) {
+        this.delayedValidate(queryUrl);
+      }
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.query, value);
+      return;
     }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.query, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.query, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.query, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -315,9 +384,19 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
 
   /**
    * @function
-   * Renders the SPListpicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
+
+    if (this.state.loadedList === false || this.state.loadedFields === false) {
+      return (
+        <div>
+          <Label>{this.props.label}</Label>
+          <Spinner type={ SpinnerType.normal } />
+        </div>
+      );
+    }
+
     //Renders content
     return (
       <div>
@@ -327,6 +406,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
           onChanged={this.onChangedList}
           options={this.state.lists}
           selectedKey={this.state.selectedList}
+          disabled={this.props.disabled}
         />
 
         {this.props.showOrderBy != false ?
@@ -336,14 +416,14 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
               options={this.state.fields}
               selectedKey={this.state.selectedField}
               onChanged={this.onChangedField}
-              isDisabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+              disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
             />
             <Dropdown
               label={strings.SPListQueryArranged}
               options={this.state.arranged}
               selectedKey={this.state.selectedArrange}
               onChanged={this.onChangedArranged}
-              isDisabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+              disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
             />
            </div>
           : ''}
@@ -354,7 +434,7 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
             max={this.props.max == null ? 500 : this.props.max}
             defaultValue={this.state.max}
             onChange={this.onChangedMax}
-            disabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true }
+            disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true }
           />
           : ''}
 
@@ -364,18 +444,20 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
               <Label>Filter</Label>
               <Dropdown
                 label=''
+                disabled={this.props.disabled}
                 options={this.state.fields}
                 selectedKey={value.field}
                 onChanged={(option: IDropdownOption, selectIndex?: number) => this.onChangedFilterField(option, selectIndex, index)}
               />
               <Dropdown
                 label=''
+                disabled={this.props.disabled}
                 options={this.state.operators}
                 selectedKey={value.operator}
                 onChanged={(option: IDropdownOption, selectIndex?: number) => this.onChangedFilterOperator(option, selectIndex, index)}
               />
-              <TextField defaultValue={value.value} onChanged={(value2: string) => this.onChangedFilterValue(value2, index)} />
-              <Button buttonType={ButtonType.command} onClick={() => this.onClickRemoveFilter(index)} icon="Delete">
+              <TextField disabled={this.props.disabled} defaultValue={value.value} onChanged={(value2: string) => this.onChangedFilterValue(value2, index)} />
+              <Button disabled={this.props.disabled} buttonType={ButtonType.command} onClick={() => this.onClickRemoveFilter(index)} icon="Delete">
                 {strings.SPListQueryRemove}
               </Button>
             </div>
@@ -385,10 +467,18 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
 
         {this.props.showFilters != false ?
           <Button buttonType={ButtonType.command} onClick={this.onClickAddFilter}
-          disabled={this.state.selectedList != null && this.state.selectedList != '' ? false : true } icon="Add">
+          disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true } icon="Add">
           {strings.SPListQueryAdd}
           </Button>
           : ''}
+
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
 
       </div>
     );
@@ -450,7 +540,7 @@ class SPListPickerService {
       queryUrl += "/_api/lists(guid'";
       queryUrl += listId;
       queryUrl += "')/Fields?$select=Title,StaticName&$orderBy=Title&$filter=Hidden%20eq%20false";
-      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
           return response.json();
       });
     }
@@ -488,7 +578,7 @@ class SPListPickerService {
           queryUrl += "&$filter=Hidden%20eq%20false";
         }
       }
-      return this.context.spHttpClient.get(queryUrl, SPHttpClientConfigurations.v1).then((response: Response) => {
+      return this.context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
           return response.json();
       });
     }

@@ -31,10 +31,16 @@ export enum CustomListFieldType {
   document = 11,
   list = 12,
   users = 13,
-  folder = 14
+  folder = 14,
+  sharePointGroups = 15,
+  securityGroups = 16,
+  officeVideo = 17,
+  stars = 18,
+  colorMini = 19
 }
 
 export interface ICustomListField {
+  id: string;
   title: string;
   type: CustomListFieldType;
   required?: boolean;
@@ -86,9 +92,13 @@ export interface IPropertyFieldCustomListProps {
   properties: any;
   /**
    * @var
-   * Key to help React identify which items have changed, are added, or are removed.
+   * An UNIQUE key indicates the identity of this control
    */
-  key: string;
+  key?: string;
+  /**
+   * Whether the property pane field is enabled or not.
+   */
+  disabled?: boolean;
 }
 
 /**
@@ -110,7 +120,7 @@ export interface IPropertyFieldCustomListPropsInternal extends IPropertyPaneCust
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
-  key: string;
+  disabled?: boolean;
 }
 
 /**
@@ -134,6 +144,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private disabled: boolean = false;
 
   /**
    * @function
@@ -153,6 +164,8 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
     this.key = _properties.key;
+    if (_properties.disabled === true)
+      this.disabled = _properties.disabled;
   }
 
   /**
@@ -173,6 +186,7 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
       context: this.context,
       properties: this.customProperties,
       key: this.key,
+      disabled: this.disabled
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -190,9 +204,9 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
 
 /**
  * @function
- * Helper method to create a Color Picker on the PropertyPane.
- * @param targetProperty - Target property the Color picker is associated to.
- * @param properties - Strongly typed Color Picker properties.
+ * Helper method to create the customer field on the PropertyPane.
+ * @param targetProperty - Target property the custom field is associated to.
+ * @param properties - Strongly typed custom field properties.
  */
 export function PropertyFieldCustomList(targetProperty: string, properties: IPropertyFieldCustomListProps): IPropertyPaneField<IPropertyFieldCustomListPropsInternal> {
 
@@ -209,8 +223,9 @@ export function PropertyFieldCustomList(targetProperty: string, properties: IPro
       onDispose: null,
       onRender: null,
       key: properties.key,
+      disabled: properties.disabled
     };
-    //Calles the PropertyFieldCustomList builder object
+    //Calls the PropertyFieldCustomList builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
     return new PropertyFieldCustomListBuilder(targetProperty, newProperties);
 }

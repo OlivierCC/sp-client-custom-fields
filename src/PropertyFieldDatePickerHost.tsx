@@ -8,6 +8,7 @@
 import * as React from 'react';
 import { IPropertyFieldDatePickerPropsInternal } from './PropertyFieldDatePicker';
 import { DatePicker, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import * as strings from 'sp-client-custom-fields/strings';
 
 /**
@@ -78,11 +79,20 @@ class DatePickerStrings implements IDatePickerStrings {
     public invalidInputErrorMessage: string = "";
 }
 
+export interface IPropertyFieldDatePickerHostState {
+  date?: string;
+  errorMessage?: string;
+}
+
 /**
  * @class
  * Renders the controls for PropertyFieldDatePicker component
  */
-export default class PropertyFieldDatePickerHost extends React.Component<IPropertyFieldDatePickerHostProps, {}> {
+export default class PropertyFieldDatePickerHost extends React.Component<IPropertyFieldDatePickerHostProps, IPropertyFieldDatePickerHostState> {
+
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
 
   /**
    * @function
@@ -92,6 +102,16 @@ export default class PropertyFieldDatePickerHost extends React.Component<IProper
     super(props);
     //Bind the current object to the external called onSelectDate method
     this.onSelectDate = this.onSelectDate.bind(this);
+
+    this.state = {
+        date: this.props.initialDate,
+        errorMessage: ''
+      };
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
@@ -99,31 +119,84 @@ export default class PropertyFieldDatePickerHost extends React.Component<IProper
    * Function called when the DatePicker Office UI Fabric component selected date changed
    */
   private onSelectDate(date: Date): void {
-    //Checks if there is a method to called
-    if (this.props.onPropertyChange && date != null) {
-      //Checks if a formatDate function has been defined
-      if (this.props.formatDate) {
-        this.props.properties[this.props.targetProperty] = this.props.formatDate(date);
-        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, this.props.formatDate(date));
+    var dateAsString: string = '';
+    if (this.props.formatDate) {
+      dateAsString = this.props.formatDate(date);
+    }
+    else {
+      dateAsString = date.toDateString();
+    }
+    this.state.date = dateAsString;
+    this.setState(this.state);
+    this.delayedValidate(dateAsString);
+  }
+
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialDate, value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialDate, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
       }
       else {
-        this.props.properties[this.props.targetProperty] = date.toDateString();
-        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, date.toDateString());
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialDate, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
       }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialDate, value);
     }
   }
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
+  }
+
+  /**
+   * @function
+   * Renders the control
    */
   public render(): JSX.Element {
     //Defines the DatePicker control labels
     var dateStrings: DatePickerStrings = new DatePickerStrings();
     //Constructs a Date type object from the initalDate string property
     var date: Date;
-    if (this.props.initialDate != null && this.props.initialDate != '')
-      date = new Date(this.props.initialDate);
+    if (this.state.date != null && this.state.date != '')
+      date = new Date(this.state.date);
     //Renders content
     return (
       <div>
@@ -131,6 +204,13 @@ export default class PropertyFieldDatePickerHost extends React.Component<IProper
           isMonthPickerVisible={false} onSelectDate={this.onSelectDate} allowTextInput={false}
           formatDate={this.props.formatDate}
            />
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }

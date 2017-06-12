@@ -38,6 +38,20 @@ export interface IPropertyFieldPicturePickerProps {
    */
   context: IWebPartContext;
   /**
+   * Whether the image preview is enabled or not. Default is true.
+   */
+  previewImage?: boolean;
+  /**
+   * Defines the file extensions allowed in the picker. You need to specifies all the extensions with
+   * a dot and to separate them with a comma without spaces. For example a good value is: `.gif,.png,.jpg`.
+   * The default value is `.gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png`
+   */
+  allowedFileExtensions?: string;
+  /**
+   * Whether the image path can be edit manually or not. Default is true.
+   */
+  readOnly?: boolean;
+  /**
    * @function
    * Defines a onPropertyChange function to raise when the selected Color changed.
    * Normally this function must be always defined with the 'this.onPropertyChange'
@@ -51,9 +65,32 @@ export interface IPropertyFieldPicturePickerProps {
   properties: any;
   /**
    * @var
-   * Key to help React identify which items have changed, are added, or are removed.
+   * An UNIQUE key indicates the identity of this control
    */
-  key: string;
+  key?: string;
+  /**
+   * Whether the property pane field is enabled or not.
+   */
+  disabled?: boolean;
+  /**
+   * The method is used to get the validation error message and determine whether the input value is valid or not.
+   *
+   *   When it returns string:
+   *   - If valid, it returns empty string.
+   *   - If invalid, it returns the error message string and the text field will
+   *     show a red border and show an error message below the text field.
+   *
+   *   When it returns Promise<string>:
+   *   - The resolved value is display as error message.
+   *   - The rejected, the value is thrown away.
+   *
+   */
+   onGetErrorMessage?: (value: string) => string | Promise<string>;
+   /**
+    * Custom Field will start to validate after users stop typing for `deferredValidationTime` milliseconds.
+    * Default value is 200.
+    */
+   deferredValidationTime?: number;
 }
 
 /**
@@ -73,7 +110,12 @@ export interface IPropertyFieldPicturePickerPropsInternal extends IPropertyPaneC
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
-  key: string;
+  disabled?: boolean;
+  onGetErrorMessage?: (value: string) => string | Promise<string>;
+  deferredValidationTime?: number;
+  previewImage?: boolean;
+  readOnly?: boolean;
+  allowedFileExtensions?: string;
 }
 
 /**
@@ -95,6 +137,12 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private disabled: boolean = false;
+  private onGetErrorMessage: (value: string) => string | Promise<string>;
+  private deferredValidationTime: number = 200;
+  private previewImage: boolean = true;
+  private readOnly: boolean = true;
+  private allowedFileExtensions: string = ".gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png";
 
   /**
    * @function
@@ -112,6 +160,17 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
     this.onPropertyChange = _properties.onPropertyChange;
     this.customProperties = _properties.properties;
     this.key = _properties.key;
+    if (_properties.disabled === true)
+      this.disabled = _properties.disabled;
+    this.onGetErrorMessage = _properties.onGetErrorMessage;
+    if (_properties.deferredValidationTime !== undefined)
+      this.deferredValidationTime = _properties.deferredValidationTime;
+    if (_properties.previewImage != null && _properties.previewImage != undefined)
+      this.previewImage = _properties.previewImage;
+    if (_properties.readOnly === false)
+      this.readOnly = _properties.readOnly;
+    if (_properties.allowedFileExtensions != null && _properties.allowedFileExtensions !== undefined && _properties.allowedFileExtensions != '')
+      this.allowedFileExtensions = _properties.allowedFileExtensions;
   }
 
   /**
@@ -130,6 +189,12 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
       key: this.key,
+      disabled: this.disabled,
+      onGetErrorMessage: this.onGetErrorMessage,
+      deferredValidationTime: this.deferredValidationTime,
+      previewImage: this.previewImage,
+      readOnly: this.readOnly,
+      allowedFileExtensions: this.allowedFileExtensions
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -147,9 +212,9 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
 
 /**
  * @function
- * Helper method to create a Color Picker on the PropertyPane.
- * @param targetProperty - Target property the Color picker is associated to.
- * @param properties - Strongly typed Color Picker properties.
+ * Helper method to create a Picture Picker on the PropertyPane.
+ * @param targetProperty - Target property the Picture picker is associated to.
+ * @param properties - Strongly typed Picture Picker properties.
  */
 export function PropertyFieldPicturePicker(targetProperty: string, properties: IPropertyFieldPicturePickerProps): IPropertyPaneField<IPropertyFieldPicturePickerPropsInternal> {
 
@@ -164,8 +229,14 @@ export function PropertyFieldPicturePicker(targetProperty: string, properties: I
       onDispose: null,
       onRender: null,
       key: properties.key,
+      disabled: properties.disabled,
+      onGetErrorMessage: properties.onGetErrorMessage,
+      deferredValidationTime: properties.deferredValidationTime,
+      previewImage: properties.previewImage,
+      readOnly: properties.readOnly,
+      allowedFileExtensions: properties.allowedFileExtensions
     };
-    //Calles the PropertyFieldPicturePicker builder object
+    //Calls the PropertyFieldPicturePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
     return new PropertyFieldPicturePickerBuilder(targetProperty, newProperties);
 }

@@ -19,5 +19,5 @@
     "temp": true
   }
 ,
-"typescript.check.workspaceVersion": false
+"typescript.tsdk": "./node_modules/typescript/lib"
 }

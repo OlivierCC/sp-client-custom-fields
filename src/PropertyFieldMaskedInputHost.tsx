@@ -8,6 +8,8 @@
 import * as React from 'react';
 import { IPropertyFieldMaskedInputPropsInternal } from './PropertyFieldMaskedInput';
 import { Label } from 'office-ui-fabric-react/lib/Label';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
 
 /**
  * @interface
@@ -36,6 +38,9 @@ interface IMaskedInputProps {
   value?: string;
   initialValue?: string;
   onChange?(newValue?: string): void;
+  disabled?: boolean;
+  onGetErrorMessage?: (value: string) => string | Promise<string>;
+  deferredValidationTime?: number;
 }
 
 /**
@@ -46,6 +51,7 @@ interface IMaskedInputProps {
 interface IMaskedInputState {
   firstLoading?: boolean;
   value?: string;
+  errorMessage: string;
 }
 
 /**
@@ -58,6 +64,10 @@ interface IMaskedInputState {
  */
 class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   constructor(props: IPropertyFieldMaskedInputHostProps) {
     super(props);
     //Binds events
@@ -68,15 +78,28 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
     //Inits default value
     this.state = {
       firstLoading: true,
+      errorMessage: '',
       value: this.props.initialValue != null ? this.props.initialValue : ''
     };
 
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   public componentDidMount(): void {
     var e = this.refs['inputShell'];
     var event = { target: e };
     this.handleChange(event);
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   private handleChange(e): void {
@@ -89,12 +112,52 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
     this.state.firstLoading = false;
     this.setState(this.state);
 
-    //var maskElement = document.getElementById(this.props.id + 'Mask');
-    //if (maskElement != null)
-    //  maskElement.innerHTML = this.setValueOfMask(e);
+    this.delayedValidate(e.target.value);
+  }
 
+  /**
+   * @function
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(newValue: string) {
     if (this.props.onChange != null)
-      this.props.onChange(e.target.value);
+      this.props.onChange(newValue);
   }
 
   private handleCurrentValue(e): string {
@@ -133,15 +196,6 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
 
     return newValue;
   };
-
-/*
-  private setValueOfMask(e): string {
-    var value = e.target.value,
-        placeholder = e.target.getAttribute('data-placeholder');
-
-    return "<i style=\"font-style: normal;color: transparent;opacity: 0;visibility: hidden;\">" + value + "</i>" + placeholder.substr(value.length);
-  };
-*/
 
   private validateProgress(e, value): string {
       var validExample = this.props['data-valid-example'],
@@ -212,9 +266,7 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
   };
 
   private handleError(e, errorMsg): boolean {
-        // the event and errorMsg name are passed. Label is already handled. What else do we do with error?
-        //var possibleErrorMsgs = ['invalidValue', 'required'];
-        return true;
+    return true;
   };
 
   public render(): JSX.Element {
@@ -229,8 +281,9 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
                  label: this.props.label,
                  dataCharset: this.props['data-charset'],
                  required: this.props.required,
-                 initialValue: this.props.initialValue
-             };
+                 initialValue: this.props.initialValue,
+                 disabled: this.props.disabled
+              };
 
         var shellStyle = {
           position: 'relative',
@@ -259,13 +312,26 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
             fontFamily: 'monospace',
             paddingRight: '10px',
             backgroundColor: 'transparent',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            boxSizing: 'border-box',
+            margin: '0',
+            boxShadow: 'none',
+            border: '1px solid #c8c8c8',
+            borderRadius: '0',
+            fontWeight: 400,
+            color: '#333333',
+            height: '32px',
+            padding: '0 12px 0 12px',
+            width: '100%',
+            outline: '0',
+            textOverflow: 'ellipsis'
         };
 
       var placeHolderContent = props.placeholder.substr(this.state.value.length);
 
       return (
-            <span style={shellStyle}>
+            <div>
+              <span style={shellStyle}>
                 <span style={shellStyleSpan}
                   aria-hidden="true"
                   ref="spanMask"
@@ -273,6 +339,7 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
                 <input style={inputShell}
                 id={props.id}
                 ref="inputShell"
+                disabled={props.disabled}
                 onChange={this.handleChange}
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
@@ -287,6 +354,14 @@ class MaskedInput extends React.Component<IMaskedInputProps, IMaskedInputState> 
                 value={this.state.value}
                 title={props.title}/>
               </span>
+              { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+                  <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+                  <span>
+                    <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+                  </span>
+                  </div>
+                : ''}
+            </div>
           );
       };
 }
@@ -299,7 +374,7 @@ export default class PropertyFieldMaskedInputHost extends React.Component<IPrope
 
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldMaskedInputHostProps) {
     super(props);
@@ -321,7 +396,7 @@ export default class PropertyFieldMaskedInputHost extends React.Component<IPrope
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the controls
    */
   public render(): JSX.Element {
 
@@ -332,12 +407,15 @@ export default class PropertyFieldMaskedInputHost extends React.Component<IPrope
         <MaskedInput
             id="tel"
             type="tel"
+            disabled={this.props.disabled}
             placeholder={this.props.placeholder}
             pattern={this.props.pattern}
             className="ms-TextField-field"
             maxLength={this.props.maxLength}
             onChange={this.onValueChanged}
             initialValue={this.props.initialValue}
+            onGetErrorMessage={this.props.onGetErrorMessage}
+            deferredValidationTime={this.props.deferredValidationTime}
         />
       </div>
     );

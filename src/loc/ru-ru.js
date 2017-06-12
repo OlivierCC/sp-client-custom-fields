@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "Ширина",
+    "DimensionHeight": "Высота",
+    "DimensionRatio": "Сохранить соотношение",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "Добавить",
@@ -104,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Пятница",
     "DatePickerDayShortFriday": "Пят",
     "DatePickerDayLongSaturday": "Суббота",
-    "DatePickerDayShortSaturday": "Суб"
+    "DatePickerDayShortSaturday": "Суб",
+
+    "DateTimePickerDate": "Дата",
+    "DateTimePickerTime": "Стойка"
   }
 });

@@ -1,7 +1,11 @@
 declare interface IStrings {
 
+  //DimensionPicker labels
+  DimensionWidth: string;
+  DimensionHeight: string;
+  DimensionRatio: string;
+
   //CustomList labels
-  //Copy the following labels in your project if you want to use the SPListQuery
   CustomListAddItem: string;
   CustomListBack: string;
   CustomListTrue: string;
@@ -17,7 +21,6 @@ declare interface IStrings {
   CustomListFieldMissing: string;
 
   //SPListQuery labels
-  //Copy the following labels in your project if you want to use the SPListQuery
   SPListQueryList: string;
   SPListQueryOrderBy: string;
   SPListQueryArranged: string;
@@ -34,7 +37,6 @@ declare interface IStrings {
   SPListQueryOperatorGe: string;
 
   //PicturePicker labels
-  //Copy the following labels in your project if you want to use the PicturePicker
   PicturePickerTitle: string;
   PicturePickerRecent: string;
   PicturePickerSite: string;
@@ -42,7 +44,6 @@ declare interface IStrings {
   PicturePickerButtonReset: string;
 
   //DocumentPicker labels
-  //Copy the following labels in your project if you want to use the DocumentPicker
   DocumentPickerTitle: string;
   DocumentPickerRecent: string;
   DocumentPickerSite: string;
@@ -50,23 +51,19 @@ declare interface IStrings {
   DocumentPickerButtonReset: string;
 
   //PeoplePicker labels
-  //Copy the following labels in your project if you want to use the PeoplePicker
   PeoplePickerSuggestedContacts: string;
   PeoplePickerNoResults: string;
   PeoplePickerLoading: string;
 
   //SPListPicker labels
-  //Copy the following labels in your project if you want to use the SPListPicker
   SPListPickerLoading: string;
 
   //SPFolderPicker labels
-  //Copy the following labels in your project if you want to use the SPFolderPicker
   SPFolderPickerDialogTitle: string;
   SPFolderPickerSelectButton: string;
   SPFolderPickerCancelButton: string;
 
   //DatePicker labels
-  //Copy the following labels in your project if you want to use the DatePicker
   DatePickerMonthLongJanuary: string;
   DatePickerMonthShortJanuary: string;
   DatePickerMonthLongFebruary: string;
@@ -105,6 +102,9 @@ declare interface IStrings {
   DatePickerDayShortFriday: string;
   DatePickerDayLongSaturday: string;
   DatePickerDayShortSaturday: string;
+
+  DateTimePickerDate: string;
+  DateTimePickerTime: string;
 }
 
 declare module 'sp-client-custom-fields/strings' {

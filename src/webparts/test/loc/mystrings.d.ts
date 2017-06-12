@@ -1,14 +1,15 @@
 declare interface ITestStrings {
   //Web Parts property labels
-  //You don't need to copy this fields
   PropertyPaneDescription: string;
   BasicGroupName: string;
   DescriptionFieldLabel: string;
   DateFieldLabel: string;
   DateTimeFieldLabel: string;
   PeopleFieldLabel: string;
+  GroupFieldLabel: string;
   SPListFieldLabel: string;
   ColorFieldLabel: string;
+  ColorMiniFieldLabel: string;
   SPFolderFieldLabel: string;
   PasswordFieldLabel: string;
   FontFieldLabel: string;
@@ -26,6 +27,17 @@ declare interface ITestStrings {
   DropDownSelectFieldLabel: string;
   RichTextBoxFieldLabel: string;
   SliderRangeFieldLabel: string;
+  DimensionFieldLabel: string;
+  SortableListFieldLabel: string;
+  TreeViewFieldLabel: string;
+  DropDownTreeViewFieldLabel: string;
+  TagPickerFieldLabel: string;
+  StarRatingFieldLabel: string;
+  NumericInputFieldLabel: string;
+  AutoSuggestFieldLabel: string;
+  SearchPropertiesFieldLabel: string;
+  OfficeVideoFieldLabel: string;
+  TermSetsFieldLabel: string;
 }
 
 declare module 'testStrings' {

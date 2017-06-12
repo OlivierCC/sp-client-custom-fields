@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "अनुपात को बचाना",
+    "DimensionHeight": "ऊंचाई",
+    "DimensionRatio": "अनुपात को बचाना",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "जोड़ें",
@@ -104,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "शुक्रवार",
     "DatePickerDayShortFriday": "शुक्रवार",
     "DatePickerDayLongSaturday": "शनिवार",
-    "DatePickerDayShortSaturday": "शनिवार"
+    "DatePickerDayShortSaturday": "शनिवार",
+
+    "DateTimePickerDate": "दिनांक",
+    "DateTimePickerTime": "घंटा"
   }
 });

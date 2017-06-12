@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "Breedte",
+    "DimensionHeight": "Hoogte",
+    "DimensionRatio": "Verhouding behouden",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "Toevoegen",
@@ -104,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Vrijdag",
     "DatePickerDayShortFriday": "Vri",
     "DatePickerDayLongSaturday": "Zaterdag",
-    "DatePickerDayShortSaturday": "Zat"
+    "DatePickerDayShortSaturday": "Zat",
+
+    "DateTimePickerDate": "Datum",
+    "DateTimePickerTime": "Uur"
   }
 });

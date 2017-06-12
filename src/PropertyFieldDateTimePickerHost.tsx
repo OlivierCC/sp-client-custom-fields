@@ -6,10 +6,11 @@
  * Released under MIT licence
  */
 import * as React from 'react';
-import { IPropertyFieldDateTimePickerPropsInternal } from './PropertyFieldDateTimePicker';
+import { IPropertyFieldDateTimePickerPropsInternal, ITimeConvention } from './PropertyFieldDateTimePicker';
 import { DatePicker, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import * as strings from 'sp-client-custom-fields/strings';
 
 /**
@@ -84,6 +85,8 @@ export interface IPropertyFieldDateTimePickerHostPropsState {
   day?: Date;
   hours?: number;
   minutes?: number;
+  seconds?: number;
+  errorMessage?: string;
 }
 
 /**
@@ -92,9 +95,13 @@ export interface IPropertyFieldDateTimePickerHostPropsState {
  */
 export default class PropertyFieldDateTimePickerHost extends React.Component<IPropertyFieldDateTimePickerHostProps, IPropertyFieldDateTimePickerHostPropsState> {
 
+  private latestValidateValue: string;
+  private async: Async;
+  private delayedValidate: (value: string) => void;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldDateTimePickerHostProps) {
     super(props);
@@ -102,13 +109,20 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
     this.onSelectDate = this.onSelectDate.bind(this);
     this.dropdownHoursChanged = this.dropdownHoursChanged.bind(this);
     this.dropdownMinutesChanged = this.dropdownMinutesChanged.bind(this);
+    this.dropdownSecondsChanged = this.dropdownSecondsChanged.bind(this);
 
     this.state = {
       day: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate) : null,
       hours: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate).getHours() : 0,
       minutes: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate).getMinutes() : 0,
+      seconds: (this.props.initialDate != null && this.props.initialDate != '') ? new Date(this.props.initialDate).getSeconds() : 0,
+      errorMessage: ''
     };
-    this.setState(this.state);
+
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
   }
 
   /**
@@ -135,29 +149,90 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
     this.saveDate();
   }
 
+  private dropdownSecondsChanged(element?: any): void {
+    this.state.seconds = Number(element.key);
+    this.setState(this.state);
+    this.saveDate();
+  }
+
   private saveDate(): void {
     if (this.state.day == null)
       return;
     var finalDate = new Date(this.state.day.toISOString());
     finalDate.setHours(this.state.hours);
     finalDate.setMinutes(this.state.minutes);
+    finalDate.setSeconds(this.state.seconds);
 
-    if (this.props.onPropertyChange && finalDate != null) {
-      //Checks if a formatDate function has been defined
+    if (finalDate != null) {
+      var finalDateAsString: string = '';
       if (this.props.formatDate) {
-        this.props.properties[this.props.targetProperty] = this.props.formatDate(finalDate);
-        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, this.props.formatDate(finalDate));
+        finalDateAsString = this.props.formatDate(finalDate);
       }
       else {
-        this.props.properties[this.props.targetProperty] = finalDate.toString();
-        this.props.onPropertyChange(this.props.targetProperty, this.props.initialDate, finalDate.toString());
+        finalDateAsString = finalDate.toString();
       }
+      this.delayedValidate(finalDateAsString);
     }
   }
 
   /**
    * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Validates the new custom field value
+   */
+  private validate(value: string): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialDate, value);
+      return;
+    }
+
+    if (this.latestValidateValue === value)
+      return;
+    this.latestValidateValue = value;
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || '');
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialDate, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialDate, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialDate, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string, newValue: string) {
+    if (this.props.onPropertyChange && newValue != null) {
+      this.props.properties[this.props.targetProperty] = newValue;
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
+  }
+
+  /**
+   * @function
+   * Renders the control
    */
   public render(): JSX.Element {
     //Defines the DatePicker control labels
@@ -166,10 +241,28 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
     var hours: IDropdownOption[] = [];
     for (var i = 0; i < 24; i++) {
       var digit: string;
-      if (i < 10)
-        digit = '0' + i;
-      else
-        digit = i.toString();
+      if (this.props.timeConvention == ITimeConvention.Hours24) {
+        //24 hours time convention
+        if (i < 10)
+          digit = '0' + i;
+        else
+          digit = i.toString();
+      }
+      else {
+        //12 hours time convention
+        if (i == 0)
+          digit = '12 am';
+        else if (i < 12) {
+          digit = i + ' am';
+        }
+        else {
+          if (i == 12)
+            digit = '12 pm';
+          else {
+            digit = (i % 12) + ' pm';
+          }
+        }
+      }
       var selected: boolean = false;
       if (i == this.state.hours)
         selected = true;
@@ -187,31 +280,70 @@ export default class PropertyFieldDateTimePickerHost extends React.Component<IPr
         selected2 = true;
       minutes.push({ key: j, text: digitMin, isSelected: selected2});
     }
+    var seconds: IDropdownOption[] = [];
+    for (var k = 0; k < 60; k++) {
+      var digitSec: string;
+      if (k < 10)
+        digitSec = '0' + k;
+      else
+        digitSec = k.toString();
+      var selected3: boolean = false;
+      if (k == this.state.seconds)
+        selected3 = true;
+      seconds.push({ key: k, text: digitSec, isSelected: selected3});
+    }
     //Renders content
     return (
       <div>
         <Label>{this.props.label}</Label>
-        <div style={{display: 'inline-flex'}}>
-          <div style={{width:'180px', paddingTop: '10px', marginRight:'2px'}}>
-              <DatePicker value={this.state.day} strings={dateStrings}
-                isMonthPickerVisible={false} onSelectDate={this.onSelectDate} allowTextInput={false}
+        <table cellPadding="0" cellSpacing="0" width="100%" style={{marginTop: '10px'}}>
+          <tbody>
+            <tr>
+              <td style={{verticalAlign: 'top'}}><Label style={{marginRight: '4px'}}>{strings.DateTimePickerDate}</Label></td>
+              <td style={{verticalAlign: 'top'}}>
+                <DatePicker value={this.state.day} strings={dateStrings}
+                  isMonthPickerVisible={false} onSelectDate={this.onSelectDate} allowTextInput={false}
                 />
-          </div>
-          <div style={{display: 'inline-flex', marginBottom: '8px'}}>
-            <div style={{width:'47px'}}>
-              <Dropdown
-                label=""
-                options={hours} onChanged={this.dropdownHoursChanged}
-                />
-            </div>
-            <div style={{paddingTop: '16px', paddingLeft: '2px', paddingRight: '2px'}}>:</div>
-            <div style={{width:'47px'}}>
-                <Dropdown
-                label=""
-                options={minutes} onChanged={this.dropdownMinutesChanged} />
-            </div>
-          </div>
-        </div>
+              </td>
+            </tr>
+            <tr>
+              <td style={{verticalAlign: 'top'}}><Label style={{marginRight: '4px'}}>{strings.DateTimePickerTime}</Label></td>
+              <td style={{verticalAlign: 'top'}}>
+                <table cellPadding="0" cellSpacing="0">
+                  <tbody>
+                    <tr>
+                      <td width="79">
+                        <Dropdown
+                          label=""
+                          options={hours} onChanged={this.dropdownHoursChanged}
+                          />
+                      </td>
+                      <td width="4" style={{paddingLeft: '2px', paddingRight: '2px'}}><Label>:</Label></td>
+                      <td width="71">
+                        <Dropdown
+                          label=""
+                          options={minutes} onChanged={this.dropdownMinutesChanged} />
+                      </td>
+                      <td width="4" style={{paddingLeft: '2px', paddingRight: '2px'}}><Label>:</Label></td>
+                      <td width="71">
+                        <Dropdown
+                          label=""
+                          options={seconds} onChanged={this.dropdownSecondsChanged} />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div style={{paddingBottom: '8px'}}><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
       </div>
     );
   }

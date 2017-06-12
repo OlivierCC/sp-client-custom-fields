@@ -1,5 +1,10 @@
 define([], function() {
   return {
+    //Dimension Picker labels
+    "DimensionWidth": "Leveys",
+    "DimensionHeight": "Korkeus",
+    "DimensionRatio": "Säilytä suhde",
+
     //Custom List labels
     //Copy the following labels in your project if you want to use the SPListQuery
     "CustomListAddItem": "Lisää",
@@ -104,6 +109,9 @@ define([], function() {
     "DatePickerDayLongFriday": "Perjantai",
     "DatePickerDayShortFriday": "Per",
     "DatePickerDayLongSaturday": "Lauantai",
-    "DatePickerDayShortSaturday": "Lau"
+    "DatePickerDayShortSaturday": "Lau",
+
+    "DateTimePickerDate": "Päivämäärä",
+    "DateTimePickerTime": "Fi"
   }
 });

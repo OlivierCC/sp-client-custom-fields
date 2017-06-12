@@ -9,6 +9,9 @@ import * as React from 'react';
 import { IPropertyFieldDropDownSelectPropsInternal } from './PropertyFieldDropDownSelect';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
+import GuidHelper from './GuidHelper';
 
 /**
  * @interface
@@ -29,6 +32,7 @@ export interface IPropertyFieldDropDownSelectHostState {
   hoverFont?: string;
   selectedFont?: string[];
   safeSelectedFont?: string[];
+  errorMessage?: string;
 }
 
 /**
@@ -37,9 +41,13 @@ export interface IPropertyFieldDropDownSelectHostState {
  */
 export default class PropertyFieldDropDownSelectHost extends React.Component<IPropertyFieldDropDownSelectHostProps, IPropertyFieldDropDownSelectHostState> {
 
+  private async: Async;
+  private delayedValidate: (value: string[]) => void;
+  private _key: string;
+
   /**
    * @function
-   * Contructor
+   * Constructor
    */
   constructor(props: IPropertyFieldDropDownSelectHostProps) {
     super(props);
@@ -49,18 +57,23 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
     this.toggleHover = this.toggleHover.bind(this);
     this.toggleHoverLeave = this.toggleHoverLeave.bind(this);
     this.onClickFont = this.onClickFont.bind(this);
-    this.onFontDropdownChanged = this.onFontDropdownChanged.bind(this);
     this.mouseEnterDropDown = this.mouseEnterDropDown.bind(this);
     this.mouseLeaveDropDown = this.mouseLeaveDropDown.bind(this);
+    this._key = GuidHelper.getGuid();
 
     //Init the state
     this.state = {
         isOpen: false,
-        isHoverDropdown: false
+        isHoverDropdown: false,
+        errorMessage: ''
       };
 
-    //Inits the default value
+    this.async = new Async(this);
+    this.validate = this.validate.bind(this);
+    this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
+    this.delayedValidate = this.async.debounce(this.validate, this.props.deferredValidationTime);
 
+    //Inits the default value
     if (props.initialValue != null && props.initialValue.length > 0  && this.props.options != null) {
       for (var i = 0; i < this.props.options.length; i++) {
         var font = this.props.options[i];
@@ -79,14 +92,53 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
 
   /**
    * @function
-   * Function to refresh the Web Part properties
+   * Validates the new custom field value
    */
-  private changeSelectedFont(newValue: string): void {
-    //Checks if there is a method to called
+  private validate(value: string[]): void {
+    if (this.props.onGetErrorMessage === null || this.props.onGetErrorMessage === undefined) {
+      this.notifyAfterValidate(this.props.initialValue, value);
+      return;
+    }
+
+    var result: string | PromiseLike<string> = this.props.onGetErrorMessage(value || []);
+    if (result !== undefined) {
+      if (typeof result === 'string') {
+        if (result === undefined || result === '')
+          this.notifyAfterValidate(this.props.initialValue, value);
+        this.state.errorMessage = result;
+        this.setState(this.state);
+      }
+      else {
+        result.then((errorMessage: string) => {
+          if (errorMessage === undefined || errorMessage === '')
+            this.notifyAfterValidate(this.props.initialValue, value);
+          this.state.errorMessage = errorMessage;
+          this.setState(this.state);
+        });
+      }
+    }
+    else {
+      this.notifyAfterValidate(this.props.initialValue, value);
+    }
+  }
+
+  /**
+   * @function
+   * Notifies the parent Web Part of a property value change
+   */
+  private notifyAfterValidate(oldValue: string[], newValue: string[]) {
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, newValue);
+      this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
     }
+  }
+
+  /**
+   * @function
+   * Called when the component will unmount
+   */
+  public componentWillUnmount() {
+    this.async.dispose();
   }
 
   /**
@@ -94,6 +146,8 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
    * Function to open the dialog
    */
   private onOpenDialog(): void {
+    if (this.props.disabled === true)
+      return;
     this.state.isOpen = !this.state.isOpen;
     this.setState(this.state);
   }
@@ -141,28 +195,25 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
       if (elm.isSelected)
         res.push(elm.key.toString());
     });
-    if (this.props.onPropertyChange && res != null) {
-      this.props.properties[this.props.targetProperty] = res;
-      this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, res);
-    }
+    this.delayedValidate(res);
   }
 
   /**
    * @function
    * User clicked on a font
    */
-  private onClickFont(element?: any) {
-    var clickedFont: string = element.currentTarget.textContent;
-    var option: IDropdownOption = this.getOption(clickedFont);
-    option.isSelected = !option.isSelected;
+  private onClickFont(element: React.FormEvent<HTMLElement>, isChecked: boolean) {
+    var value: string = (element.currentTarget as any).value;
+    var option: IDropdownOption = this.getOption(value);
+    option.isSelected = isChecked;
     this.setState(this.state);
     this.saveOptions();
   }
 
-  private getOption(text: string): IDropdownOption {
+  private getOption(key: string): IDropdownOption {
     for (var i = 0; i < this.props.options.length; i++) {
       var font = this.props.options[i];
-      if (font.text === text)
+      if (font.key === key)
         return font;
     }
     return null;
@@ -170,15 +221,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
 
   /**
    * @function
-   * The font dropdown selected value changed (used when the previewFont property equals false)
-   */
-  private onFontDropdownChanged(option: IDropdownOption, index?: number): void {
-    this.changeSelectedFont(option.key as string);
-  }
-
-  /**
-   * @function
-   * Renders the datepicker controls with Office UI  Fabric
+   * Renders the control
    */
   public render(): JSX.Element {
 
@@ -191,12 +234,14 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
         zoom: 1
       };
       var dropdownColor = '1px solid #c8c8c8';
-      if (this.state.isOpen === true)
+      if (this.props.disabled === true)
+        dropdownColor = '1px solid #f4f4f4';
+      else if (this.state.isOpen === true)
         dropdownColor = '1px solid #3091DE';
       else if (this.state.isHoverDropdown === true)
         dropdownColor = '1px solid #767676';
       var fontSelectA = {
-        backgroundColor: '#fff',
+        backgroundColor: this.props.disabled === true ? '#f4f4f4' : '#fff',
         borderRadius        : '0px',
         backgroundClip        : 'padding-box',
         border: dropdownColor,
@@ -207,9 +252,9 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
         height: '26px',
         lineHeight: '26px',
         padding: '0 0 0 8px',
-        color: '#444',
+        color: this.props.disabled === true ? '#a6a6a6' : '#444',
         textDecoration: 'none',
-        cursor: 'pointer'
+        cursor: this.props.disabled === true ? 'default' : 'pointer'
       };
       var fontSelectASpan = {
         marginRight: '26px',
@@ -218,7 +263,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
         whiteSpace: 'nowrap',
         lineHeight: '1.8',
         textOverflow: 'ellipsis',
-        cursor: 'pointer',
+        cursor: this.props.disabled === true ? 'default' : 'pointer',
         fontWeight: 400
       };
       var fontSelectADiv = {
@@ -236,7 +281,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
         display: 'block',
         width: '100%',
         height: '100%',
-        cursor: 'pointer',
+        cursor: this.props.disabled === true ? 'default' : 'pointer',
         marginTop: '2px'
       };
       var fsDrop = {
@@ -275,12 +320,12 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
                     if (foundSelected == false) {
                       foundSelected = true;
                       return (
-                          <span>{elm.text}</span>
+                          <span key={this._key + '-spanselect-' + index}>{elm.text}</span>
                       );
                     }
                     else {
                       return (
-                          <span>, {elm.text}</span>
+                          <span key={this._key + '-spanselect-' + index}>, {elm.text}</span>
                       );
                     }
                   }
@@ -294,7 +339,7 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
             </a>
             <div style={fsDrop}>
               <ul style={fsResults}>
-                {this.props.options.map((font: IDropdownOption) => {
+                {this.props.options.map((font: IDropdownOption, index: number) => {
                   var backgroundColor: string = 'transparent';
                   if (this.state.hoverFont === font.text)
                     backgroundColor = '#eaeaea';
@@ -304,13 +349,19 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
                     margin: '0',
                     listStyle: 'none',
                     fontSize: '16px',
-                    backgroundColor: backgroundColor,
-                    cursor: 'pointer'
+                    backgroundColor: backgroundColor
                   };
                   return (
-                    <li value={font.text} onMouseEnter={this.toggleHover} role="menuitem" onClick={this.onClickFont} onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
-                      <input style={{width: '18px', height: '18px'}} checked={font.isSelected} aria-checked={font.isSelected} type="checkbox" role="checkbox" />
-                      {font.text}
+                    <li value={font.text}
+                      key={this._key + '-dropdownselect-' + index}
+                      onMouseEnter={this.toggleHover} role="menuitem" onMouseLeave={this.toggleHoverLeave} style={innerStyle}>
+                      <Checkbox
+                        defaultChecked={font.isSelected}
+                        disabled={this.props.disabled}
+                        label={font.text}
+                        onChange={this.onClickFont}
+                        inputProps={{value: font.key}}
+                      />
                     </li>
                   );
                 })
@@ -318,6 +369,13 @@ export default class PropertyFieldDropDownSelectHost extends React.Component<IPr
               </ul>
             </div>
           </div>
+          { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?
+              <div><div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>{  this.state.errorMessage }</div>
+              <span>
+                <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>{ this.state.errorMessage }</p>
+              </span>
+              </div>
+            : ''}
         </div>
       );
   }

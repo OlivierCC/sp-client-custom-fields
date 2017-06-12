@@ -6,8 +6,10 @@ define([], function() {
     "DateFieldLabel": "Date Field",
     "DateTimeFieldLabel": "Date Time Field",
     "PeopleFieldLabel": "People Picker Field",
+    "GroupFieldLabel": "Group Picker Field",
     "SPListFieldLabel": "SharePoint List Field",
     "ColorFieldLabel": "Color Field",
+    "ColorMiniFieldLabel": "Mini Color Field",
     "SPFolderFieldLabel": "SharePoint Folder Field",
     "PasswordFieldLabel": "Password Field",
     "FontFieldLabel": "Font Field",
@@ -24,6 +26,17 @@ define([], function() {
     "AlignFieldLabel": "Align Field",
     "DropDownSelectFieldLabel": "Drop down with select Field",
     "RichTextBoxFieldLabel": "Rich Text Box Field",
-    "SliderRangeFieldLabel": "Slider Range Field"
+    "SliderRangeFieldLabel": "Slider Range Field",
+    "DimensionFieldLabel": "Dimension Field",
+    "SortableListFieldLabel": "Sortable List Field",
+    "TreeViewFieldLabel": "TreeView Field",
+    "DropDownTreeViewFieldLabel": "DropDown TreeView Field",
+    "TagPickerFieldLabel": "Tag Picker Field",
+    "StarRatingFieldLabel": "Star Rating Field",
+    "NumericInputFieldLabel": "Numeric Input Field",
+    "AutoSuggestFieldLabel": "Auto Complete Input Field",
+    "SearchPropertiesFieldLabel": "Search Properties Picker",
+    "OfficeVideoFieldLabel": "Office Video Field",
+    "TermSetsFieldLabel": "Term Sets Field"
   }
 });

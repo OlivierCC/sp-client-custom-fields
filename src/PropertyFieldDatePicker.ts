@@ -51,9 +51,28 @@ export interface IPropertyFieldDatePickerProps {
   properties: any;
   /**
    * @var
-   * Key to help React identify which items have changed, are added, or are removed.
+   * An UNIQUE key indicates the identity of this control
    */
-  key: string;
+  key?: string;
+  /**
+   * The method is used to get the validation error message and determine whether the input value is valid or not.
+   *
+   *   When it returns string:
+   *   - If valid, it returns empty string.
+   *   - If invalid, it returns the error message string and the text field will
+   *     show a red border and show an error message below the text field.
+   *
+   *   When it returns Promise<string>:
+   *   - The resolved value is display as error message.
+   *   - The rejected, the value is thrown away.
+   *
+   */
+   onGetErrorMessage?: (value: string) => string | Promise<string>;
+   /**
+    * Custom Field will start to validate after users stop typing for `deferredValidationTime` milliseconds.
+    * Default value is 200.
+    */
+   deferredValidationTime?: number;
 }
 
 /**
@@ -73,7 +92,8 @@ export interface IPropertyFieldDatePickerPropsInternal extends IPropertyPaneCust
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   properties: any;
-  key: string;
+  onGetErrorMessage?: (value: string) => string | Promise<string>;
+  deferredValidationTime?: number;
 }
 
 /**
@@ -95,6 +115,8 @@ export class PropertyFieldDatePickerBuilder implements IPropertyPaneField<IPrope
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private onGetErrorMessage: (value: string) => string | Promise<string>;
+  private deferredValidationTime: number = 200;
 
   /**
    * @function
@@ -112,6 +134,9 @@ export class PropertyFieldDatePickerBuilder implements IPropertyPaneField<IPrope
     this.formatDate = _properties.formatDate;
     this.customProperties = _properties.properties;
     this.key = _properties.key;
+    this.onGetErrorMessage = _properties.onGetErrorMessage;
+    if (_properties.deferredValidationTime !== undefined)
+      this.deferredValidationTime = _properties.deferredValidationTime;
   }
 
   /**
@@ -130,6 +155,8 @@ export class PropertyFieldDatePickerBuilder implements IPropertyPaneField<IPrope
       onPropertyChange: this.onPropertyChange,
       properties: this.customProperties,
       key: this.key,
+      onGetErrorMessage: this.onGetErrorMessage,
+      deferredValidationTime: this.deferredValidationTime
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -147,9 +174,9 @@ export class PropertyFieldDatePickerBuilder implements IPropertyPaneField<IPrope
 
 /**
  * @function
- * Helper method to create a Date Picker on the PropertyPane.
- * @param targetProperty - Target property the date picker is associated to.
- * @param properties - Strongly typed Date Picker properties.
+ * Helper method to create the customer field on the PropertyPane.
+ * @param targetProperty - Target property the custom field is associated to.
+ * @param properties - Strongly typed custom field properties.
  */
 export function PropertyFieldDatePicker(targetProperty: string, properties: IPropertyFieldDatePickerProps): IPropertyPaneField<IPropertyFieldDatePickerPropsInternal> {
 
@@ -164,8 +191,10 @@ export function PropertyFieldDatePicker(targetProperty: string, properties: IPro
       onDispose: null,
       onRender: null,
       key: properties.key,
+      onGetErrorMessage: properties.onGetErrorMessage,
+      deferredValidationTime: properties.deferredValidationTime
     };
-    //Calles the PropertyFieldDatePicker builder object
+    //Calls the PropertyFieldDatePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process
     return new PropertyFieldDatePickerBuilder(targetProperty, newProperties);
 }
