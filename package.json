@@ -34,7 +34,7 @@
     "@types/chai": ">=3.4.34 <3.6.0",
     "@types/mocha": ">=2.2.33 <2.6.0",
     "gulp": "~3.9.1",
-    "typedoc": "^0.5.7"
+    "typedoc": "^0.7.1"
   },
   "scripts": {
     "build": "gulp bundle",

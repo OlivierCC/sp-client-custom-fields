@@ -202,7 +202,7 @@ export default class PropertyFieldDatePickerHost extends React.Component<IProper
     //Renders content
     return (
       <div>
-        <DatePicker { ...this.props }  value={date} strings={dateStrings}
+        <DatePicker label={this.props.label}  value={date} strings={dateStrings}
           isMonthPickerVisible={false} onSelectDate={this.onSelectDate} allowTextInput={false}
           formatDate={this.props.formatDate}
            />
