@@ -15,7 +15,7 @@ import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Slider } from 'office-ui-fabric-react/lib/Slider';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { CommandButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 
@@ -309,6 +309,8 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -457,19 +459,19 @@ export default class PropertyFieldSPListQueryHost extends React.Component<IPrope
                 onChanged={(option: IDropdownOption, selectIndex?: number) => this.onChangedFilterOperator(option, selectIndex, index)}
               />
               <TextField disabled={this.props.disabled} defaultValue={value.value} onChanged={(value2: string) => this.onChangedFilterValue(value2, index)} />
-              <Button disabled={this.props.disabled} buttonType={ButtonType.command} onClick={() => this.onClickRemoveFilter(index)} icon="Delete">
+              <CommandButton disabled={this.props.disabled} onClick={() => this.onClickRemoveFilter(index)} iconProps={ { iconName: 'Delete' } }>
                 {strings.SPListQueryRemove}
-              </Button>
+              </CommandButton>
             </div>
           );
         })
         }
 
         {this.props.showFilters != false ?
-          <Button buttonType={ButtonType.command} onClick={this.onClickAddFilter}
-          disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true } icon="Add">
+          <CommandButton onClick={this.onClickAddFilter}
+          disabled={this.props.disabled === false && this.state.selectedList != null && this.state.selectedList != '' ? false : true } iconProps={ { iconName: 'Add' } }>
           {strings.SPListQueryAdd}
-          </Button>
+          </CommandButton>
           : ''}
 
         { this.state.errorMessage != null && this.state.errorMessage != '' && this.state.errorMessage != undefined ?

@@ -69,7 +69,19 @@ export interface IPropertyFieldSPListMultiplePickerProps {
    * method of the web part object.
    */
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
-    /**
+  /**
+   * @function
+   * This API is called to render the web part.
+   * Normally this function must be always defined with the 'this.render.bind(this)'
+   * method of the web part object.
+   */
+  render(): void;
+  /**
+   * This property is used to indicate the web part's PropertyPane interaction mode: Reactive or NonReactive.
+   * The default behaviour is Reactive.
+   */
+  disableReactivePropertyChanges?: boolean;
+  /**
    * @var
    * Parent Web Part properties
    */
@@ -123,6 +135,8 @@ export interface IPropertyFieldSPListMultiplePickerPropsInternal extends IProper
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  render(): void;
+  disableReactivePropertyChanges?: boolean;
   properties: any;
   key: string;
   disabled?: boolean;
@@ -156,6 +170,8 @@ class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPr
   private disabled: boolean = false;
   private onGetErrorMessage: (value: string[]) => string | Promise<string>;
   private deferredValidationTime: number = 200;
+  private renderWebPart: () => void;
+  private disableReactivePropertyChanges: boolean = false;
 
   /**
    * @function
@@ -181,6 +197,9 @@ class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPr
     this.onGetErrorMessage = _properties.onGetErrorMessage;
     if (_properties.deferredValidationTime !== undefined)
       this.deferredValidationTime = _properties.deferredValidationTime;
+    this.renderWebPart = _properties.render;
+    if (_properties.disableReactivePropertyChanges !== undefined && _properties.disableReactivePropertyChanges != null)
+      this.disableReactivePropertyChanges = _properties.disableReactivePropertyChanges;
   }
 
   /**
@@ -204,7 +223,9 @@ class PropertyFieldSPListMultiplePickerBuilder implements IPropertyPaneField<IPr
       key: this.key,
       disabled: this.disabled,
       onGetErrorMessage: this.onGetErrorMessage,
-      deferredValidationTime: this.deferredValidationTime
+      deferredValidationTime: this.deferredValidationTime,
+      render: this.renderWebPart,
+      disableReactivePropertyChanges: this.disableReactivePropertyChanges
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -244,7 +265,9 @@ export function PropertyFieldSPListMultiplePicker(targetProperty: string, proper
       key: properties.key,
       disabled: properties.disabled,
       onGetErrorMessage: properties.onGetErrorMessage,
-      deferredValidationTime: properties.deferredValidationTime
+      deferredValidationTime: properties.deferredValidationTime,
+      render: properties.render,
+      disableReactivePropertyChanges: properties.disableReactivePropertyChanges
     };
     //Calls the PropertyFieldSPListMultiplePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

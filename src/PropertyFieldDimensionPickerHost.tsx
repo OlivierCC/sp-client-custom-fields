@@ -222,6 +222,8 @@ export default class PropertyFieldDimensionPickerHost extends React.Component<IP
   private notifyAfterValidate(oldValue: IPropertyFieldDimension, newValue: IPropertyFieldDimension) {
     this.props.properties[this.props.targetProperty] = newValue;
     this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
   }
 
   /**

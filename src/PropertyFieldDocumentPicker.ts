@@ -44,7 +44,19 @@ export interface IPropertyFieldDocumentPickerProps {
    * method of the web part object.
    */
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
-    /**
+  /**
+   * @function
+   * This API is called to render the web part.
+   * Normally this function must be always defined with the 'this.render.bind(this)'
+   * method of the web part object.
+   */
+  render(): void;
+  /**
+   * This property is used to indicate the web part's PropertyPane interaction mode: Reactive or NonReactive.
+   * The default behaviour is Reactive.
+   */
+  disableReactivePropertyChanges?: boolean;
+  /**
    * @var
    * Parent Web Part properties
    */
@@ -109,6 +121,8 @@ export interface IPropertyFieldDocumentPickerPropsInternal extends IPropertyPane
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  render(): void;
+  disableReactivePropertyChanges?: boolean;
   properties: any;
   disabled?: boolean;
   onGetErrorMessage?: (value: string) => string | Promise<string>;
@@ -143,6 +157,8 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
   private previewDocument: boolean = true;
   private readOnly: boolean = true;
   private allowedFileExtensions: string = ".doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf,.txt";
+  private renderWebPart: () => void;
+  private disableReactivePropertyChanges: boolean = false;
 
   /**
    * @function
@@ -171,6 +187,9 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
       this.readOnly = _properties.readOnly;
     if (_properties.allowedFileExtensions != null && _properties.allowedFileExtensions !== undefined && _properties.allowedFileExtensions != '')
       this.allowedFileExtensions = _properties.allowedFileExtensions;
+    this.renderWebPart = _properties.render;
+    if (_properties.disableReactivePropertyChanges !== undefined && _properties.disableReactivePropertyChanges != null)
+      this.disableReactivePropertyChanges = _properties.disableReactivePropertyChanges;
   }
 
   /**
@@ -194,7 +213,9 @@ class PropertyFieldDocumentPickerBuilder implements IPropertyPaneField<IProperty
       deferredValidationTime: this.deferredValidationTime,
       previewDocument: this.previewDocument,
       readOnly: this.readOnly,
-      allowedFileExtensions: this.allowedFileExtensions
+      allowedFileExtensions: this.allowedFileExtensions,
+      render: this.renderWebPart,
+      disableReactivePropertyChanges: this.disableReactivePropertyChanges
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -234,7 +255,9 @@ export function PropertyFieldDocumentPicker(targetProperty: string, properties: 
       deferredValidationTime: properties.deferredValidationTime,
       previewDocument: properties.previewDocument,
       readOnly: properties.readOnly,
-      allowedFileExtensions: properties.allowedFileExtensions
+      allowedFileExtensions: properties.allowedFileExtensions,
+      render: properties.render,
+      disableReactivePropertyChanges: properties.disableReactivePropertyChanges
     };
     //Calls the PropertyFieldDocumentPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -125,6 +125,8 @@ export default class PropertyFieldSearchPropertiesPickerHost extends React.Compo
   private notifyAfterValidate(oldValue: string[], newValue: string[]) {
     this.props.properties[this.props.targetProperty] = newValue;
     this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
   }
 
   /**

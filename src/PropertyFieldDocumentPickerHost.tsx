@@ -8,7 +8,7 @@
 import * as React from 'react';
 import { IPropertyFieldDocumentPickerPropsInternal } from './PropertyFieldDocumentPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { IconButton, DefaultButton, PrimaryButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
@@ -131,6 +131,8 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -288,8 +290,14 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
                 />
               </td>
               <td width="64">
-                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
-                <Button disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
+                <table style={{width: '100%', borderSpacing: 0}}>
+                  <tbody>
+                    <tr>
+                      <td><IconButton disabled={this.props.disabled} iconProps={ { iconName: 'FolderSearch' } } onClick={this.onOpenPanel} /></td>
+                      <td><IconButton disabled={this.props.disabled === false && (this.state.selectedImage != null && this.state.selectedImage != '') ? false: true} iconProps={ { iconName: 'Delete' } }  onClick={this.onEraseButton} /></td>
+                    </tr>
+                  </tbody>
+                </table>
               </td>
             </tr>
           </tbody>
@@ -371,8 +379,8 @@ export default class PropertyFieldDocumentPickerHost extends React.Component<IPr
     marginBottom: '20px',
     marginRight: '20px'
           }}>
-            <Button buttonType={ButtonType.primary}> Open </Button>
-            <Button buttonType={ButtonType.normal} onClick={this.onClosePanel}> Cancel </Button>
+             <PrimaryButton> Open </PrimaryButton>
+             <DefaultButton onClick={this.onClosePanel}> Cancel </DefaultButton>
           </div>
           : ''}
 

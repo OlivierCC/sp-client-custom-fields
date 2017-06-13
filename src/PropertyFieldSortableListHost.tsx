@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { IconButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import GuidHelper from './GuidHelper';
@@ -173,6 +173,8 @@ export default class PropertyFieldSortableListHost extends React.Component<IProp
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -226,8 +228,14 @@ export default class PropertyFieldSortableListHost extends React.Component<IProp
           <div>
             <Label>{this.props.label}</Label>
             <div style={{position: 'absolute', right: '0', marginRight: '20px', zIndex: 998}}>
-              <Button icon="ChevronUp" buttonType={ButtonType.icon} onClick={this.sortDescending} disabled={this.props.disabled}></Button>
-              <Button icon="ChevronDown" buttonType={ButtonType.icon} onClick={this.sortAscending} disabled={this.props.disabled}></Button>
+              <table style={{width: '100%', borderSpacing: 0}}>
+                  <tbody>
+                    <tr>
+                      <td><IconButton iconProps={ { iconName: 'ChevronUp' } } onClick={this.sortDescending} disabled={this.props.disabled}></IconButton></td>
+                      <td><IconButton iconProps={ { iconName: 'ChevronDown' } } onClick={this.sortAscending} disabled={this.props.disabled}></IconButton></td>
+                    </tr>
+                  </tbody>
+              </table>
             </div>
             {this.state.results.map((item: IChoiceGroupOption, index: number) => {
               var uniqueKey = this.props.targetProperty + '-' + item.key;

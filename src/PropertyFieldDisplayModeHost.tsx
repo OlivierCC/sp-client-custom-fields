@@ -9,7 +9,7 @@ import * as React from 'react';
 import { IPropertyFieldDisplayModePropsInternal } from './PropertyFieldDisplayMode';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
-import 'office-ui-fabric-react/lib/components/ChoiceGroup/ChoiceGroup.scss';
+import styles from './PropertyFields.module.scss';
 import GuidHelper from './GuidHelper';
 
 /**
@@ -118,6 +118,8 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -182,8 +184,8 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
     if (this.state.mode == 'tiles')
       backgroundTiles = '#EEEEEE';
 
-    var styleList = 'ms-ChoiceField-field';
-    var styleTiles = 'ms-ChoiceField-field';
+    var styleList = styles['spcfChoiceFieldField'];
+    var styleTiles = styles['spcfChoiceFieldField'];
     if (this.state.mode === 'list')
       styleList += ' is-checked';
     else if (this.state.mode === 'tiles')
@@ -200,35 +202,37 @@ export default class PropertyFieldDisplayModeHost extends React.Component<IPrope
         <div style={{display: 'inline-flex'}}>
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundLists}}
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
-            <div style={{float: 'left'}}>
-              <label className={styleList}></label>
-              <input id={"bulletRadio-" + this._key } className=""
+            <div style={{float: 'left'}} className={styles['spcfChoiceField']}>
+              <input id={"bulletRadio-" + this._key } className={styles['spcfChoiceFieldInput']}
                 onChange={this.onClickBullets} type="radio" name={"display-mode-" + this._key} role="radio"
                 disabled={this.props.disabled}
                 defaultChecked={this.state.mode == "list" ? true : false}
                 aria-checked={this.state.mode == "list" ? true : false}
                 value="list"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
-              <label htmlFor={"bulletRadio-" + this._key } className="">
-                <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--List' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'60px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
-                </span>
+              <label htmlFor={"bulletRadio-" + this._key } className={styleList}>
+                <div className={styles['spcfChoiceFieldInnerField']}>
+                  <div className={styles['spcfChoiceFieldIconWrapper']}>
+                    <i className='ms-Icon ms-Icon--List' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'60px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
+                  </div>
+                </div>
               </label>
             </div>
           </div>
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '100px', marginRight: '30px', paddingLeft:'8px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
-            <div style={{float: 'left'}}>
-              <label className={styleTiles}></label>
-              <input id={"tilesRadio-" + this._key} className=""
+            <div style={{float: 'left'}} className={styles['spcfChoiceField']}>
+              <input id={"tilesRadio-" + this._key} className={styles['spcfChoiceFieldInput']}
                onChange={this.onClickTiles} type="radio" name={"display-mode-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "tiles" ? true : false}
                aria-checked={this.state.mode == "tiles" ? true : false}
                value="tiles"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
-              <label htmlFor={"tilesRadio-" + this._key} className="">
-                <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--Tiles' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'48px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
-                </span>
+              <label htmlFor={"tilesRadio-" + this._key} className={styleTiles}>
+                <div className={styles['spcfChoiceFieldInnerField']}>
+                  <div className={styles['spcfChoiceFieldIconWrapper']}>
+                    <i className='ms-Icon ms-Icon--Tiles' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'48px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
+                  </div>
+                </div>
               </label>
             </div>
           </div>

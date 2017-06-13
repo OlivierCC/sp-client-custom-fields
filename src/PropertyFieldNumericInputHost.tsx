@@ -9,7 +9,8 @@ import * as React from 'react';
 import { IPropertyFieldNumericInputPropsInternal } from './PropertyFieldNumericInput';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
-import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
+//import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
+import styles from './PropertyFields.module.scss';
 var NumericInput: any = require('react-numeric-input');
 
 /**
@@ -98,6 +99,8 @@ export default class PropertyFieldNumericInputHost extends React.Component<IProp
   private notifyAfterValidate(oldValue: number, newValue: number) {
     this.props.properties[this.props.targetProperty] = newValue;
     this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
   }
 
   /**
@@ -118,7 +121,7 @@ export default class PropertyFieldNumericInputHost extends React.Component<IProp
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
         <NumericInput
-          className="ms-TextField-field"
+          className={styles.customTextField}
           size={this.props.size}
           disabled={this.props.disabled}
           onChange={this.onValueChanged}

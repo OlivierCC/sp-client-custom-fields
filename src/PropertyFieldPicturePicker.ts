@@ -58,7 +58,19 @@ export interface IPropertyFieldPicturePickerProps {
    * method of the web part object.
    */
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
-    /**
+  /**
+   * @function
+   * This API is called to render the web part.
+   * Normally this function must be always defined with the 'this.render.bind(this)'
+   * method of the web part object.
+   */
+  render(): void;
+  /**
+   * This property is used to indicate the web part's PropertyPane interaction mode: Reactive or NonReactive.
+   * The default behaviour is Reactive.
+   */
+  disableReactivePropertyChanges?: boolean;
+  /**
    * @var
    * Parent Web Part properties
    */
@@ -109,6 +121,8 @@ export interface IPropertyFieldPicturePickerPropsInternal extends IPropertyPaneC
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  render(): void;
+  disableReactivePropertyChanges?: boolean;
   properties: any;
   disabled?: boolean;
   onGetErrorMessage?: (value: string) => string | Promise<string>;
@@ -143,6 +157,8 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
   private previewImage: boolean = true;
   private readOnly: boolean = true;
   private allowedFileExtensions: string = ".gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png";
+  private renderWebPart: () => void;
+  private disableReactivePropertyChanges: boolean = false;
 
   /**
    * @function
@@ -171,6 +187,9 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
       this.readOnly = _properties.readOnly;
     if (_properties.allowedFileExtensions != null && _properties.allowedFileExtensions !== undefined && _properties.allowedFileExtensions != '')
       this.allowedFileExtensions = _properties.allowedFileExtensions;
+    this.renderWebPart = _properties.render;
+    if (_properties.disableReactivePropertyChanges !== undefined && _properties.disableReactivePropertyChanges != null)
+      this.disableReactivePropertyChanges = _properties.disableReactivePropertyChanges;
   }
 
   /**
@@ -194,7 +213,9 @@ class PropertyFieldPicturePickerBuilder implements IPropertyPaneField<IPropertyF
       deferredValidationTime: this.deferredValidationTime,
       previewImage: this.previewImage,
       readOnly: this.readOnly,
-      allowedFileExtensions: this.allowedFileExtensions
+      allowedFileExtensions: this.allowedFileExtensions,
+      render: this.renderWebPart,
+      disableReactivePropertyChanges: this.disableReactivePropertyChanges
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -234,7 +255,9 @@ export function PropertyFieldPicturePicker(targetProperty: string, properties: I
       deferredValidationTime: properties.deferredValidationTime,
       previewImage: properties.previewImage,
       readOnly: properties.readOnly,
-      allowedFileExtensions: properties.allowedFileExtensions
+      allowedFileExtensions: properties.allowedFileExtensions,
+      render: properties.render,
+      disableReactivePropertyChanges: properties.disableReactivePropertyChanges
     };
     //Calls the PropertyFieldPicturePicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

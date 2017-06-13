@@ -88,6 +88,8 @@ export default class PropertyFieldTagPickerHost extends React.Component<IPropert
   private notifyAfterValidate(oldValue: IPropertyFieldTag[], newValue: IPropertyFieldTag[]) {
     this.props.properties[this.props.targetProperty] = newValue;
     this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
   }
 
   /**

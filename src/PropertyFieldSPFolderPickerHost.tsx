@@ -12,7 +12,7 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IPropertyFieldSPFolderPickerPropsInternal } from './PropertyFieldSPFolderPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { IconButton, DefaultButton, PrimaryButton, CommandButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Dialog, DialogType } from 'office-ui-fabric-react/lib/Dialog';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { List } from 'office-ui-fabric-react/lib/List';
@@ -271,6 +271,8 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -315,8 +317,14 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
                   value={this.state.confirmFolder} />
               </td>
               <td width="64">
-                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onBrowseClick} />
-                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="Delete" onClick={this.onClearSelectionClick} />
+                <table style={{width: '100%', borderSpacing: 0}}>
+                  <tbody>
+                    <tr>
+                      <td><IconButton disabled={this.props.disabled} iconProps={ { iconName: 'FolderSearch' } } onClick={this.onBrowseClick} /></td>
+                      <td><IconButton disabled={this.props.disabled} iconProps={ { iconName: 'Delete' } } onClick={this.onClearSelectionClick} /></td>
+                    </tr>
+                  </tbody>
+                </table>
               </td>
             </tr>
           </tbody>
@@ -335,16 +343,16 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
             <div style={{ height: '330px'}}>
                 { this.state.loading ? <div><Spinner type={ SpinnerType.normal } /></div> : null }
 
-                { this.state.loading === false && currentFolderisRoot === false ? <Button buttonType={ButtonType.icon} onClick={this.onClickParent} icon="Reply">...</Button> : null }
+                { this.state.loading === false && currentFolderisRoot === false ? <IconButton onClick={this.onClickParent} iconProps={ { iconName: 'Reply' } }>...</IconButton> : null }
 
                 <List items={this.state.childrenFolders.value}  onRenderCell={this.onRenderCell} />
                 { this.state.loading === false ?
-                <Button buttonType={ButtonType.icon} icon="CaretLeft8" onClick={this.onClickPrevious}
+                <IconButton iconProps={ { iconName: 'CaretLeft8' } } onClick={this.onClickPrevious}
                   disabled={ this.currentPage > 0 ? false : true }
                   />
                 : null }
                 { this.state.loading === false ?
-                <Button buttonType={ButtonType.icon} icon="CaretRight8" onClick={this.onClickNext}
+                <IconButton iconProps={ { iconName: 'CaretRight8' } } onClick={this.onClickNext}
                   disabled={ this.state.childrenFolders.value.length < this.pageItemCount ? true : false }
                    />
                 : null }
@@ -352,9 +360,9 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
 
             <div style={{marginTop: '20px'}}>
 
-              <Button buttonType={ButtonType.primary} disabled={this.state.selectedFolder != null && this.state.selectedFolder != '' ? false : true }
-                onClick={this.onClickSelect}>{strings.SPFolderPickerSelectButton}</Button>
-              <Button buttonType={ButtonType.normal} onClick={this.onDismiss}>{strings.SPFolderPickerCancelButton}</Button>
+              <PrimaryButton disabled={this.state.selectedFolder != null && this.state.selectedFolder != '' ? false : true }
+                onClick={this.onClickSelect}>{strings.SPFolderPickerSelectButton}</PrimaryButton>
+              <DefaultButton onClick={this.onDismiss}>{strings.SPFolderPickerCancelButton}</DefaultButton>
             </div>
 
         </Dialog>
@@ -379,11 +387,11 @@ export default class PropertyFieldSPFolderPickerHost extends React.Component<IPr
             <span className="ms-Label">
               <i className="ms-Icon ms-Icon--FolderFill" style={{color: '#0062AF', fontSize: '22px'}}></i>
               <span style={{paddingLeft: '5px'}}>
-                <button style={{paddingBottom: '0', height: '27px'}} className="ms-Button ms-Button--command" value={item.ServerRelativeUrl} onClick={this.onClickLink}>
+                <CommandButton style={{paddingBottom: '0', height: '27px'}} value={item.ServerRelativeUrl} onClick={this.onClickLink}>
                   <span className="ms-Button-label">
                     {item.Name}
                   </span>
-                </button>
+                </CommandButton>
               </span>
             </span>
           </label>

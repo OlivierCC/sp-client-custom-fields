@@ -53,7 +53,19 @@ export interface IPropertyFieldOfficeVideoPickerProps {
    * method of the web part object.
    */
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
-    /**
+  /**
+   * @function
+   * This API is called to render the web part.
+   * Normally this function must be always defined with the 'this.render.bind(this)'
+   * method of the web part object.
+   */
+  render(): void;
+  /**
+   * This property is used to indicate the web part's PropertyPane interaction mode: Reactive or NonReactive.
+   * The default behaviour is Reactive.
+   */
+  disableReactivePropertyChanges?: boolean;
+  /**
    * @var
    * Parent Web Part properties
    */
@@ -105,6 +117,8 @@ export interface IPropertyFieldOfficeVideoPickerPropsInternal extends IPropertyP
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  render(): void;
+  disableReactivePropertyChanges?: boolean;
   properties: any;
   disabled?: boolean;
   onGetErrorMessage?: (value: string) => string | Promise<string>;
@@ -136,6 +150,8 @@ class PropertyFieldOfficeVideoPickerBuilder implements IPropertyPaneField<IPrope
   private deferredValidationTime: number = 200;
   private readOnly: boolean = true;
   private panelTitle: string;
+  private renderWebPart: () => void;
+  private disableReactivePropertyChanges: boolean = false;
 
   /**
    * @function
@@ -161,6 +177,9 @@ class PropertyFieldOfficeVideoPickerBuilder implements IPropertyPaneField<IPrope
     if (_properties.readOnly === false)
       this.readOnly = _properties.readOnly;
     this.panelTitle = _properties.panelTitle;
+    this.renderWebPart = _properties.render;
+    if (_properties.disableReactivePropertyChanges !== undefined && _properties.disableReactivePropertyChanges != null)
+      this.disableReactivePropertyChanges = _properties.disableReactivePropertyChanges;
   }
 
   /**
@@ -183,7 +202,9 @@ class PropertyFieldOfficeVideoPickerBuilder implements IPropertyPaneField<IPrope
       onGetErrorMessage: this.onGetErrorMessage,
       deferredValidationTime: this.deferredValidationTime,
       readOnly: this.readOnly,
-      panelTitle: this.panelTitle
+      panelTitle: this.panelTitle,
+      render: this.renderWebPart,
+      disableReactivePropertyChanges: this.disableReactivePropertyChanges
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -222,7 +243,9 @@ export function PropertyFieldOfficeVideoPicker(targetProperty: string, propertie
       onGetErrorMessage: properties.onGetErrorMessage,
       deferredValidationTime: properties.deferredValidationTime,
       readOnly: properties.readOnly,
-      panelTitle: properties.panelTitle
+      panelTitle: properties.panelTitle,
+      render: properties.render,
+      disableReactivePropertyChanges: properties.disableReactivePropertyChanges
     };
     //Calls the PropertyFieldOfficeVideoPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

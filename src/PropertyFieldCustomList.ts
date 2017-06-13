@@ -86,6 +86,18 @@ export interface IPropertyFieldCustomListProps {
    */
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
   /**
+   * @function
+   * This API is called to render the web part.
+   * Normally this function must be always defined with the 'this.render.bind(this)'
+   * method of the web part object.
+   */
+  render(): void;
+  /**
+   * This property is used to indicate the web part's PropertyPane interaction mode: Reactive or NonReactive.
+   * The default behaviour is Reactive.
+   */
+  disableReactivePropertyChanges?: boolean;
+  /**
    * @var
    * Parent Web Part properties
    */
@@ -119,6 +131,8 @@ export interface IPropertyFieldCustomListPropsInternal extends IPropertyPaneCust
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  render(): void;
+  disableReactivePropertyChanges?: boolean;
   properties: any;
   disabled?: boolean;
 }
@@ -145,6 +159,8 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
   private customProperties: any;
   private key: string;
   private disabled: boolean = false;
+  private renderWebPart: () => void;
+  private disableReactivePropertyChanges: boolean = false;
 
   /**
    * @function
@@ -166,6 +182,9 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
     this.key = _properties.key;
     if (_properties.disabled === true)
       this.disabled = _properties.disabled;
+    this.renderWebPart = _properties.render;
+    if (_properties.disableReactivePropertyChanges !== undefined && _properties.disableReactivePropertyChanges != null)
+      this.disableReactivePropertyChanges = _properties.disableReactivePropertyChanges;
   }
 
   /**
@@ -186,7 +205,9 @@ class PropertyFieldCustomListBuilder implements IPropertyPaneField<IPropertyFiel
       context: this.context,
       properties: this.customProperties,
       key: this.key,
-      disabled: this.disabled
+      disabled: this.disabled,
+      render: this.renderWebPart,
+      disableReactivePropertyChanges: this.disableReactivePropertyChanges
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -223,7 +244,9 @@ export function PropertyFieldCustomList(targetProperty: string, properties: IPro
       onDispose: null,
       onRender: null,
       key: properties.key,
-      disabled: properties.disabled
+      disabled: properties.disabled,
+      render: properties.render,
+      disableReactivePropertyChanges: properties.disableReactivePropertyChanges
     };
     //Calls the PropertyFieldCustomList builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

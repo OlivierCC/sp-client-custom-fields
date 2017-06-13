@@ -58,7 +58,19 @@ export interface IPropertyFieldDimensionPickerProps {
    * method of the web part object.
    */
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
-    /**
+  /**
+   * @function
+   * This API is called to render the web part.
+   * Normally this function must be always defined with the 'this.render.bind(this)'
+   * method of the web part object.
+   */
+  render(): void;
+  /**
+   * This property is used to indicate the web part's PropertyPane interaction mode: Reactive or NonReactive.
+   * The default behaviour is Reactive.
+   */
+  disableReactivePropertyChanges?: boolean;
+  /**
    * @var
    * Parent Web Part properties
    */
@@ -108,6 +120,8 @@ export interface IPropertyFieldDimensionPickerPropsInternal extends IPropertyPan
   onRender(elem: HTMLElement): void;
   onDispose(elem: HTMLElement): void;
   onPropertyChange(propertyPath: string, oldValue: any, newValue: any): void;
+  render(): void;
+  disableReactivePropertyChanges?: boolean;
   properties: any;
   disabled?: boolean;
   onGetErrorMessage?: (value: IPropertyFieldDimension) => string | Promise<string>;
@@ -139,6 +153,8 @@ class PropertyFieldDimensionPickerBuilder implements IPropertyPaneField<IPropert
   private deferredValidationTime: number = 200;
   private preserveRatio: boolean = true;
   private preserveRatioEnabled: boolean = true;
+  private renderWebPart: () => void;
+  private disableReactivePropertyChanges: boolean = false;
 
   /**
    * @function
@@ -164,6 +180,9 @@ class PropertyFieldDimensionPickerBuilder implements IPropertyPaneField<IPropert
       this.preserveRatio = _properties.preserveRatio;
     if (_properties.preserveRatioEnabled === false)
       this.preserveRatioEnabled = _properties.preserveRatioEnabled;
+    this.renderWebPart = _properties.render;
+    if (_properties.disableReactivePropertyChanges !== undefined && _properties.disableReactivePropertyChanges != null)
+      this.disableReactivePropertyChanges = _properties.disableReactivePropertyChanges;
   }
 
   /**
@@ -185,7 +204,9 @@ class PropertyFieldDimensionPickerBuilder implements IPropertyPaneField<IPropert
       onGetErrorMessage: this.onGetErrorMessage,
       deferredValidationTime: this.deferredValidationTime,
       preserveRatio: this.preserveRatio,
-      preserveRatioEnabled: this.preserveRatioEnabled
+      preserveRatioEnabled: this.preserveRatioEnabled,
+      render: this.renderWebPart,
+      disableReactivePropertyChanges: this.disableReactivePropertyChanges
     });
     //Calls the REACT content generator
     ReactDom.render(element, elem);
@@ -223,7 +244,9 @@ export function PropertyFieldDimensionPicker(targetProperty: string, properties:
       onGetErrorMessage: properties.onGetErrorMessage,
       deferredValidationTime: properties.deferredValidationTime,
       preserveRatio: properties.preserveRatio,
-      preserveRatioEnabled: properties.preserveRatioEnabled
+      preserveRatioEnabled: properties.preserveRatioEnabled,
+      render: properties.render,
+      disableReactivePropertyChanges: properties.disableReactivePropertyChanges
     };
     //Calls the PropertyFieldDimensionPicker builder object
     //This object will simulate a PropertyFieldCustom to manage his rendering process

@@ -8,7 +8,7 @@
 import * as React from 'react';
 import { IPropertyFieldOfficeVideoPickerPropsInternal } from './PropertyFieldOfficeVideoPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { IconButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
@@ -132,6 +132,8 @@ export default class PropertyFieldOfficeVideoPickerHost extends React.Component<
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -261,8 +263,14 @@ export default class PropertyFieldOfficeVideoPickerHost extends React.Component<
                 />
               </td>
               <td width="64">
-                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="FolderSearch" onClick={this.onOpenPanel} />
-                <Button disabled={this.props.disabled === false && (this.state.selectedVideo != null && this.state.selectedVideo != '') ? false: true} buttonType={ButtonType.icon} icon="Delete" onClick={this.onEraseButton} />
+                <table style={{width: '100%', borderSpacing: 0}}>
+                  <tbody>
+                    <tr>
+                      <td><IconButton disabled={this.props.disabled} iconProps={ { iconName: 'FolderSearch' } }  onClick={this.onOpenPanel} /></td>
+                      <td><IconButton disabled={this.props.disabled === false && (this.state.selectedVideo != null && this.state.selectedVideo != '') ? false: true} iconProps={ { iconName: 'Delete' } } onClick={this.onEraseButton} /></td>
+                    </tr>
+                  </tbody>
+                </table>
               </td>
             </tr>
           </tbody>

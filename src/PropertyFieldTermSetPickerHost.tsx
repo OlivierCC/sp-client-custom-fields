@@ -9,7 +9,7 @@
 import * as React from 'react';
 import { IWebPartContext} from '@microsoft/sp-webpart-base';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { IconButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { Spinner, SpinnerType } from 'office-ui-fabric-react/lib/Spinner';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
@@ -148,6 +148,8 @@ export default class PropertyFieldTermSetPickerHost extends React.Component<IPro
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -300,7 +302,7 @@ export default class PropertyFieldTermSetPickerHost extends React.Component<IPro
                 />
               </td>
               <td width="32">
-                <Button disabled={this.props.disabled} buttonType={ButtonType.icon} icon="Tag" onClick={this.onOpenPanel} />
+                <IconButton disabled={this.props.disabled} iconProps={ { iconName: 'Tag' } } onClick={this.onOpenPanel} />
               </td>
             </tr>
           </tbody>

@@ -446,6 +446,8 @@ export default class PropertyFieldPhoneNumberHost extends React.Component<IPrope
     if (this.props.onPropertyChange && element != null) {
       this.props.properties[this.props.targetProperty] = element;
       this.props.onPropertyChange(this.props.targetProperty, this.props.initialValue, element);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 

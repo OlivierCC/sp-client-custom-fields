@@ -102,6 +102,8 @@ export default class PropertyFieldPasswordHost extends React.Component<IProperty
   private notifyAfterValidate(oldValue: string, newValue: string) {
     this.props.properties[this.props.targetProperty] = newValue;
     this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+    if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
   }
 
   /**

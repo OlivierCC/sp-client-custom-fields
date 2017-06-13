@@ -4,4 +4,198 @@
       max-width: 680px !important;
   }
 
+  .customTextField {
+    font-size: 16px;
+    font-family: monospace;
+    padding: 0px 12px;
+    background-color: transparent;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    margin: 0px;
+    box-shadow: none;
+    border: 1px solid rgb(200, 200, 200);
+    border-radius: 0px;
+    font-weight: 400;
+    color: rgb(51, 51, 51);
+    height: 32px;
+    width: 100%;
+    outline: 0px;
+    text-overflow: ellipsis;
+  }
+
+.customTextField:hover {
+    border-color: #767676;
+}
+
+.spcfChoiceField {
+  color: #333333;
+  font-family: 'Segoe UI Regular WestEuropean', 'Segoe UI', Tahoma, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  box-sizing: border-box;
+  margin: 0 0 0 2px;
+  padding: 0;
+  box-shadow: none;
+  min-height: 36px;
+  position: relative;
+}
+
+.spcfChoiceFieldInput:disabled + .spcfChoiceFieldField {
+  pointer-events: none;
+  cursor: default;
+}
+
+.spcfChoiceFieldInput:disabled + .spcfChoiceFieldField:before {
+  background-color: #c8c8c8;
+  color: #c8c8c8;
+}
+
+.spcfChoiceFieldInput:disabled + .spcfChoiceFieldField:after {
+  border-color: #eaeaea;
+}
+
+
+@media screen and (-ms-high-contrast: active) {
+  .spcfChoiceFieldInput:disabled + .spcfChoiceFieldField:before {
+    background-color: #00ff00;
+    color: #00ff00;
+  }
+
+  .spcfChoiceFieldInput:disabled + .spcfChoiceFieldField:after {
+    border-color: #00ff00;
+  }
+
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+  .spcfChoiceFieldInput:disabled + .spcfChoiceFieldField:before {
+    background-color: #600000;
+    color: #600000;
+  }
+
+  .spcfChoiceFieldInput:disabled + .spcfChoiceFieldField:after {
+    border-color: #600000;
+  }
+
+}
+
+.spcfChoiceFieldInput {
+  position: absolute;
+  opacity: 0;
+  top: 8px;
+}
+
+.spcfChoiceFieldInput:focus:not(:disabled) + .spcfChoiceFieldField:after {
+  border-color: #767676;
+}
+
+.spcfChoiceFieldField {
+  display: inline-block;
+  cursor: pointer;
+  margin-top: 8px;
+  position: relative;
+}
+
+.spcfChoiceFieldField:after {
+  content: '';
+  display: inline-block;
+  border: 1px #c8c8c8 solid;
+  width: 19px;
+  height: 19px;
+  cursor: pointer;
+  position: relative;
+  font-weight: normal;
+  left: -1px;
+  top: -1px;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.spcfChoiceFieldField:hover:after {
+  border-color: #767676;
+}
+
+.spcfChoiceFieldInput:checked + .spcfChoiceFieldField:before {
+  background-color: #666666;
+  border-color: #666666;
+  color: #666666;
+  border-radius: 50%;
+  content: '\00a0';
+  display: inline-block;
+  position: absolute;
+  top: 4px;
+  bottom: 0;
+  left: 4px;
+  width: 11px;
+  height: 11px;
+  box-sizing: border-box;
+}
+
+.spcfChoiceFieldInnerField {
+  position: relative;
+  padding-top: 10px;
+  margin-bottom: 12px;
+}
+
+.spcfChoiceFieldIconWrapper {
+    font-size: 32px;
+    line-height: 32px;
+    height: 32px;
+}
+
+@media screen and (-ms-high-contrast: active) {
+  .spcfChoiceFieldInput:checked + .spcfChoiceFieldField:before {
+    border-color: #ffffff;
+    background-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+  .spcfChoiceFieldInput:checked + .spcfChoiceFieldField:before {
+    border-color: #000000;
+    background-color: #000000;
+  }
+}
+
+.spcfChoiceFieldInput:checked + .spcfChoiceFieldField:hover:before {
+  background-color: #212121;
+  color: #212121;
+}
+
+.spcfChoiceFieldInput[type='checkbox'] + .spcfChoiceFieldField:after {
+  border-radius: 0;
+}
+
+.spcfChoiceFieldInput[type='checkbox']:checked + .spcfChoiceFieldField:before {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-family: 'Office365Icons';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  speak: none;
+  content: '\e041';
+  background-color: transparent;
+  border-radius: 0;
+  font-size: 13px;
+  top: 3px;
+  left: 3px;
+}
+
+@media screen and (-ms-high-contrast: active) {
+  .spcfChoiceFieldInput[type='checkbox']:checked + .spcfChoiceFieldField:before {
+    color: #ffffff;
+    border-color: transparent;
+    background-color: transparent;
+  }
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+  .spcfChoiceFieldInput[type='checkbox']:checked + .spcfChoiceFieldField:before {
+    color: #000000;
+    border-color: transparent;
+    background-color: transparent;
+  }
+}
 

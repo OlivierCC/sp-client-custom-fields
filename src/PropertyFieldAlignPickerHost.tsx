@@ -9,9 +9,9 @@ import * as React from 'react';
 import { IPropertyFieldAlignPickerPropsInternal } from './PropertyFieldAlignPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
-import 'office-ui-fabric-react/lib/components/ChoiceGroup/ChoiceGroup.scss';
-import { ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import GuidHelper from './GuidHelper';
+import styles from './PropertyFields.module.scss';
+
 
 /**
  * @interface
@@ -123,6 +123,8 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
     if (this.props.onPropertyChanged && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChanged(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -213,9 +215,9 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
     if (this.state.mode == 'right')
       backgroundRight = '#EEEEEE';
 
-    var styleLeft = 'ms-ChoiceField-field';
-    var styleCenter = 'ms-ChoiceField-field';
-    var styleRight = 'ms-ChoiceField-field';
+    var styleLeft = styles['spcfChoiceFieldField'];
+    var styleCenter = styles['spcfChoiceFieldField'];
+    var styleRight = styles['spcfChoiceFieldField'];
     if (this.state.mode === 'left')
       styleLeft += ' is-checked';
     else if (this.state.mode === 'center')
@@ -233,56 +235,58 @@ export default class PropertyFieldAlignPickerHost extends React.Component<IPrope
       <div style={{ marginBottom: '8px'}}>
         <Label>{this.props.label}</Label>
 
-
         <div style={{display: 'inline-flex'}}>
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundLists}}
             onMouseEnter={this.mouseListEnterDropDown} onMouseLeave={this.mouseListLeaveDropDown}>
-            <div style={{float: 'left'}}>
-              <label className={styleLeft} style={{marginLeft: '5px'}} htmlFor={"leftRadio-" + this._key}></label>
-              <input id={"leftRadio-" + this._key} className=""
+            <div style={{float: 'left'}}  className={styles['spcfChoiceField']}>
+              <input id={"leftRadio-" + this._key} className={styles['spcfChoiceFieldInput']}
                 disabled={this.props.disabled}
                 onChange={this.onClickBullets} type="radio" role="radio" name={"align-picker-" + this._key}
                 defaultChecked={this.state.mode == "left" ? true : false}
                 aria-checked={this.state.mode == "left" ? true : false}
                 value="left"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
-              <label htmlFor={"leftRadio-" + this._key} className="">
-                <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--AlignLeft' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
-                </span>
+              <label htmlFor={"leftRadio-" + this._key} className={styleLeft}>
+                <div className={styles['spcfChoiceFieldInnerField']}>
+                  <div className={styles['spcfChoiceFieldIconWrapper']}>
+                    <i className='ms-Icon ms-Icon--AlignLeft' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
+                  </div>
+                </div>
               </label>
             </div>
           </div>
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundTiles}}
             onMouseEnter={this.mouseTilesEnterDropDown} onMouseLeave={this.mouseTilesLeaveDropDown}>
-            <div style={{float: 'left'}}>
-              <label className={styleCenter} style={{marginLeft: '5px'}} htmlFor={"centerRadio-" + this._key }></label>
-              <input id={"centerRadio-" + this._key } className=""
+            <div style={{float: 'left'}} className={styles['spcfChoiceField']}>
+              <input id={"centerRadio-" + this._key } className={styles['spcfChoiceFieldInput']}
                onChange={this.onClickTiles} type="radio" name={"align-picker-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "center" ? true : false}
                aria-checked={this.state.mode == "center" ? true : false}
                value="center"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
-              <label htmlFor={"centerRadio-" + this._key } className="">
-                <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--AlignCenter' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
-                </span>
+              <label htmlFor={"centerRadio-" + this._key } className={styleCenter}>
+                <div className={styles['spcfChoiceFieldInnerField']}>
+                  <div className={styles['spcfChoiceFieldIconWrapper']}>
+                    <i className='ms-Icon ms-Icon--AlignCenter' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
+                  </div>
+                </div>
               </label>
             </div>
           </div>
           <div style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '70px', marginRight: '30px', backgroundColor: backgroundRight}}
             onMouseEnter={this.mouseRightEnterDropDown} onMouseLeave={this.mouseRightLeaveDropDown}>
-            <div style={{float: 'left'}}>
-              <label className={styleRight} style={{marginLeft: '5px'}} htmlFor={"rightRadio-" + this._key }></label>
-              <input id={"rightRadio-" + this._key } className=""
+            <div style={{float: 'left'}} className={styles['spcfChoiceField']}>
+              <input id={"rightRadio-" + this._key } className={styles['spcfChoiceFieldInput']}
                onChange={this.onClickRight} type="radio" name={"align-picker-" + this._key} role="radio"
                disabled={this.props.disabled}
                defaultChecked={this.state.mode == "right" ? true : false}
                aria-checked={this.state.mode == "right" ? true : false}
                value="right"  style={{cursor: this.props.disabled === false ? 'pointer' : 'default', width: '18px', height: '18px', opacity: 0}}/>
-              <label htmlFor={"rightRadio-" + this._key } className="">
-                <span className="ms-Label">
-                  <i className='ms-Icon ms-Icon--AlignRight' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
-                </span>
+              <label htmlFor={"rightRadio-" + this._key } className={styleRight} >
+                <div className={styles['spcfChoiceFieldInnerField']}>
+                  <div className={styles['spcfChoiceFieldIconWrapper']}>
+                    <i className='ms-Icon ms-Icon--AlignRight' aria-hidden="true" style={{cursor: this.props.disabled === false ? 'pointer' : 'default',fontSize:'32px', paddingLeft: '30px', color: this.props.disabled === false ? '#808080' : '#A6A6A6'}}></i>
+                  </div>
+                </div>
               </label>
             </div>
           </div>

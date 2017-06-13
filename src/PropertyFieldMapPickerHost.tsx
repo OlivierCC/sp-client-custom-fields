@@ -9,12 +9,11 @@
 import * as React from 'react';
 import { IPropertyFieldMapPickerPropsInternal } from './PropertyFieldMapPicker';
 import { Label } from 'office-ui-fabric-react/lib/Label';
-import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
+import { IconButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import 'office-ui-fabric-react/lib/components/TextField/TextField.scss';
-
-var MapComponent: any = require('react-cartographer/lib/components/Map');
+import Map from 'react-cartographer/lib/components/Map';
 
 /**
  * @interface
@@ -147,6 +146,8 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
     if (this.props.onPropertyChange && newValue != null) {
       this.props.properties[this.props.targetProperty] = newValue;
       this.props.onPropertyChange(this.props.targetProperty, oldValue, newValue);
+      if (!this.props.disableReactivePropertyChanges && this.props.render != null)
+        this.props.render();
     }
   }
 
@@ -193,8 +194,14 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
                   disabled={this.props.disabled}/>
               </td>
               <td style={{verticalAlign: 'bottom', paddingBottom: '10px'}}>
-                <Button buttonType={ButtonType.icon} icon="MapPin" disabled={this.props.disabled} onClick={this.onGetCurrentLocation}  />
-                <Button buttonType={ButtonType.icon} disabled={this.props.disabled} icon={this.state.isOpen ? 'ChevronUpSmall': 'ChevronDownSmall'}  onClick={this.onClickChevron}  />
+                <table style={{width: '100%', borderSpacing: 0}}>
+                  <tbody>
+                    <tr>
+                      <td><IconButton iconProps={ { iconName: 'MapPin' } } disabled={this.props.disabled} onClick={this.onGetCurrentLocation}  /></td>
+                      <td><IconButton disabled={this.props.disabled} iconProps={ { iconName: this.state.isOpen ? 'ChevronUpSmall': 'ChevronDownSmall' } } onClick={this.onClickChevron}  /></td>
+                    </tr>
+                  </tbody>
+                </table>
               </td>
             </tr>
           </tbody>
@@ -209,7 +216,7 @@ export default class PropertyFieldMapPickerHost extends React.Component<IPropert
             : ''}
         { this.state.isOpen === true ?
           <div>
-            <MapComponent
+            <Map
                 provider='bing'
                 providerKey='Ag3-9ixwWbFk4BdNzkj6MCnFN2_pQiL2hedXxiiuaF_DSuzDqAVp2mW9wPE0coeL'
                 mapId='map'
