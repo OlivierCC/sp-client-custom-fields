@@ -76,7 +76,7 @@ export interface IPropertyFieldRichTextBoxProps {
    * @var
    * An UNIQUE key indicates the identity of this control
    */
-  key?: string;
+  key: string;
   /**
    * Whether the property pane field is enabled or not.
    */
@@ -146,10 +146,10 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
   private mode: string;
   private inline: boolean;
   private minHeight: number;
-  private guid: string;
   private onPropertyChange: (propertyPath: string, oldValue: any, newValue: any) => void;
   private customProperties: any;
   private key: string;
+  private keyCopy: string;
   private disabled: boolean = false;
   private onGetErrorMessage: (value: string) => string | Promise<string>;
   private deferredValidationTime: number = 200;
@@ -178,8 +178,8 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     this.onPropertyChange = _properties.onPropertyChange;
     this.render = this.render.bind(this);
     this.customProperties = _properties.properties;
-    this.guid = this.getGuid();
     this.key = _properties.key;
+    this.keyCopy = _properties.key;
     if (_properties.disabled === true)
       this.disabled = _properties.disabled;
     this.onGetErrorMessage = _properties.onGetErrorMessage;
@@ -194,17 +194,6 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     this.notifyAfterValidate = this.notifyAfterValidate.bind(this);
     this.delayedValidate = this.async.debounce(this.validate, this.deferredValidationTime);
   }
-
-  private getGuid(): string {
-    return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' +
-      this.s4() + '-' + this.s4() + this.s4() + this.s4();
-  }
-
-  private s4(): string {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
 
   /**
    * @function
@@ -223,9 +212,9 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       onDispose: this.dispose,
       onRender: this.render,
       onPropertyChange: this.onPropertyChange,
-      guid: this.guid,
       properties: this.customProperties,
-      key: this.key,
+      key: this.keyCopy,
+      keyCopy: this.keyCopy,
       disabled: this.disabled,
       onGetErrorMessage: this.onGetErrorMessage,
       deferredValidationTime: this.deferredValidationTime,
@@ -241,22 +230,25 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     var ckEditorCdn = '//cdn.ckeditor.com/4.6.2/{0}/ckeditor.js'.replace("{0}", fMode);
 
     SPComponentLoader.loadScript(ckEditorCdn, { globalExportsName: 'CKEDITOR' }).then((CKEDITOR: any): void => {
-      if (this.inline == null || this.inline === false)
-        CKEDITOR.replace( this.guid + '-editor', {
-            skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
-        }  );
-      else
-        CKEDITOR.inline( this.guid + '-editor', {
-            skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
-        }   );
-
-      for (var i in CKEDITOR.instances) {
-        CKEDITOR.instances[i].on('change', (elm?, val?) =>
-        {
-          CKEDITOR.instances[i].updateElement();
-          var value = ((document.getElementById(this.guid + '-editor')) as any).value;
-          this.delayedValidate(value);
-        });
+      if (CKEDITOR.instances[this.key + '-editor'] == null) {
+        if (this.inline == null || this.inline === false) {
+          CKEDITOR.replace( this.key + '-editor', {
+              skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
+          }  );
+        }
+        else {
+          CKEDITOR.inline( this.key + '-editor', {
+              skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
+          }   );
+        }
+        for (var i in CKEDITOR.instances) {
+          CKEDITOR.instances[i].on('change', (elm?, val?) =>
+          {
+            CKEDITOR.instances[i].updateElement();
+            var value = ((document.getElementById(this.key + '-editor')) as any).value;
+            this.delayedValidate(value);
+          });
+        }
       }
     });
   }
@@ -280,15 +272,15 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       if (typeof result === 'string') {
         if (result === undefined || result === '')
           this.notifyAfterValidate(this.initialValue, value);
-        ((document.getElementById(this.guid + '-errorMssg1')) as any).innerHTML = result;
-        ((document.getElementById(this.guid + '-errorMssg2')) as any).innerHTML = result;
+        ((document.getElementById(this.key + '-errorMssg1')) as any).innerHTML = result;
+        ((document.getElementById(this.key + '-errorMssg2')) as any).innerHTML = result;
       }
       else {
         result.then((errorMessage: string) => {
           if (errorMessage === undefined || errorMessage === '')
             this.notifyAfterValidate(this.initialValue, value);
-          ((document.getElementById(this.guid + '-errorMssg1')) as any).innerHTML = errorMessage;
-          ((document.getElementById(this.guid + '-errorMssg2')) as any).innerHTML = errorMessage;
+          ((document.getElementById(this.key + '-errorMssg1')) as any).innerHTML = errorMessage;
+          ((document.getElementById(this.key + '-errorMssg2')) as any).innerHTML = errorMessage;
         });
       }
     }

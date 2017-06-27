@@ -1,4 +1,4 @@
-![release](https://img.shields.io/badge/release-v1.3.5-blue.svg)
+![release](https://img.shields.io/badge/release-v1.3.6-blue.svg)
 ![npm](https://img.shields.io/badge/npm-sp--client--custom--fields-red.svg)
 ![status](https://img.shields.io/badge/status-stable-green.svg)
 ![mit](https://img.shields.io/badge/license-MIT-yellow.svg)
@@ -48,7 +48,8 @@ gulp serve
 
 Date | Description |  Contributors
 ------------ | ----------- | -----------
-12/06/2017  | 1.3.5 Upgrade to latest SPFx version. Fix refreshing web part issues + fix bugs with latest version of Office UI Fabric | @ytasyol @OlivierC
+06/27/2017  | 1.3.6 Fix bugs with PropertyFieldRichTextBox | @OlivierC
+06/12/2017  | 1.3.5 Upgrade to latest SPFx version. Fix refreshing web part issues + fix bugs with latest version of Office UI Fabric | @ytasyol @OlivierC
 05/03/2017  | 1.3.4 Fix bugs with PropertyFieldSPListQuery | @TravisGilbert
 04/12/2017  | 1.3.3 Upgrade to Office UI Fabric 2.6.3 + bugs fix + new TermSetPicker custom field added | @OlivierC
 04/09/2017  | 1.3.2 Custom List layout improvements + bugs fix | @OlivierC
