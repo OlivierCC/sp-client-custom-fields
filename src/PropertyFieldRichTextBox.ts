@@ -16,6 +16,7 @@ import {
 import PropertyFieldRichTextBoxHost, { IPropertyFieldRichTextBoxHostProps } from './PropertyFieldRichTextBoxHost';
 import { SPComponentLoader } from '@microsoft/sp-loader';
 import { Async } from 'office-ui-fabric-react/lib/Utilities';
+import { IWebPartContext} from '@microsoft/sp-webpart-base';
 
 /**
  * @interface
@@ -78,6 +79,11 @@ export interface IPropertyFieldRichTextBoxProps {
    */
   key: string;
   /**
+   * @var
+   * The current web part context
+   */
+  context: IWebPartContext;
+  /**
    * Whether the property pane field is enabled or not.
    */
   disabled?: boolean;
@@ -124,6 +130,7 @@ export interface IPropertyFieldRichTextBoxPropsInternal extends IPropertyPaneCus
   disableReactivePropertyChanges?: boolean;
   properties: any;
   disabled?: boolean;
+  context: IWebPartContext;
   onGetErrorMessage?: (value: string) => string | Promise<string>;
   deferredValidationTime?: number;
 }
@@ -151,6 +158,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
   private key: string;
   private keyCopy: string;
   private disabled: boolean = false;
+  private context: IWebPartContext;
   private onGetErrorMessage: (value: string) => string | Promise<string>;
   private deferredValidationTime: number = 200;
   private renderWebPart: () => void;
@@ -159,6 +167,10 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
   private latestValidateValue: string;
   private async: Async;
   private delayedValidate: (value: string) => void;
+
+  //Static helper to manage load state
+  private static CURRENT_WEBPART_INSTANCE: string = null;
+  private static FIELD_KEY_INSTANCES = [];
 
   /**
    * @function
@@ -180,6 +192,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
     this.customProperties = _properties.properties;
     this.key = _properties.key;
     this.keyCopy = _properties.key;
+    this.context = _properties.context;
     if (_properties.disabled === true)
       this.disabled = _properties.disabled;
     this.onGetErrorMessage = _properties.onGetErrorMessage;
@@ -215,6 +228,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       properties: this.customProperties,
       key: this.keyCopy,
       keyCopy: this.keyCopy,
+      context: this.context,
       disabled: this.disabled,
       onGetErrorMessage: this.onGetErrorMessage,
       deferredValidationTime: this.deferredValidationTime,
@@ -229,15 +243,30 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       fMode = this.mode;
     var ckEditorCdn = '//cdn.ckeditor.com/4.6.2/{0}/ckeditor.js'.replace("{0}", fMode);
 
+    //Checks if the web part is loaded or reloaded to reload the CKEditor
+    let shouldReloadCKEditor: boolean = false;
+    if (PropertyFieldRichTextBoxBuilder.CURRENT_WEBPART_INSTANCE !== this.context.instanceId) {
+      shouldReloadCKEditor = true;
+      PropertyFieldRichTextBoxBuilder.FIELD_KEY_INSTANCES = [];
+      PropertyFieldRichTextBoxBuilder.CURRENT_WEBPART_INSTANCE = this.context.instanceId;
+    }
+    if (!shouldReloadCKEditor) {
+      //The web part has been already loaded, but check if the current field must recall CKEditor
+      if (PropertyFieldRichTextBoxBuilder.FIELD_KEY_INSTANCES[this.key] == null) {
+        shouldReloadCKEditor = true;
+      }
+    }
+    PropertyFieldRichTextBoxBuilder.FIELD_KEY_INSTANCES[this.key] = true;
+
     SPComponentLoader.loadScript(ckEditorCdn, { globalExportsName: 'CKEDITOR' }).then((CKEDITOR: any): void => {
-      if (CKEDITOR.instances[this.key + '-editor'] == null) {
+      if (shouldReloadCKEditor || CKEDITOR.instances[this.key + '-' + this.context.instanceId + '-editor'] == null) {
         if (this.inline == null || this.inline === false) {
-          CKEDITOR.replace( this.key + '-editor', {
+          CKEDITOR.replace( this.key + '-' + this.context.instanceId + '-editor', {
               skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
           }  );
         }
         else {
-          CKEDITOR.inline( this.key + '-editor', {
+          CKEDITOR.inline( this.key + '-' + this.context.instanceId + '-editor', {
               skin: 'moono-lisa,//cdn.ckeditor.com/4.6.2/full-all/skins/moono-lisa/'
           }   );
         }
@@ -245,7 +274,7 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
           CKEDITOR.instances[i].on('change', (elm?, val?) =>
           {
             CKEDITOR.instances[i].updateElement();
-            var value = ((document.getElementById(this.key + '-editor')) as any).value;
+            var value = ((document.getElementById(this.key + '-' + this.context.instanceId + '-editor')) as any).value;
             this.delayedValidate(value);
           });
         }
@@ -272,15 +301,15 @@ class PropertyFieldRichTextBoxBuilder implements IPropertyPaneField<IPropertyFie
       if (typeof result === 'string') {
         if (result === undefined || result === '')
           this.notifyAfterValidate(this.initialValue, value);
-        ((document.getElementById(this.key + '-errorMssg1')) as any).innerHTML = result;
-        ((document.getElementById(this.key + '-errorMssg2')) as any).innerHTML = result;
+        ((document.getElementById(this.key + '-' + this.context.instanceId + '-errorMssg1')) as any).innerHTML = result;
+        ((document.getElementById(this.key + '-' + this.context.instanceId + '-errorMssg2')) as any).innerHTML = result;
       }
       else {
         result.then((errorMessage: string) => {
           if (errorMessage === undefined || errorMessage === '')
             this.notifyAfterValidate(this.initialValue, value);
-          ((document.getElementById(this.key + '-errorMssg1')) as any).innerHTML = errorMessage;
-          ((document.getElementById(this.key + '-errorMssg2')) as any).innerHTML = errorMessage;
+          ((document.getElementById(this.key + '-' + this.context.instanceId + '-errorMssg1')) as any).innerHTML = errorMessage;
+          ((document.getElementById(this.key + '-' + this.context.instanceId + '-errorMssg2')) as any).innerHTML = errorMessage;
         });
       }
     }
@@ -334,6 +363,7 @@ export function PropertyFieldRichTextBox(targetProperty: string, properties: IPr
       onDispose: null,
       onRender: null,
       key: properties.key,
+      context: properties.context,
       disabled: properties.disabled,
       onGetErrorMessage: properties.onGetErrorMessage,
       deferredValidationTime: properties.deferredValidationTime,

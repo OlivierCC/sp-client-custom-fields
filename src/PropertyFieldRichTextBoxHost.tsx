@@ -53,18 +53,18 @@ export default class PropertyFieldRichTextBoxHost extends React.Component<IPrope
         <Label>{this.props.label}</Label>
         <div style={{border: '1px solid #c8c8c8', minHeight: minHeight + 'px'}}>
           <textarea disabled={this.props.disabled}
-            name={this.props.keyCopy + '-editor'}
-            id={this.props.keyCopy + '-editor'}
+            name={this.props.keyCopy + '-' + this.props.context.instanceId + '-editor'}
+            id={this.props.keyCopy + '-' + this.props.context.instanceId + '-editor'}
             defaultValue={this.props.initialValue}
             ></textarea>
         </div>
         <div>
             <div aria-live='assertive' className='ms-u-screenReaderOnly' data-automation-id='error-message'>
-              <span id={this.props.keyCopy + '-errorMssg1'}/>
+              <span id={this.props.keyCopy + '-' + this.props.context.instanceId + '-errorMssg1'}/>
             </div>
             <span>
               <p className='ms-TextField-errorMessage ms-u-slideDownIn20'>
-                <span id={this.props.keyCopy + '-errorMssg2'}/>
+                <span id={this.props.keyCopy + '-' + this.props.context.instanceId + '-errorMssg2'}/>
               </p>
             </span>
         </div>

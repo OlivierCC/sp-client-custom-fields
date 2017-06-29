@@ -837,6 +837,7 @@ export default class TestWebPart extends BaseClientSideWebPart<ITestWebPartProps
                   disableReactivePropertyChanges: this.disableReactivePropertyChanges,
                   properties: this.properties,
                   disabled: false,
+                  context: this.context,
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'richFieldId'
