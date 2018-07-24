@@ -198,17 +198,25 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
         this.onClosePanel();
       } else if (messageObject.type == "success") {
         var imageUrl: string = messageObject.items[0].sharePoint.url;
-        var extensions: string[] = this.props.allowedFileExtensions.split(',');
-        var lowerUrl: string = imageUrl.toLowerCase();
-        for (var iExt = 0; iExt < extensions.length; iExt++) {
-          var ext = extensions[iExt].toLowerCase();
-          if (lowerUrl.indexOf(ext) > -1) {
-            this.state.selectedImage = imageUrl;
-            this.setState(this.state);
-            this.saveImageProperty(imageUrl);
-            this.onClosePanel();
-            break;
+        if(this.props.allowedFileExtensions)
+        {
+          var extensions: string[] = this.props.allowedFileExtensions.split(',');
+          var lowerUrl: string = imageUrl.toLowerCase();
+          for (var iExt = 0; iExt < extensions.length; iExt++) {
+            var ext = extensions[iExt].toLowerCase();
+            if (lowerUrl.indexOf(ext) > -1) {
+              this.state.selectedImage = imageUrl;
+              this.setState(this.state);
+              this.saveImageProperty(imageUrl);
+              this.onClosePanel();
+              break;
+            }
           }
+        } else {
+          this.state.selectedImage = imageUrl;
+          this.setState(this.state);
+          this.saveImageProperty(imageUrl);
+          this.onClosePanel();
         }
       }
     }
@@ -260,7 +268,13 @@ export default class PropertyFieldPicturePickerHost extends React.Component<IPro
     iframeUrl += "%22%7D&id=";
     iframeUrl += encodeURI(this.props.context.pageContext.web.serverRelativeUrl);
     iframeUrl += '&view=2&typeFilters=';
-    iframeUrl += encodeURI('folder,' + this.props.allowedFileExtensions);
+    var types = '';
+    if(this.props.allowedFileExtensions){
+        types = this.props.allowedFileExtensions;
+    } else {
+        types = '.gif,.jpg,.jpeg,.bmp,.dib,.tif,.tiff,.ico,.png';
+    }
+    iframeUrl += encodeURI('folder,' + types);
     iframeUrl += '&p=2';
 
     //Renders content
