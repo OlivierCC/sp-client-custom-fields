@@ -5,6 +5,10 @@
   "engines": {
     "node": ">=0.10.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oliviercc/sp-client-custom-fields.git"
+  },
   "dependencies": {
     "@microsoft/sp-client-base": "~1.0.0",
     "@microsoft/sp-core-library": "~1.1.0",
